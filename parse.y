@@ -166,7 +166,7 @@ fitem: fname
 undef_list: fitem
         | undef_list ',' {SET_LEX_STATE(EXPR_FNAME|EXPR_FITEM);} fitem
 
-op      : '|'
+op: '|'
         | '^'
         | '&'
         | tCMP
@@ -278,250 +278,52 @@ aref_args: none
         | args ',' assocs trailer
         | assocs trailer
 
-arg_rhs     : arg   %prec tOP_ASGN
+arg_rhs: arg   %prec tOP_ASGN
         | arg modifier_rescue arg
 
-paren_args  : '(' opt_call_args rparen
-            {
-            /*%%%*/
-            $$ = $2;
-            /*% %*/
-            /*% ripper: arg_paren!(escape_Qundef($2)) %*/
-            }
+paren_args: '(' opt_call_args rparen
         | '(' args ',' args_forward rparen
-            {
-            if (!check_forwarding_args(p)) {
-                $$ = Qnone;
-            }
-            else {
-            /*%%%*/
-                $$ = new_args_forward_call(p, $2, &@4, &@$);
-            /*% %*/
-            /*% ripper: arg_paren!(args_add!($2, $4)) %*/
-            }
-            }
         | '(' args_forward rparen
-            {
-            if (!check_forwarding_args(p)) {
-                $$ = Qnone;
-            }
-            else {
-            /*%%%*/
-                $$ = new_args_forward_call(p, 0, &@2, &@$);
-            /*% %*/
-            /*% ripper: arg_paren!($2) %*/
-            }
-            }
-        ;
 
-opt_paren_args  : none
+opt_paren_args: none
         | paren_args
-        ;
 
-opt_call_args   : none
+opt_call_args: none
         | call_args
         | args ','
-            {
-              $$ = $1;
-            }
         | args ',' assocs ','
-            {
-            /*%%%*/
-            $$ = $3 ? arg_append(p, $1, new_hash(p, $3, &@3), &@$) : $1;
-            /*% %*/
-            /*% ripper: args_add!($1, bare_assoc_hash!($3)) %*/
-            }
         | assocs ','
-            {
-            /*%%%*/
-            $$ = $1 ? NEW_LIST(new_hash(p, $1, &@1), &@1) : 0;
-            /*% %*/
-            /*% ripper: args_add!(args_new!, bare_assoc_hash!($1)) %*/
-            }
-        ;
 
-call_args   : command
-            {
-            /*%%%*/
-            value_expr($1);
-            $$ = NEW_LIST($1, &@$);
-            /*% %*/
-            /*% ripper: args_add!(args_new!, $1) %*/
-            }
+call_args: command
         | args opt_block_arg
-            {
-            /*%%%*/
-            $$ = arg_blk_pass($1, $2);
-            /*% %*/
-            /*% ripper: args_add_block!($1, $2) %*/
-            }
         | assocs opt_block_arg
-            {
-            /*%%%*/
-            $$ = $1 ? NEW_LIST(new_hash(p, $1, &@1), &@1) : 0;
-            $$ = arg_blk_pass($$, $2);
-            /*% %*/
-            /*% ripper: args_add_block!(args_add!(args_new!, bare_assoc_hash!($1)), $2) %*/
-            }
         | args ',' assocs opt_block_arg
-            {
-            /*%%%*/
-            $$ = $3 ? arg_append(p, $1, new_hash(p, $3, &@3), &@$) : $1;
-            $$ = arg_blk_pass($$, $4);
-            /*% %*/
-            /*% ripper: args_add_block!(args_add!($1, bare_assoc_hash!($3)), $4) %*/
-            }
         | block_arg
-            /*% ripper[brace]: args_add_block!(args_new!, $1) %*/
-        ;
 
-command_args    :   {
-            /* If call_args starts with a open paren '(' or '[',
-             * look-ahead reading of the letters calls CMDARG_PUSH(0),
-             * but the push must be done after CMDARG_PUSH(1).
-             * So this code makes them consistent by first cancelling
-             * the premature CMDARG_PUSH(0), doing CMDARG_PUSH(1),
-             * and finally redoing CMDARG_PUSH(0).
-             */
-            int lookahead = 0;
-            switch (yychar) {
-              case '(': case tLPAREN: case tLPAREN_ARG: case '[': case tLBRACK:
-                lookahead = 1;
-            }
-            if (lookahead) CMDARG_POP();
-            CMDARG_PUSH(1);
-            if (lookahead) CMDARG_PUSH(0);
-            }
-          call_args
-            {
-            /* call_args can be followed by tLBRACE_ARG (that does CMDARG_PUSH(0) in the lexer)
-             * but the push must be done after CMDARG_POP() in the parser.
-             * So this code does CMDARG_POP() to pop 0 pushed by tLBRACE_ARG,
-             * CMDARG_POP() to pop 1 pushed by command_args,
-             * and CMDARG_PUSH(0) to restore back the flag set by tLBRACE_ARG.
-             */
-            int lookahead = 0;
-            switch (yychar) {
-              case tLBRACE_ARG:
-                lookahead = 1;
-            }
-            if (lookahead) CMDARG_POP();
-            CMDARG_POP();
-            if (lookahead) CMDARG_PUSH(0);
-            $$ = $2;
-            }
-        ;
+command_args: call_args
 
-block_arg   : tAMPER arg_value
-            {
-            /*%%%*/
-            $$ = NEW_BLOCK_PASS($2, &@$);
-            /*% %*/
-            /*% ripper: $2 %*/
-            }
-                | tAMPER
-                    {
-                        if (!local_id(p, ANON_BLOCK_ID)) {
-                            compile_error(p, "no anonymous block parameter");
-                        }
-                    /*%%%*/
-                        $$ = NEW_BLOCK_PASS(NEW_LVAR(ANON_BLOCK_ID, &@1), &@$);
-                    /*% %*/
-                    /*% ripper: Qnil %*/
-                    }
-        ;
+block_arg: tAMPER arg_value
+        | tAMPER
 
-opt_block_arg   : ',' block_arg
-            {
-            $$ = $2;
-            }
+opt_block_arg: ',' block_arg
         | none
-            {
-            $$ = 0;
-            }
-        ;
 
-/* value */
-args        : arg_value
-            {
-            /*%%%*/
-            $$ = NEW_LIST($1, &@$);
-            /*% %*/
-            /*% ripper: args_add!(args_new!, $1) %*/
-            }
+args: arg_value
         | tSTAR arg_value
-            {
-            /*%%%*/
-            $$ = NEW_SPLAT($2, &@$);
-            /*% %*/
-            /*% ripper: args_add_star!(args_new!, $2) %*/
-            }
         | tSTAR
-            {
-                        if (!local_id(p, ANON_REST_ID)) {
-                            compile_error(p, "no anonymous rest parameter");
-                        }
-            /*%%%*/
-            $$ = NEW_SPLAT(NEW_LVAR(ANON_REST_ID, &@1), &@$);
-            /*% %*/
-            /*% ripper: args_add_star!(args_new!, Qnil) %*/
-            }
         | args ',' arg_value
-            {
-            /*%%%*/
-            $$ = last_arg_append(p, $1, $3, &@$);
-            /*% %*/
-            /*% ripper: args_add!($1, $3) %*/
-            }
         | args ',' tSTAR arg_value
-            {
-            /*%%%*/
-            $$ = rest_arg_append(p, $1, $4, &@$);
-            /*% %*/
-            /*% ripper: args_add_star!($1, $4) %*/
-            }
         | args ',' tSTAR
-            {
-                        if (!local_id(p, ANON_REST_ID)) {
-                            compile_error(p, "no anonymous rest parameter");
-                        }
-            /*%%%*/
-            $$ = rest_arg_append(p, $1, NEW_LVAR(ANON_REST_ID, &@3), &@$);
-            /*% %*/
-            /*% ripper: args_add_star!($1, Qnil) %*/
-            }
-        ;
 
-/* value */
-mrhs_arg    : mrhs
+mrhs_arg: mrhs
         | arg_value
         ;
 
-/* value */
-mrhs        : args ',' arg_value
-            {
-            /*%%%*/
-            $$ = last_arg_append(p, $1, $3, &@$);
-            /*% %*/
-            /*% ripper: mrhs_add!(mrhs_new_from_args!($1), $3) %*/
-            }
+mrhs: args ',' arg_value
         | args ',' tSTAR arg_value
-            {
-            /*%%%*/
-            $$ = rest_arg_append(p, $1, $4, &@$);
-            /*% %*/
-            /*% ripper: mrhs_add_star!(mrhs_new_from_args!($1), $4) %*/
-            }
         | tSTAR arg_value
-            {
-            /*%%%*/
-            $$ = NEW_SPLAT($2, &@$);
-            /*% %*/
-            /*% ripper: mrhs_add_star!(mrhs_new!, $2) %*/
-            }
-        ;
 
-primary     : literal
+primary: literal
         | strings
         | xstring
         | regexp
@@ -532,697 +334,128 @@ primary     : literal
         | var_ref
         | backref
         | tFID
-            {
-            /*%%%*/
-            $$ = NEW_FCALL($1, 0, &@$);
-            /*% %*/
-            /*% ripper: method_add_arg!(fcall!($1), args_new!) %*/
-            }
-        | k_begin
-            {
-            CMDARG_PUSH(0);
-            }
-          bodystmt
-          k_end
-            {
-            CMDARG_POP();
-            /*%%%*/
-            set_line_body($3, @1.end_pos.lineno);
-            $$ = NEW_BEGIN($3, &@$);
-            nd_set_line($$, @1.end_pos.lineno);
-            /*% %*/
-            /*% ripper: begin!($3) %*/
-            }
-        | tLPAREN_ARG {SET_LEX_STATE(EXPR_ENDARG);} rparen
-            {
-            /*%%%*/
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper: paren!(0) %*/
-            }
-        | tLPAREN_ARG stmt {SET_LEX_STATE(EXPR_ENDARG);} rparen
-            {
-            /*%%%*/
-            if (nd_type_p($2, NODE_SELF)) $2->nd_state = 0;
-            $$ = $2;
-            /*% %*/
-            /*% ripper: paren!($2) %*/
-            }
+        | k_begin bodystmt k_end
+        | tLPAREN_ARG rparen
+        | tLPAREN_ARG stmt rparen
         | tLPAREN compstmt ')'
-            {
-            /*%%%*/
-            if (nd_type_p($2, NODE_SELF)) $2->nd_state = 0;
-            $$ = $2;
-            /*% %*/
-            /*% ripper: paren!($2) %*/
-            }
         | primary_value tCOLON2 tCONSTANT
-            {
-            /*%%%*/
-            $$ = NEW_COLON2($1, $3, &@$);
-            /*% %*/
-            /*% ripper: const_path_ref!($1, $3) %*/
-            }
         | tCOLON3 tCONSTANT
-            {
-            /*%%%*/
-            $$ = NEW_COLON3($2, &@$);
-            /*% %*/
-            /*% ripper: top_const_ref!($2) %*/
-            }
         | tLBRACK aref_args ']'
-            {
-            /*%%%*/
-            $$ = make_list($2, &@$);
-            /*% %*/
-            /*% ripper: array!(escape_Qundef($2)) %*/
-            }
         | tLBRACE assoc_list '}'
-            {
-            /*%%%*/
-            $$ = new_hash(p, $2, &@$);
-            $$->nd_brace = TRUE;
-            /*% %*/
-            /*% ripper: hash!(escape_Qundef($2)) %*/
-            }
         | k_return
-            {
-            /*%%%*/
-            $$ = NEW_RETURN(0, &@$);
-            /*% %*/
-            /*% ripper: return0! %*/
-            }
         | keyword_yield '(' call_args rparen
-            {
-            /*%%%*/
-            $$ = new_yield(p, $3, &@$);
-            /*% %*/
-            /*% ripper: yield!(paren!($3)) %*/
-            }
         | keyword_yield '(' rparen
-            {
-            /*%%%*/
-            $$ = NEW_YIELD(0, &@$);
-            /*% %*/
-            /*% ripper: yield!(paren!(args_new!)) %*/
-            }
         | keyword_yield
-            {
-            /*%%%*/
-            $$ = NEW_YIELD(0, &@$);
-            /*% %*/
-            /*% ripper: yield0! %*/
-            }
         | keyword_defined opt_nl '(' {p->ctxt.in_defined = 1;} expr rparen
-            {
-            p->ctxt.in_defined = 0;
-            $$ = new_defined(p, $5, &@$);
-            }
         | keyword_not '(' expr rparen
-            {
-            $$ = call_uni_op(p, method_cond(p, $3, &@3), METHOD_NOT, &@1, &@$);
-            }
         | keyword_not '(' rparen
-            {
-            $$ = call_uni_op(p, method_cond(p, new_nil(&@2), &@2), METHOD_NOT, &@1, &@$);
-            }
         | fcall brace_block
-            {
-            /*%%%*/
-            $$ = method_add_block(p, $1, $2, &@$);
-            /*% %*/
-            /*% ripper: method_add_block!(method_add_arg!(fcall!($1), args_new!), $2) %*/
-            }
         | method_call
         | method_call brace_block
-            {
-            /*%%%*/
-            block_dup_check(p, $1->nd_args, $2);
-            $$ = method_add_block(p, $1, $2, &@$);
-            /*% %*/
-            /*% ripper: method_add_block!($1, $2) %*/
-            }
         | lambda
-        | k_if expr_value then
-          compstmt
-          if_tail
-          k_end
-            {
-            /*%%%*/
-            $$ = new_if(p, $2, $4, $5, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: if!($2, $4, escape_Qundef($5)) %*/
-            }
-        | k_unless expr_value then
-          compstmt
-          opt_else
-          k_end
-            {
-            /*%%%*/
-            $$ = new_unless(p, $2, $4, $5, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: unless!($2, $4, escape_Qundef($5)) %*/
-            }
-        | k_while expr_value_do
-          compstmt
-          k_end
-            {
-            /*%%%*/
-            $$ = NEW_WHILE(cond(p, $2, &@2), $3, 1, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: while!($2, $3) %*/
-            }
-        | k_until expr_value_do
-          compstmt
-          k_end
-            {
-            /*%%%*/
-            $$ = NEW_UNTIL(cond(p, $2, &@2), $3, 1, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: until!($2, $3) %*/
-            }
-        | k_case expr_value opt_terms
-            {
-            $<val>$ = p->case_labels;
-            p->case_labels = Qnil;
-            }
-          case_body
-          k_end
-            {
-            if (RTEST(p->case_labels)) rb_hash_clear(p->case_labels);
-            p->case_labels = $<val>4;
-            /*%%%*/
-            $$ = NEW_CASE($2, $5, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: case!($2, $5) %*/
-            }
-        | k_case opt_terms
-            {
-            $<val>$ = p->case_labels;
-            p->case_labels = 0;
-            }
-          case_body
-          k_end
-            {
-            if (RTEST(p->case_labels)) rb_hash_clear(p->case_labels);
-            p->case_labels = $<val>3;
-            /*%%%*/
-            $$ = NEW_CASE2($4, &@$);
-            /*% %*/
-            /*% ripper: case!(Qnil, $4) %*/
-            }
-        | k_case expr_value opt_terms
-          p_case_body
-          k_end
-            {
-            /*%%%*/
-            $$ = NEW_CASE3($2, $4, &@$);
-            /*% %*/
-            /*% ripper: case!($2, $4) %*/
-            }
-        | k_for for_var keyword_in expr_value_do
-          compstmt
-          k_end
-            {
-            /*%%%*/
-            /*
-             *  for a, b, c in e
-             *  #=>
-             *  e.each{|*x| a, b, c = x}
-             *
-             *  for a in e
-             *  #=>
-             *  e.each{|x| a, = x}
-             */
-            ID id = internal_id(p);
-            NODE *m = NEW_ARGS_AUX(0, 0, &NULL_LOC);
-            NODE *args, *scope, *internal_var = NEW_DVAR(id, &@2);
-                        rb_ast_id_table_t *tbl = rb_ast_new_local_table(p->ast, 1);
-            tbl->ids[0] = id; /* internal id */
-
-            switch (nd_type($2)) {
-              case NODE_LASGN:
-              case NODE_DASGN: /* e.each {|internal_var| a = internal_var; ... } */
-                $2->nd_value = internal_var;
-                id = 0;
-                m->nd_plen = 1;
-                m->nd_next = $2;
-                break;
-              case NODE_MASGN: /* e.each {|*internal_var| a, b, c = (internal_var.length == 1 && Array === (tmp = internal_var[0]) ? tmp : internal_var); ... } */
-                m->nd_next = node_assign(p, $2, NEW_FOR_MASGN(internal_var, &@2), NO_LEX_CTXT, &@2);
-                break;
-              default: /* e.each {|*internal_var| @a, B, c[1], d.attr = internal_val; ... } */
-                m->nd_next = node_assign(p, NEW_MASGN(NEW_LIST($2, &@2), 0, &@2), internal_var, NO_LEX_CTXT, &@2);
-            }
-            /* {|*internal_id| <m> = internal_id; ... } */
-            args = new_args(p, m, 0, id, 0, new_args_tail(p, 0, 0, 0, &@2), &@2);
-            scope = NEW_NODE(NODE_SCOPE, tbl, $5, args, &@$);
-            $$ = NEW_FOR($4, scope, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: for!($2, $4, $5) %*/
-            }
-        | k_class cpath superclass
-            {
-            if (p->ctxt.in_def) {
-                YYLTYPE loc = code_loc_gen(&@1, &@2);
-                yyerror1(&loc, "class definition in method body");
-            }
-            p->ctxt.in_class = 1;
-            local_push(p, 0);
-            }
-          bodystmt
-          k_end
-            {
-            /*%%%*/
-            $$ = NEW_CLASS($2, $5, $3, &@$);
-            nd_set_line($$->nd_body, @6.end_pos.lineno);
-            set_line_body($5, @3.end_pos.lineno);
-            nd_set_line($$, @3.end_pos.lineno);
-            /*% %*/
-            /*% ripper: class!($2, $3, $5) %*/
-            local_pop(p);
-            p->ctxt.in_class = $<ctxt>1.in_class;
-            p->ctxt.shareable_constant_value = $<ctxt>1.shareable_constant_value;
-            }
-        | k_class tLSHFT expr
-            {
-            p->ctxt.in_def = 0;
-            p->ctxt.in_class = 0;
-            local_push(p, 0);
-            }
-          term
-          bodystmt
-          k_end
-            {
-            /*%%%*/
-            $$ = NEW_SCLASS($3, $6, &@$);
-            nd_set_line($$->nd_body, @7.end_pos.lineno);
-            set_line_body($6, nd_line($3));
-            fixpos($$, $3);
-            /*% %*/
-            /*% ripper: sclass!($3, $6) %*/
-            local_pop(p);
-            p->ctxt.in_def = $<ctxt>1.in_def;
-            p->ctxt.in_class = $<ctxt>1.in_class;
-            p->ctxt.shareable_constant_value = $<ctxt>1.shareable_constant_value;
-            }
-        | k_module cpath
-            {
-            if (p->ctxt.in_def) {
-                YYLTYPE loc = code_loc_gen(&@1, &@2);
-                yyerror1(&loc, "module definition in method body");
-            }
-            p->ctxt.in_class = 1;
-            local_push(p, 0);
-            }
-          bodystmt
-          k_end
-            {
-            /*%%%*/
-            $$ = NEW_MODULE($2, $4, &@$);
-            nd_set_line($$->nd_body, @5.end_pos.lineno);
-            set_line_body($4, @2.end_pos.lineno);
-            nd_set_line($$, @2.end_pos.lineno);
-            /*% %*/
-            /*% ripper: module!($2, $4) %*/
-            local_pop(p);
-            p->ctxt.in_class = $<ctxt>1.in_class;
-            p->ctxt.shareable_constant_value = $<ctxt>1.shareable_constant_value;
-            }
-        | defn_head
-          f_arglist
-          bodystmt
-          k_end
-            {
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $$ = set_defun_body(p, $1, $2, $3, &@$);
-            /*% %*/
-            /*% ripper: def!(get_value($1), $2, $3) %*/
-            local_pop(p);
-            }
-        | defs_head
-          f_arglist
-          bodystmt
-          k_end
-            {
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $$ = set_defun_body(p, $1, $2, $3, &@$);
-            /*%
-            $1 = get_value($1);
-            %*/
-            /*% ripper: defs!(AREF($1, 0), AREF($1, 1), AREF($1, 2), $2, $3) %*/
-            local_pop(p);
-            }
+        | k_if expr_value then compstmt if_tail k_end
+        | k_unless expr_value then compstmt opt_else k_end
+        | k_while expr_value_do compstmt k_end
+        | k_until expr_value_do compstmt k_end
+        | k_case expr_value opt_terms case_body k_end
+        | k_case opt_terms case_body k_end
+        | k_case expr_value opt_terms p_case_body k_end
+        | k_for for_var keyword_in expr_value_do compstmt k_end
+        | k_class cpath superclass bodystmt k_end
+        | k_class tLSHFT expr term bodystmt k_end
+        | k_module cpath bodystmt k_end
+        | defn_head f_arglist bodystmt k_end
+        | defs_head f_arglist bodystmt k_end
         | keyword_break
-            {
-            /*%%%*/
-            $$ = NEW_BREAK(0, &@$);
-            /*% %*/
-            /*% ripper: break!(args_new!) %*/
-            }
         | keyword_next
-            {
-            /*%%%*/
-            $$ = NEW_NEXT(0, &@$);
-            /*% %*/
-            /*% ripper: next!(args_new!) %*/
-            }
         | keyword_redo
-            {
-            /*%%%*/
-            $$ = NEW_REDO(&@$);
-            /*% %*/
-            /*% ripper: redo! %*/
-            }
         | keyword_retry
-            {
-            /*%%%*/
-            $$ = NEW_RETRY(&@$);
-            /*% %*/
-            /*% ripper: retry! %*/
-            }
-        ;
 
-primary_value   : primary
-            {
-            value_expr($1);
-            $$ = $1;
-            }
-        ;
+primary_value: primary
 
-k_begin     : keyword_begin
-            {
-            token_info_push(p, "begin", &@$);
-            }
-        ;
+k_begin: keyword_begin
 
-k_if        : keyword_if
-            {
-            WARN_EOL("if");
-            token_info_push(p, "if", &@$);
-            if (p->token_info && p->token_info->nonspc &&
-                p->token_info->next && !strcmp(p->token_info->next->token, "else")) {
-                const char *tok = p->lex.ptok;
-                const char *beg = p->lex.pbeg + p->token_info->next->beg.column;
-                beg += rb_strlen_lit("else");
-                while (beg < tok && ISSPACE(*beg)) beg++;
-                if (beg == tok) {
-                p->token_info->nonspc = 0;
-                }
-            }
-            }
-        ;
+k_if: keyword_if
 
-k_unless    : keyword_unless
-            {
-            token_info_push(p, "unless", &@$);
-            }
-        ;
+k_unless: keyword_unless
 
-k_while     : keyword_while
-            {
-            token_info_push(p, "while", &@$);
-            }
-        ;
+k_while: keyword_while
 
-k_until     : keyword_until
-            {
-            token_info_push(p, "until", &@$);
-            }
-        ;
+k_until: keyword_until
 
-k_case      : keyword_case
-            {
-            token_info_push(p, "case", &@$);
-            }
-        ;
+k_case: keyword_case
 
-k_for       : keyword_for
-            {
-            token_info_push(p, "for", &@$);
-            }
-        ;
+k_for: keyword_for
 
-k_class     : keyword_class
-            {
-            token_info_push(p, "class", &@$);
-            $<ctxt>$ = p->ctxt;
-            }
-        ;
+k_class: keyword_class
 
-k_module    : keyword_module
-            {
-            token_info_push(p, "module", &@$);
-            $<ctxt>$ = p->ctxt;
-            }
-        ;
+k_module: keyword_module
 
-k_def       : keyword_def
-            {
-            token_info_push(p, "def", &@$);
-            p->ctxt.in_argdef = 1;
-            }
-        ;
+k_def: keyword_def
 
-k_do        : keyword_do
-            {
-            token_info_push(p, "do", &@$);
-            }
-        ;
+k_do: keyword_do
 
-k_do_block  : keyword_do_block
-            {
-            token_info_push(p, "do", &@$);
-            }
-        ;
+k_do_block: keyword_do_block
 
-k_rescue    : keyword_rescue
-            {
-            token_info_warn(p, "rescue", p->token_info, 1, &@$);
-            }
-        ;
+k_rescue: keyword_rescue
 
-k_ensure    : keyword_ensure
-            {
-            token_info_warn(p, "ensure", p->token_info, 1, &@$);
-            }
-        ;
+k_ensure: keyword_ensure
 
-k_when      : keyword_when
-            {
-            token_info_warn(p, "when", p->token_info, 0, &@$);
-            }
-        ;
+k_when: keyword_when
 
-k_else      : keyword_else
-            {
-            token_info *ptinfo_beg = p->token_info;
-            int same = ptinfo_beg && strcmp(ptinfo_beg->token, "case") != 0;
-            token_info_warn(p, "else", p->token_info, same, &@$);
-            if (same) {
-                token_info e;
-                e.next = ptinfo_beg->next;
-                e.token = "else";
-                token_info_setup(&e, p->lex.pbeg, &@$);
-                if (!e.nonspc) *ptinfo_beg = e;
-            }
-            }
-        ;
+k_else: keyword_else
 
-k_elsif     : keyword_elsif
-            {
-            WARN_EOL("elsif");
-            token_info_warn(p, "elsif", p->token_info, 1, &@$);
-            }
-        ;
+k_elsif: keyword_elsif
 
-k_end       : keyword_end
-            {
-            token_info_pop(p, "end", &@$);
-            }
-        ;
+k_end: keyword_end
 
-k_return    : keyword_return
-            {
-            if (p->ctxt.in_class && !p->ctxt.in_def && !dyna_in_block(p))
-                yyerror1(&@1, "Invalid return in class/module body");
-            }
-        ;
+k_return: keyword_return
 
-then        : term
+then: term
         | keyword_then
         | term keyword_then
-        ;
 
 do      : term
         | keyword_do_cond
-        ;
 
-if_tail     : opt_else
-        | k_elsif expr_value then
-          compstmt
-          if_tail
-            {
-            /*%%%*/
-            $$ = new_if(p, $2, $4, $5, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: elsif!($2, $4, escape_Qundef($5)) %*/
-            }
-        ;
+if_tail: opt_else
+        | k_elsif expr_value then compstmt if_tail
 
-opt_else    : none
+opt_else: none
         | k_else compstmt
-            {
-            /*%%%*/
-            $$ = $2;
-            /*% %*/
-            /*% ripper: else!($2) %*/
-            }
-        ;
 
-for_var     : lhs
+for_var: lhs
         | mlhs
-        ;
 
-f_marg      : f_norm_arg
-            {
-            /*%%%*/
-            $$ = assignable(p, $1, 0, &@$);
-            mark_lvar_used(p, $$);
-            /*% %*/
-            /*% ripper: assignable(p, $1) %*/
-            }
+f_marg: f_norm_arg
         | tLPAREN f_margs rparen
-            {
-            /*%%%*/
-            $$ = $2;
-            /*% %*/
-            /*% ripper: mlhs_paren!($2) %*/
-            }
-        ;
 
-f_marg_list : f_marg
-            {
-            /*%%%*/
-            $$ = NEW_LIST($1, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add!(mlhs_new!, $1) %*/
-            }
+f_marg_list: f_marg
         | f_marg_list ',' f_marg
-            {
-            /*%%%*/
-            $$ = list_append(p, $1, $3);
-            /*% %*/
-            /*% ripper: mlhs_add!($1, $3) %*/
-            }
-        ;
 
-f_margs     : f_marg_list
-            {
-            /*%%%*/
-            $$ = NEW_MASGN($1, 0, &@$);
-            /*% %*/
-            /*% ripper: $1 %*/
-            }
+f_margs: f_marg_list
         | f_marg_list ',' f_rest_marg
-            {
-            /*%%%*/
-            $$ = NEW_MASGN($1, $3, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_star!($1, $3) %*/
-            }
         | f_marg_list ',' f_rest_marg ',' f_marg_list
-            {
-            /*%%%*/
-            $$ = NEW_MASGN($1, NEW_POSTARG($3, $5, &@$), &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_post!(mlhs_add_star!($1, $3), $5) %*/
-            }
         | f_rest_marg
-            {
-            /*%%%*/
-            $$ = NEW_MASGN(0, $1, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_star!(mlhs_new!, $1) %*/
-            }
         | f_rest_marg ',' f_marg_list
-            {
-            /*%%%*/
-            $$ = NEW_MASGN(0, NEW_POSTARG($1, $3, &@$), &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_post!(mlhs_add_star!(mlhs_new!, $1), $3) %*/
-            }
-        ;
 
-f_rest_marg : tSTAR f_norm_arg
-            {
-            /*%%%*/
-            $$ = assignable(p, $2, 0, &@$);
-            mark_lvar_used(p, $$);
-            /*% %*/
-            /*% ripper: assignable(p, $2) %*/
-            }
+f_rest_marg: tSTAR f_norm_arg
         | tSTAR
-            {
-            /*%%%*/
-            $$ = NODE_SPECIAL_NO_NAME_REST;
-            /*% %*/
-            /*% ripper: Qnil %*/
-            }
-        ;
 
-f_any_kwrest    : f_kwrest
-        | f_no_kwarg {$$ = ID2VAL(idNil);}
-        ;
+f_any_kwrest: f_kwrest
+        | f_no_kwarg
 
-f_eq        : {p->ctxt.in_argdef = 0;} '=';
+f_eq: '=';
 
-block_args_tail : f_block_kwarg ',' f_kwrest opt_f_block_arg
-            {
-            $$ = new_args_tail(p, $1, $3, $4, &@3);
-            }
+block_args_tail: f_block_kwarg ',' f_kwrest opt_f_block_arg
         | f_block_kwarg opt_f_block_arg
-            {
-            $$ = new_args_tail(p, $1, Qnone, $2, &@1);
-            }
         | f_any_kwrest opt_f_block_arg
-            {
-            $$ = new_args_tail(p, Qnone, $1, $2, &@1);
-            }
         | f_block_arg
-            {
-            $$ = new_args_tail(p, Qnone, Qnone, $1, &@1);
-            }
-        ;
 
-opt_block_args_tail : ',' block_args_tail
-            {
-            $$ = $2;
-            }
+opt_block_args_tail: ',' block_args_tail
         | /* none */
-            {
-            $$ = new_args_tail(p, Qnone, Qnone, Qnone, &@0);
-            }
-        ;
 
-excessed_comma  : ','
-            {
-            /* magic number for rest_id in iseq_set_arguments() */
-            /*%%%*/
-            $$ = NODE_SPECIAL_EXCESSIVE_COMMA;
-            /*% %*/
-            /*% ripper: excessed_comma! %*/
-            }
-        ;
+excessed_comma: ','
 
 block_param : f_arg ',' f_block_optarg ',' f_rest_arg opt_block_args_tail
             {
