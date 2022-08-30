@@ -29,16 +29,16 @@ stmt: 'alias' fitem fitem
         | 'alias' tGVAR tBACK_REF
         | 'alias' tGVAR tNTH_REF
         | 'undef' undef_list
-        | stmt modifier_if expr_value
-        | stmt modifier_unless expr_value
-        | stmt modifier_while expr_value
-        | stmt modifier_until expr_value
-        | stmt modifier_rescue stmt
+        | stmt 'if' expr_value
+        | stmt 'unless' expr_value
+        | stmt 'while' expr_value
+        | stmt 'until' expr_value
+        | stmt 'rescue' stmt
         | 'END' '{' compstmt '}'
         | command_asgn
         | mlhs '=' lex_ctxt command_call
         | lhs '=' lex_ctxt mrhs
-        | mlhs '=' lex_ctxt mrhs_arg modifier_rescue stmt
+        | mlhs '=' lex_ctxt mrhs_arg 'rescue' stmt
         | mlhs '=' lex_ctxt mrhs_arg
         | expr
 
@@ -47,16 +47,16 @@ command_asgn: lhs '=' lex_ctxt command_rhs
         | primary_value '[' opt_call_args rbracket tOP_ASGN lex_ctxt command_rhs
         | primary_value call_op tIDENTIFIER tOP_ASGN lex_ctxt command_rhs
         | primary_value call_op tCONSTANT tOP_ASGN lex_ctxt command_rhs
-        | primary_value tCOLON2 tCONSTANT tOP_ASGN lex_ctxt command_rhs
-        | primary_value tCOLON2 tIDENTIFIER tOP_ASGN lex_ctxt command_rhs
+        | primary_value '::' tCONSTANT tOP_ASGN lex_ctxt command_rhs
+        | primary_value '::' tIDENTIFIER tOP_ASGN lex_ctxt command_rhs
         | defn_head f_opt_paren_args '=' command
-        | defn_head f_opt_paren_args '=' command modifier_rescue arg
+        | defn_head f_opt_paren_args '=' command 'rescue' arg
         | defs_head f_opt_paren_args '=' command
-        | defs_head f_opt_paren_args '=' command modifier_rescue arg
+        | defs_head f_opt_paren_args '=' command 'rescue' arg
         | backref tOP_ASGN lex_ctxt command_rhs
 
-command_rhs: command_call   %prec tOP_ASGN
-        | command_call modifier_rescue stmt
+command_rhs: command_call
+        | command_call 'rescue' stmt
         | command_asgn
         ;
 
@@ -65,9 +65,9 @@ expr: command_call
         | expr 'or' expr
         | 'not' opt_nl expr
         | '!' command_call
-        | arg tASSOC p_top_expr_body
+        | arg '=>' p_top_expr_body
         | arg 'in' p_top_expr_body
-        | arg %prec tLBRACE_ARG
+        | arg
 
 def_name: fname
 
@@ -85,16 +85,16 @@ command_call: command
 block_command: block_call
         | block_call call_op2 operation2 command_args
 
-cmd_brace_block: tLBRACE_ARG brace_body '}'
+cmd_brace_block: '{' brace_body '}'
 
 fcall: operation
 
-command: fcall command_args       %prec tLOWEST
+command: fcall command_args
         | fcall command_args cmd_brace_block
-        | primary_value call_op operation2 command_args %prec tLOWEST
+        | primary_value call_op operation2 command_args
         | primary_value call_op operation2 command_args cmd_brace_block
-        | primary_value tCOLON2 operation2 command_args %prec tLOWEST
-        | primary_value tCOLON2 operation2 command_args cmd_brace_block
+        | primary_value '::' operation2 command_args
+        | primary_value '::' operation2 command_args cmd_brace_block
         | 'super' command_args
         | 'yield' command_args
         | k_return call_args
@@ -102,24 +102,24 @@ command: fcall command_args       %prec tLOWEST
         | 'next' call_args
 
 mlhs: mlhs_basic
-        | tLPAREN mlhs_inner rparen
+        | '(' mlhs_inner rparen
 
 mlhs_inner: mlhs_basic
-        | tLPAREN mlhs_inner rparen
+        | '(' mlhs_inner rparen
 
 mlhs_basic: mlhs_head
         | mlhs_head mlhs_item
-        | mlhs_head tSTAR mlhs_node
-        | mlhs_head tSTAR mlhs_node ',' mlhs_post
-        | mlhs_head tSTAR
-        | mlhs_head tSTAR ',' mlhs_post
-        | tSTAR mlhs_node
-        | tSTAR mlhs_node ',' mlhs_post
-        | tSTAR
-        | tSTAR ',' mlhs_post
+        | mlhs_head '*' mlhs_node
+        | mlhs_head '*' mlhs_node ',' mlhs_post
+        | mlhs_head '*'
+        | mlhs_head '*' ',' mlhs_post
+        | '*' mlhs_node
+        | '*' mlhs_node ',' mlhs_post
+        | '*'
+        | '*' ',' mlhs_post
 
 mlhs_item: mlhs_node
-        | tLPAREN mlhs_inner rparen
+        | '(' mlhs_inner rparen
 
 mlhs_head: mlhs_item ','
         | mlhs_head mlhs_item ','
@@ -131,28 +131,28 @@ mlhs_node: user_variable
         | keyword_variable
         | primary_value '[' opt_call_args rbracket
         | primary_value call_op tIDENTIFIER
-        | primary_value tCOLON2 tIDENTIFIER
+        | primary_value '::' tIDENTIFIER
         | primary_value call_op tCONSTANT
-        | primary_value tCOLON2 tCONSTANT
-        | tCOLON3 tCONSTANT
+        | primary_value '::' tCONSTANT
+        | '::' tCONSTANT
         | backref
 
 lhs: user_variable
         | keyword_variable
         | primary_value '[' opt_call_args rbracket
         | primary_value call_op tIDENTIFIER
-        | primary_value tCOLON2 tIDENTIFIER
+        | primary_value '::' tIDENTIFIER
         | primary_value call_op tCONSTANT
-        | primary_value tCOLON2 tCONSTANT
-        | tCOLON3 tCONSTANT
+        | primary_value '::' tCONSTANT
+        | '::' tCONSTANT
         | backref
 
 cname: tIDENTIFIER
         | tCONSTANT
 
-cpath: tCOLON3 cname
+cpath: '::' cname
         | cname
-        | primary_value tCOLON2 cname
+        | primary_value '::' cname
 
 fname: tIDENTIFIER
         | tCONSTANT
@@ -184,11 +184,11 @@ op: '|'
         | '+'
         | '-'
         | '*'
-        | tSTAR
+        | '*'
         | '/'
         | '%'
-        | tPOW
-        | tDSTAR
+        | '**'
+        | '**'
         | '!'
         | '~'
         | tUPLUS
@@ -217,23 +217,23 @@ arg: lhs '=' lex_ctxt arg_rhs
         | primary_value '[' opt_call_args rbracket tOP_ASGN lex_ctxt arg_rhs
         | primary_value call_op tIDENTIFIER tOP_ASGN lex_ctxt arg_rhs
         | primary_value call_op tCONSTANT tOP_ASGN lex_ctxt arg_rhs
-        | primary_value tCOLON2 tIDENTIFIER tOP_ASGN lex_ctxt arg_rhs
-        | primary_value tCOLON2 tCONSTANT tOP_ASGN lex_ctxt arg_rhs
-        | tCOLON3 tCONSTANT tOP_ASGN lex_ctxt arg_rhs
+        | primary_value '::' tIDENTIFIER tOP_ASGN lex_ctxt arg_rhs
+        | primary_value '::' tCONSTANT tOP_ASGN lex_ctxt arg_rhs
+        | '::' tCONSTANT tOP_ASGN lex_ctxt arg_rhs
         | backref tOP_ASGN lex_ctxt arg_rhs
-        | arg tDOT2 arg
-        | arg tDOT3 arg
-        | arg tDOT2
-        | arg tDOT3
-        | tBDOT2 arg
-        | tBDOT3 arg
+        | arg '..' arg
+        | arg '...' arg
+        | arg '..'
+        | arg '...'
+        | '..' arg
+        | '...' arg
         | arg '+' arg
         | arg '-' arg
         | arg '*' arg
         | arg '/' arg
         | arg '%' arg
-        | arg tPOW arg
-        | tUMINUS_NUM simple_numeric tPOW arg
+        | arg '**' arg
+        | tUMINUS_NUM simple_numeric '**' arg
         | tUPLUS arg
         | tUMINUS arg
         | arg '|' arg
@@ -255,9 +255,9 @@ arg: lhs '=' lex_ctxt arg_rhs
         | 'defined?' opt_nl arg
         | arg '?' arg opt_nl ':' arg
         | defn_head f_opt_paren_args '=' arg
-        | defn_head f_opt_paren_args '=' arg modifier_rescue arg
+        | defn_head f_opt_paren_args '=' arg 'rescue' arg
         | defs_head f_opt_paren_args '=' arg
-        | defs_head f_opt_paren_args '=' arg modifier_rescue arg
+        | defs_head f_opt_paren_args '=' arg 'rescue' arg
         | primary
 
 relop: '>'
@@ -266,8 +266,8 @@ relop: '>'
         | '<='
         ;
 
-rel_expr: arg relop arg   %prec '>'
-        | rel_expr relop arg   %prec '>'
+rel_expr: arg relop arg
+        | rel_expr relop arg
 
 lex_ctxt: none
 
@@ -278,8 +278,8 @@ aref_args: none
         | args ',' assocs trailer
         | assocs trailer
 
-arg_rhs: arg   %prec tOP_ASGN
-        | arg modifier_rescue arg
+arg_rhs: arg
+        | arg 'rescue' arg
 
 paren_args: '(' opt_call_args rparen
         | '(' args ',' args_forward rparen
@@ -302,26 +302,26 @@ call_args: command
 
 command_args: call_args
 
-block_arg: tAMPER arg_value
-        | tAMPER
+block_arg: '&' arg_value
+        | '&'
 
 opt_block_arg: ',' block_arg
         | none
 
 args: arg_value
-        | tSTAR arg_value
-        | tSTAR
+        | '*' arg_value
+        | '*'
         | args ',' arg_value
-        | args ',' tSTAR arg_value
-        | args ',' tSTAR
+        | args ',' '*' arg_value
+        | args ',' '*'
 
 mrhs_arg: mrhs
         | arg_value
         ;
 
 mrhs: args ',' arg_value
-        | args ',' tSTAR arg_value
-        | tSTAR arg_value
+        | args ',' '*' arg_value
+        | '*' arg_value
 
 primary: literal
         | strings
@@ -335,13 +335,13 @@ primary: literal
         | backref
         | tFID
         | k_begin bodystmt k_end
-        | tLPAREN_ARG rparen
-        | tLPAREN_ARG stmt rparen
-        | tLPAREN compstmt ')'
-        | primary_value tCOLON2 tCONSTANT
-        | tCOLON3 tCONSTANT
-        | tLBRACK aref_args ']'
-        | tLBRACE assoc_list '}'
+        | '(' rparen
+        | '(' stmt rparen
+        | '(' compstmt ')'
+        | primary_value '::' tCONSTANT
+        | '::' tCONSTANT
+        | '[' aref_args ']'
+        | '{' assoc_list '}'
         | k_return
         | 'yield' '(' call_args rparen
         | 'yield' '(' rparen
@@ -428,7 +428,7 @@ for_var: lhs
         | mlhs
 
 f_marg: f_norm_arg
-        | tLPAREN f_margs rparen
+        | '(' f_margs rparen
 
 f_marg_list: f_marg
         | f_marg_list ',' f_marg
@@ -439,8 +439,8 @@ f_margs: f_marg_list
         | f_rest_marg
         | f_rest_marg ',' f_marg_list
 
-f_rest_marg: tSTAR f_norm_arg
-        | tSTAR
+f_rest_marg: '*' f_norm_arg
+        | '*'
 
 f_any_kwrest: f_kwrest
         | f_no_kwarg
@@ -495,7 +495,7 @@ f_larglist: '(' f_args opt_bv_decl ')'
         | f_args
 
 lambda_body: tLAMBEG compstmt '}'
-        | 'do_LAMBDA bodystmt k_end
+        | kDO_LAMBDA bodystmt k_end
 
 do_block: k_do_block do_body k_end
 
@@ -506,10 +506,10 @@ block_call: command do_block
 
 method_call: fcall paren_args
         | primary_value call_op operation2 opt_paren_args
-        | primary_value tCOLON2 operation2 paren_args
-        | primary_value tCOLON2 operation3
+        | primary_value '::' operation2 paren_args
+        | primary_value '::' operation3
         | primary_value call_op paren_args
-        | primary_value tCOLON2 paren_args
+        | primary_value '::' paren_args
         | 'super' paren_args
         | 'super'
         | primary_value '[' opt_call_args rbracket
@@ -522,9 +522,9 @@ brace_body: opt_block_param compstmt
 do_body: opt_block_param bodystmt
 
 case_args: arg_value
-        | tSTAR arg_value
+        | '*' arg_value
         | case_args ',' arg_value
-        | case_args ',' tSTAR arg_value
+        | case_args ',' '*' arg_value
 
 case_body: k_when case_args then compstmt cases
 
@@ -537,8 +537,8 @@ p_cases: opt_else
         | p_case_body
 
 p_top_expr: p_top_expr_body
-        | p_top_expr_body modifier_if expr_value
-        | p_top_expr_body modifier_unless expr_value
+        | p_top_expr_body 'if' expr_value
+        | p_top_expr_body 'unless' expr_value
 
 p_top_expr_body: p_expr
         | p_expr ','
@@ -549,7 +549,7 @@ p_top_expr_body: p_expr
 
 p_expr: p_as
 
-p_as: p_expr tASSOC p_variable
+p_as: p_expr '=>' p_variable
         | p_alt
 
 p_alt: p_alt '|' p_expr_basic
@@ -568,12 +568,12 @@ p_expr_basic: p_value
         | p_const p_lbracket p_find rbracket
         | p_const p_lbracket p_kwargs rbracket
         | p_const '[' rbracket
-        | tLBRACK p_args rbracket
-        | tLBRACK p_find rbracket
-        | tLBRACK rbracket
-        | tLBRACE p_kwargs rbrace
-        | tLBRACE rbrace
-        | tLPAREN p_expr rparen
+        | '[' p_args rbracket
+        | '[' p_find rbracket
+        | '[' rbracket
+        | '{' p_kwargs rbrace
+        | '{' rbrace
+        | '(' p_expr rparen
 
 p_args: p_expr
         | p_args_head
@@ -591,8 +591,8 @@ p_args_tail: p_rest
 p_find: p_rest ',' p_args_post ',' p_rest
 
 
-p_rest: tSTAR tIDENTIFIER
-        | tSTAR
+p_rest: '*' tIDENTIFIER
+        | '*'
 
 p_args_post: p_arg
         | p_args_post ',' p_arg
@@ -622,15 +622,15 @@ p_any_kwrest: p_kwrest
         | p_kwnorest
 
 p_value: p_primitive
-        | p_primitive tDOT2 p_primitive
-        | p_primitive tDOT3 p_primitive
-        | p_primitive tDOT2
-        | p_primitive tDOT3
+        | p_primitive '..' p_primitive
+        | p_primitive '...' p_primitive
+        | p_primitive '..'
+        | p_primitive '...'
         | p_var_ref
         | p_expr_ref
         | p_const
-        | tBDOT2 p_primitive
-        | tBDOT3 p_primitive
+        | '..' p_primitive
+        | '...' p_primitive
 
 p_primitive: literal
         | strings
@@ -648,10 +648,10 @@ p_variable: tIDENTIFIER
 p_var_ref: '^' tIDENTIFIER
         | '^' nonlocal_var
 
-p_expr_ref: '^' tLPAREN expr_value ')'
+p_expr_ref: '^' '(' expr_value ')'
 
-p_const: tCOLON3 cname
-        | p_const tCOLON2 cname
+p_const: '::' cname
+        | p_const '::' cname
         | tCONSTANT
 
 opt_rescue: k_rescue exc_list exc_var then compstmt opt_rescue
@@ -661,7 +661,7 @@ exc_list: arg_value
         | mrhs
         | none
 
-exc_var: tASSOC lhs
+exc_var: '=>' lhs
         | none
 
 opt_ensure: k_ensure compstmt
@@ -734,7 +734,7 @@ sym: fname
 dsym: tSYMBEG string_contents tSTRING_END
 
 numeric: simple_numeric
-        | tUMINUS_NUM simple_numeric   %prec tLOWEST
+        | tUMINUS_NUM simple_numeric
 
 simple_numeric: tINTEGER
         | tFLOAT
@@ -803,7 +803,7 @@ f_args: f_arg ',' f_optarg ',' f_rest_arg opt_args_tail
         | args_tail
         | /* none */
 
-args_forward: tBDOT3
+args_forward: '...'
 
 f_bad_arg: tCONSTANT
         | tIVAR
@@ -816,7 +816,7 @@ f_norm_arg: f_bad_arg
 f_arg_asgn: f_norm_arg
 
 f_arg_item: f_arg_asgn
-        | tLPAREN f_margs rparen
+        | '(' f_margs rparen
 
 f_arg: f_arg_item
         | f_arg ',' f_arg_item
@@ -837,8 +837,8 @@ f_block_kwarg: f_block_kw
 f_kwarg: f_kw
         | f_kwarg ',' f_kw
 
-kwrest_mark: tPOW
-        | tDSTAR
+kwrest_mark: '**'
+        | '**'
 
 f_no_kwarg: p_kwnorest
 
@@ -856,13 +856,12 @@ f_optarg: f_opt
         | f_optarg ',' f_opt
 
 restarg_mark: '*'
-        | tSTAR
 
 f_rest_arg: restarg_mark tIDENTIFIER
         | restarg_mark
 
 blkarg_mark: '&'
-        | tAMPER
+        | '&'
         ;
 
 f_block_arg: blkarg_mark tIDENTIFIER
@@ -879,12 +878,12 @@ assoc_list: none
 assocs: assoc
         | assocs ',' assoc
 
-assoc: arg_value tASSOC arg_value
+assoc: arg_value '=>' arg_value
         | tLABEL arg_value
         | tLABEL
         | tSTRING_BEG string_contents tLABEL_END arg_value
-        | tDSTAR arg_value
-        | tDSTAR
+        | '**' arg_value
+        | '**'
 
 operation: tIDENTIFIER
         | tCONSTANT
@@ -898,13 +897,13 @@ operation3: tIDENTIFIER
         | op
 
 dot_or_colon: '.'
-        | tCOLON2
+        | '::'
 
 call_op: '.'
-        | tANDDOT
+        | '&.'
 
 call_op2: call_op
-        | tCOLON2
+        | '::'
 
 opt_terms: /* none */
         | terms
