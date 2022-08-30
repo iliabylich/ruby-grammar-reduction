@@ -8,7 +8,7 @@ top_stmts: none
         | error top_stmt
 
 top_stmt: stmt
-        | keyword_BEGIN begin_block
+        | 'BEGIN' begin_block
 
 begin_block: '{' top_compstmt '}'
 
@@ -22,19 +22,19 @@ stmts: none
         | stmts terms stmt_or_begin
         | error stmt
 
-stmt_or_begin: stmt keyword_BEGIN begin_block
+stmt_or_begin: stmt 'BEGIN' begin_block
 
-stmt: keyword_alias fitem fitem
-        | keyword_alias tGVAR tGVAR
-        | keyword_alias tGVAR tBACK_REF
-        | keyword_alias tGVAR tNTH_REF
-        | keyword_undef undef_list
+stmt: 'alias' fitem fitem
+        | 'alias' tGVAR tGVAR
+        | 'alias' tGVAR tBACK_REF
+        | 'alias' tGVAR tNTH_REF
+        | 'undef' undef_list
         | stmt modifier_if expr_value
         | stmt modifier_unless expr_value
         | stmt modifier_while expr_value
         | stmt modifier_until expr_value
         | stmt modifier_rescue stmt
-        | keyword_END '{' compstmt '}'
+        | 'END' '{' compstmt '}'
         | command_asgn
         | mlhs '=' lex_ctxt command_call
         | lhs '=' lex_ctxt mrhs
@@ -61,12 +61,12 @@ command_rhs: command_call   %prec tOP_ASGN
         ;
 
 expr: command_call
-        | expr keyword_and expr
-        | expr keyword_or expr
-        | keyword_not opt_nl expr
+        | expr 'and' expr
+        | expr 'or' expr
+        | 'not' opt_nl expr
         | '!' command_call
         | arg tASSOC p_top_expr_body
-        | arg keyword_in p_top_expr_body
+        | arg 'in' p_top_expr_body
         | arg %prec tLBRACE_ARG
 
 def_name: fname
@@ -95,11 +95,11 @@ command: fcall command_args       %prec tLOWEST
         | primary_value call_op operation2 command_args cmd_brace_block
         | primary_value tCOLON2 operation2 command_args %prec tLOWEST
         | primary_value tCOLON2 operation2 command_args cmd_brace_block
-        | keyword_super command_args
-        | keyword_yield command_args
+        | 'super' command_args
+        | 'yield' command_args
         | k_return call_args
-        | keyword_break call_args
-        | keyword_next call_args
+        | 'break' call_args
+        | 'next' call_args
 
 mlhs: mlhs_basic
         | tLPAREN mlhs_inner rparen
@@ -175,9 +175,9 @@ op: '|'
         | tMATCH
         | tNMATCH
         | '>'
-        | tGEQ
+        | '>='
         | '<'
-        | tLEQ
+        | '<='
         | tNEQ
         | tLSHFT
         | tRSHFT
@@ -198,18 +198,18 @@ op: '|'
         | '`'
         ;
 
-reswords: keyword__LINE__ | keyword__FILE__ | keyword__ENCODING__
-        | keyword_BEGIN | keyword_END
-        | keyword_alias | keyword_and | keyword_begin
-        | keyword_break | keyword_case | keyword_class | keyword_def
-        | keyword_defined | keyword_do | keyword_else | keyword_elsif
-        | keyword_end | keyword_ensure | keyword_false
-        | keyword_for | keyword_in | keyword_module | keyword_next
-        | keyword_nil | keyword_not | keyword_or | keyword_redo
-        | keyword_rescue | keyword_retry | keyword_return | keyword_self
-        | keyword_super | keyword_then | keyword_true | keyword_undef
-        | keyword_when | keyword_yield | keyword_if | keyword_unless
-        | keyword_while | keyword_until
+reswords: '__LINE__' | '__FILE__' | '__ENCODING__'
+        | 'BEGIN' | 'END'
+        | 'alias' | 'and' | 'begin'
+        | 'break' | 'case' | 'class' | 'def'
+        | 'defined?' | 'do | 'else' | 'elsif'
+        | 'end' | 'ensure' | 'false'
+        | 'for' | 'in' | 'module' | 'next'
+        | 'nil' | 'not' | 'or' | 'redo'
+        | 'rescue' | 'retry' | 'return' | 'self'
+        | 'super' | 'then' | 'true' | 'undef'
+        | 'when' | 'yield' | 'if' | 'unless'
+        | 'while' | 'until'
         ;
 
 arg: lhs '=' lex_ctxt arg_rhs
@@ -252,7 +252,7 @@ arg: lhs '=' lex_ctxt arg_rhs
         | arg tRSHFT arg
         | arg tANDOP arg
         | arg tOROP arg
-        | keyword_defined opt_nl arg
+        | 'defined?' opt_nl arg
         | arg '?' arg opt_nl ':' arg
         | defn_head f_opt_paren_args '=' arg
         | defn_head f_opt_paren_args '=' arg modifier_rescue arg
@@ -262,8 +262,8 @@ arg: lhs '=' lex_ctxt arg_rhs
 
 relop: '>'
         | '<'
-        | tGEQ
-        | tLEQ
+        | '>='
+        | '<='
         ;
 
 rel_expr: arg relop arg   %prec '>'
@@ -343,12 +343,12 @@ primary: literal
         | tLBRACK aref_args ']'
         | tLBRACE assoc_list '}'
         | k_return
-        | keyword_yield '(' call_args rparen
-        | keyword_yield '(' rparen
-        | keyword_yield
-        | keyword_defined opt_nl '(' expr rparen
-        | keyword_not '(' expr rparen
-        | keyword_not '(' rparen
+        | 'yield' '(' call_args rparen
+        | 'yield' '(' rparen
+        | 'yield'
+        | 'defined?' opt_nl '(' expr rparen
+        | 'not' '(' expr rparen
+        | 'not' '(' rparen
         | fcall brace_block
         | method_call
         | method_call brace_block
@@ -360,63 +360,63 @@ primary: literal
         | k_case expr_value opt_terms case_body k_end
         | k_case opt_terms case_body k_end
         | k_case expr_value opt_terms p_case_body k_end
-        | k_for for_var keyword_in expr_value_do compstmt k_end
+        | k_for for_var 'in' expr_value_do compstmt k_end
         | k_class cpath superclass bodystmt k_end
         | k_class tLSHFT expr term bodystmt k_end
         | k_module cpath bodystmt k_end
         | defn_head f_arglist bodystmt k_end
         | defs_head f_arglist bodystmt k_end
-        | keyword_break
-        | keyword_next
-        | keyword_redo
-        | keyword_retry
+        | 'break'
+        | 'next'
+        | 'redo'
+        | 'retry'
 
 primary_value: primary
 
-k_begin: keyword_begin
+k_begin: 'begin'
 
-k_if: keyword_if
+k_if: 'if'
 
-k_unless: keyword_unless
+k_unless: 'unless'
 
-k_while: keyword_while
+k_while: 'while'
 
-k_until: keyword_until
+k_until: 'until'
 
-k_case: keyword_case
+k_case: 'case'
 
-k_for: keyword_for
+k_for: 'for'
 
-k_class: keyword_class
+k_class: 'class'
 
-k_module: keyword_module
+k_module: 'module'
 
-k_def: keyword_def
+k_def: 'def'
 
-k_do: keyword_do
+k_do: 'do
 
-k_do_block: keyword_do_block
+k_do_block: 'do'
 
-k_rescue: keyword_rescue
+k_rescue: 'rescue'
 
-k_ensure: keyword_ensure
+k_ensure: 'ensure'
 
-k_when: keyword_when
+k_when: 'when'
 
-k_else: keyword_else
+k_else: 'else'
 
-k_elsif: keyword_elsif
+k_elsif: 'elsif'
 
-k_end: keyword_end
+k_end: 'end'
 
-k_return: keyword_return
+k_return: 'return'
 
 then: term
-        | keyword_then
-        | term keyword_then
+        | 'then'
+        | term 'then'
 
 do: term
-        | keyword_do_cond
+        | 'do_cond
 
 if_tail: opt_else
         | k_elsif expr_value then compstmt if_tail
@@ -495,7 +495,7 @@ f_larglist: '(' f_args opt_bv_decl ')'
         | f_args
 
 lambda_body: tLAMBEG compstmt '}'
-        | keyword_do_LAMBDA bodystmt k_end
+        | 'do_LAMBDA bodystmt k_end
 
 do_block: k_do_block do_body k_end
 
@@ -510,8 +510,8 @@ method_call: fcall paren_args
         | primary_value tCOLON2 operation3
         | primary_value call_op paren_args
         | primary_value tCOLON2 paren_args
-        | keyword_super paren_args
-        | keyword_super
+        | 'super' paren_args
+        | 'super'
         | primary_value '[' opt_call_args rbracket
 
 brace_block: '{' brace_body '}'
@@ -531,7 +531,7 @@ case_body: k_when case_args then compstmt cases
 cases: opt_else
         | case_body
 
-p_case_body: keyword_in p_top_expr then compstmt p_cases
+p_case_body: 'in' p_top_expr then compstmt p_cases
 
 p_cases: opt_else
         | p_case_body
@@ -616,7 +616,7 @@ p_kw_label: tLABEL
 p_kwrest: kwrest_mark tIDENTIFIER
         | kwrest_mark
 
-p_kwnorest: kwrest_mark keyword_nil
+p_kwnorest: kwrest_mark 'nil'
 
 p_any_kwrest: p_kwrest
         | p_kwnorest
@@ -749,13 +749,13 @@ user_variable: tIDENTIFIER
         | tCONSTANT
         | nonlocal_var
 
-keyword_variable: keyword_nil
-        | keyword_self
-        | keyword_true
-        | keyword_false
-        | keyword__FILE__
-        | keyword__LINE__
-        | keyword__ENCODING__
+keyword_variable: 'nil'
+        | 'self'
+        | 'true'
+        | 'false'
+        | '__FILE__'
+        | '__LINE__'
+        | '__ENCODING__'
         ;
 
 var_ref: user_variable
