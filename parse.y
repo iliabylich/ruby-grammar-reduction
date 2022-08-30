@@ -36,24 +36,24 @@ stmt: 'alias' fitem fitem
         | stmt 'rescue' stmt
         | 'END' '{' compstmt '}'
         | command_asgn
-        | mlhs '=' lex_ctxt command_call
-        | lhs '=' lex_ctxt mrhs
-        | mlhs '=' lex_ctxt mrhs_arg 'rescue' stmt
-        | mlhs '=' lex_ctxt mrhs_arg
+        | mlhs '=' command_call
+        | lhs '=' mrhs
+        | mlhs '=' mrhs_arg 'rescue' stmt
+        | mlhs '=' mrhs_arg
         | expr
 
-command_asgn: lhs '=' lex_ctxt command_rhs
-        | var_lhs tOP_ASGN lex_ctxt command_rhs
-        | primary_value '[' opt_call_args rbracket tOP_ASGN lex_ctxt command_rhs
-        | primary_value call_op tIDENTIFIER tOP_ASGN lex_ctxt command_rhs
-        | primary_value call_op tCONSTANT tOP_ASGN lex_ctxt command_rhs
-        | primary_value '::' tCONSTANT tOP_ASGN lex_ctxt command_rhs
-        | primary_value '::' tIDENTIFIER tOP_ASGN lex_ctxt command_rhs
+command_asgn: lhs '=' command_rhs
+        | var_lhs tOP_ASGN command_rhs
+        | primary_value '[' opt_call_args rbracket tOP_ASGN command_rhs
+        | primary_value call_op tIDENTIFIER tOP_ASGN command_rhs
+        | primary_value call_op tCONSTANT tOP_ASGN command_rhs
+        | primary_value '::' tCONSTANT tOP_ASGN command_rhs
+        | primary_value '::' tIDENTIFIER tOP_ASGN command_rhs
         | defn_head f_opt_paren_args '=' command
         | defn_head f_opt_paren_args '=' command 'rescue' arg
         | defs_head f_opt_paren_args '=' command
         | defs_head f_opt_paren_args '=' command 'rescue' arg
-        | backref tOP_ASGN lex_ctxt command_rhs
+        | backref tOP_ASGN command_rhs
 
 command_rhs: command_call
         | command_call 'rescue' stmt
@@ -212,15 +212,15 @@ reswords: '__LINE__' | '__FILE__' | '__ENCODING__'
         | 'while' | 'until'
         ;
 
-arg: lhs '=' lex_ctxt arg_rhs
-        | var_lhs tOP_ASGN lex_ctxt arg_rhs
-        | primary_value '[' opt_call_args rbracket tOP_ASGN lex_ctxt arg_rhs
-        | primary_value call_op tIDENTIFIER tOP_ASGN lex_ctxt arg_rhs
-        | primary_value call_op tCONSTANT tOP_ASGN lex_ctxt arg_rhs
-        | primary_value '::' tIDENTIFIER tOP_ASGN lex_ctxt arg_rhs
-        | primary_value '::' tCONSTANT tOP_ASGN lex_ctxt arg_rhs
-        | '::' tCONSTANT tOP_ASGN lex_ctxt arg_rhs
-        | backref tOP_ASGN lex_ctxt arg_rhs
+arg: lhs '=' arg_rhs
+        | var_lhs tOP_ASGN arg_rhs
+        | primary_value '[' opt_call_args rbracket tOP_ASGN arg_rhs
+        | primary_value call_op tIDENTIFIER tOP_ASGN arg_rhs
+        | primary_value call_op tCONSTANT tOP_ASGN arg_rhs
+        | primary_value '::' tIDENTIFIER tOP_ASGN arg_rhs
+        | primary_value '::' tCONSTANT tOP_ASGN arg_rhs
+        | '::' tCONSTANT tOP_ASGN arg_rhs
+        | backref tOP_ASGN arg_rhs
         | arg '..' arg
         | arg '...' arg
         | arg '..'
@@ -268,8 +268,6 @@ relop: '>'
 
 rel_expr: arg relop arg
         | rel_expr relop arg
-
-lex_ctxt: none
 
 arg_value: arg
 
