@@ -1,562 +1,93 @@
-program     :  {
-            SET_LEX_STATE(EXPR_BEG);
-            local_push(p, ifndef_ripper(1)+0);
-            }
-          top_compstmt
-            {
-            /*%%%*/
-            if ($2 && !compile_for_eval) {
-                NODE *node = $2;
-                /* last expression should not be void */
-                if (nd_type_p(node, NODE_BLOCK)) {
-                while (node->nd_next) {
-                    node = node->nd_next;
-                }
-                node = node->nd_head;
-                }
-                node = remove_begin(node);
-                void_expr(p, node);
-            }
-            p->eval_tree = NEW_SCOPE(0, block_append(p, p->eval_tree, $2), &@$);
-            /*% %*/
-            /*% ripper[final]: program!($2) %*/
-            local_pop(p);
-            }
-        ;
+program: top_compstmt
 
-top_compstmt    : top_stmts opt_terms
-            {
-            $$ = void_stmts(p, $1);
-            }
-        ;
+top_compstmt: top_stmts opt_terms
 
-top_stmts   : none
-                    {
-            /*%%%*/
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper: stmts_add!(stmts_new!, void_stmt!) %*/
-            }
+top_stmts: none
         | top_stmt
-            {
-            /*%%%*/
-            $$ = newline_node($1);
-            /*% %*/
-            /*% ripper: stmts_add!(stmts_new!, $1) %*/
-            }
         | top_stmts terms top_stmt
-            {
-            /*%%%*/
-            $$ = block_append(p, $1, newline_node($3));
-            /*% %*/
-            /*% ripper: stmts_add!($1, $3) %*/
-            }
         | error top_stmt
-            {
-            $$ = remove_begin($2);
-            }
-        ;
 
-top_stmt    : stmt
+top_stmt: stmt
         | keyword_BEGIN begin_block
-            {
-            $$ = $2;
-            }
-        ;
 
-begin_block : '{' top_compstmt '}'
-            {
-            /*%%%*/
-            p->eval_tree_begin = block_append(p, p->eval_tree_begin,
-                              NEW_BEGIN($2, &@$));
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper: BEGIN!($2) %*/
-            }
-        ;
+begin_block: '{' top_compstmt '}'
 
-bodystmt    : compstmt
-          opt_rescue
-          k_else {if (!$2) {yyerror1(&@3, "else without rescue is useless");}}
-          compstmt
-          opt_ensure
-            {
-            /*%%%*/
-            $$ = new_bodystmt(p, $1, $2, $5, $6, &@$);
-            /*% %*/
-            /*% ripper: bodystmt!(escape_Qundef($1), escape_Qundef($2), escape_Qundef($5), escape_Qundef($6)) %*/
-            }
-        | compstmt
-          opt_rescue
-          opt_ensure
-            {
-            /*%%%*/
-            $$ = new_bodystmt(p, $1, $2, 0, $3, &@$);
-            /*% %*/
-            /*% ripper: bodystmt!(escape_Qundef($1), escape_Qundef($2), Qnil, escape_Qundef($3)) %*/
-            }
-        ;
+bodystmt: compstmt opt_rescue k_else compstmt opt_ensure
+        | compstmt opt_rescue opt_ensure
 
-compstmt    : stmts opt_terms
-            {
-            $$ = void_stmts(p, $1);
-            }
-        ;
+compstmt: stmts opt_terms
 
-stmts       : none
-                    {
-            /*%%%*/
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper: stmts_add!(stmts_new!, void_stmt!) %*/
-            }
+stmts: none
         | stmt_or_begin
-            {
-            /*%%%*/
-            $$ = newline_node($1);
-            /*% %*/
-            /*% ripper: stmts_add!(stmts_new!, $1) %*/
-            }
         | stmts terms stmt_or_begin
-            {
-            /*%%%*/
-            $$ = block_append(p, $1, newline_node($3));
-            /*% %*/
-            /*% ripper: stmts_add!($1, $3) %*/
-            }
         | error stmt
-            {
-            $$ = remove_begin($2);
-            }
-        ;
 
-stmt_or_begin   : stmt
-                    {
-            $$ = $1;
-            }
-                | keyword_BEGIN
-            {
-            yyerror1(&@1, "BEGIN is permitted only at toplevel");
-            }
-          begin_block
-            {
-            $$ = $3;
-            }
-        ;
+stmt_or_begin: stmt keyword_BEGIN begin_block
 
-stmt        : keyword_alias fitem {SET_LEX_STATE(EXPR_FNAME|EXPR_FITEM);} fitem
-            {
-            /*%%%*/
-            $$ = NEW_ALIAS($2, $4, &@$);
-            /*% %*/
-            /*% ripper: alias!($2, $4) %*/
-            }
+stmt: keyword_alias fitem fitem
         | keyword_alias tGVAR tGVAR
-            {
-            /*%%%*/
-            $$ = NEW_VALIAS($2, $3, &@$);
-            /*% %*/
-            /*% ripper: var_alias!($2, $3) %*/
-            }
         | keyword_alias tGVAR tBACK_REF
-            {
-            /*%%%*/
-            char buf[2];
-            buf[0] = '$';
-            buf[1] = (char)$3->nd_nth;
-            $$ = NEW_VALIAS($2, rb_intern2(buf, 2), &@$);
-            /*% %*/
-            /*% ripper: var_alias!($2, $3) %*/
-            }
         | keyword_alias tGVAR tNTH_REF
-            {
-            static const char mesg[] = "can't make alias for the number variables";
-            /*%%%*/
-            yyerror1(&@3, mesg);
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper[error]: alias_error!(ERR_MESG(), $3) %*/
-            }
         | keyword_undef undef_list
-            {
-            /*%%%*/
-            $$ = $2;
-            /*% %*/
-            /*% ripper: undef!($2) %*/
-            }
         | stmt modifier_if expr_value
-            {
-            /*%%%*/
-            $$ = new_if(p, $3, remove_begin($1), 0, &@$);
-            fixpos($$, $3);
-            /*% %*/
-            /*% ripper: if_mod!($3, $1) %*/
-            }
         | stmt modifier_unless expr_value
-            {
-            /*%%%*/
-            $$ = new_unless(p, $3, remove_begin($1), 0, &@$);
-            fixpos($$, $3);
-            /*% %*/
-            /*% ripper: unless_mod!($3, $1) %*/
-            }
         | stmt modifier_while expr_value
-            {
-            /*%%%*/
-            if ($1 && nd_type_p($1, NODE_BEGIN)) {
-                $$ = NEW_WHILE(cond(p, $3, &@3), $1->nd_body, 0, &@$);
-            }
-            else {
-                $$ = NEW_WHILE(cond(p, $3, &@3), $1, 1, &@$);
-            }
-            /*% %*/
-            /*% ripper: while_mod!($3, $1) %*/
-            }
         | stmt modifier_until expr_value
-            {
-            /*%%%*/
-            if ($1 && nd_type_p($1, NODE_BEGIN)) {
-                $$ = NEW_UNTIL(cond(p, $3, &@3), $1->nd_body, 0, &@$);
-            }
-            else {
-                $$ = NEW_UNTIL(cond(p, $3, &@3), $1, 1, &@$);
-            }
-            /*% %*/
-            /*% ripper: until_mod!($3, $1) %*/
-            }
         | stmt modifier_rescue stmt
-            {
-            /*%%%*/
-            NODE *resq;
-            YYLTYPE loc = code_loc_gen(&@2, &@3);
-            resq = NEW_RESBODY(0, remove_begin($3), 0, &loc);
-            $$ = NEW_RESCUE(remove_begin($1), resq, 0, &@$);
-            /*% %*/
-            /*% ripper: rescue_mod!($1, $3) %*/
-            }
         | keyword_END '{' compstmt '}'
-            {
-            if (p->ctxt.in_def) {
-                rb_warn0("END in method; use at_exit");
-            }
-            /*%%%*/
-            {
-                NODE *scope = NEW_NODE(
-                NODE_SCOPE, 0 /* tbl */, $3 /* body */, 0 /* args */, &@$);
-                $$ = NEW_POSTEXE(scope, &@$);
-            }
-            /*% %*/
-            /*% ripper: END!($3) %*/
-            }
         | command_asgn
         | mlhs '=' lex_ctxt command_call
-            {
-            /*%%%*/
-            value_expr($4);
-            $$ = node_assign(p, $1, $4, $3, &@$);
-            /*% %*/
-            /*% ripper: massign!($1, $4) %*/
-            }
         | lhs '=' lex_ctxt mrhs
-            {
-            /*%%%*/
-            $$ = node_assign(p, $1, $4, $3, &@$);
-            /*% %*/
-            /*% ripper: assign!($1, $4) %*/
-            }
-                | mlhs '=' lex_ctxt mrhs_arg modifier_rescue stmt
-                    {
-                    /*%%%*/
-                        YYLTYPE loc = code_loc_gen(&@5, &@6);
-            $$ = node_assign(p, $1, NEW_RESCUE($4, NEW_RESBODY(0, remove_begin($6), 0, &loc), 0, &@$), $3, &@$);
-                    /*% %*/
-                    /*% ripper: massign!($1, rescue_mod!($4, $6)) %*/
-                    }
+        | mlhs '=' lex_ctxt mrhs_arg modifier_rescue stmt
         | mlhs '=' lex_ctxt mrhs_arg
-            {
-            /*%%%*/
-            $$ = node_assign(p, $1, $4, $3, &@$);
-            /*% %*/
-            /*% ripper: massign!($1, $4) %*/
-            }
         | expr
-        ;
 
-command_asgn    : lhs '=' lex_ctxt command_rhs
-            {
-            /*%%%*/
-            $$ = node_assign(p, $1, $4, $3, &@$);
-            /*% %*/
-            /*% ripper: assign!($1, $4) %*/
-            }
+command_asgn: lhs '=' lex_ctxt command_rhs
         | var_lhs tOP_ASGN lex_ctxt command_rhs
-            {
-            /*%%%*/
-            $$ = new_op_assign(p, $1, $2, $4, $3, &@$);
-            /*% %*/
-            /*% ripper: opassign!($1, $2, $4) %*/
-            }
         | primary_value '[' opt_call_args rbracket tOP_ASGN lex_ctxt command_rhs
-            {
-            /*%%%*/
-            $$ = new_ary_op_assign(p, $1, $3, $5, $7, &@3, &@$);
-            /*% %*/
-            /*% ripper: opassign!(aref_field!($1, escape_Qundef($3)), $5, $7) %*/
-
-            }
         | primary_value call_op tIDENTIFIER tOP_ASGN lex_ctxt command_rhs
-            {
-            /*%%%*/
-            $$ = new_attr_op_assign(p, $1, $2, $3, $4, $6, &@$);
-            /*% %*/
-            /*% ripper: opassign!(field!($1, $2, $3), $4, $6) %*/
-            }
         | primary_value call_op tCONSTANT tOP_ASGN lex_ctxt command_rhs
-            {
-            /*%%%*/
-            $$ = new_attr_op_assign(p, $1, $2, $3, $4, $6, &@$);
-            /*% %*/
-            /*% ripper: opassign!(field!($1, $2, $3), $4, $6) %*/
-            }
         | primary_value tCOLON2 tCONSTANT tOP_ASGN lex_ctxt command_rhs
-            {
-            /*%%%*/
-            YYLTYPE loc = code_loc_gen(&@1, &@3);
-            $$ = new_const_op_assign(p, NEW_COLON2($1, $3, &loc), $4, $6, $5, &@$);
-            /*% %*/
-            /*% ripper: opassign!(const_path_field!($1, $3), $4, $6) %*/
-            }
         | primary_value tCOLON2 tIDENTIFIER tOP_ASGN lex_ctxt command_rhs
-            {
-            /*%%%*/
-            $$ = new_attr_op_assign(p, $1, ID2VAL(idCOLON2), $3, $4, $6, &@$);
-            /*% %*/
-            /*% ripper: opassign!(field!($1, ID2VAL(idCOLON2), $3), $4, $6) %*/
-            }
         | defn_head f_opt_paren_args '=' command
-            {
-            endless_method_name(p, $<node>1, &@1);
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $$ = set_defun_body(p, $1, $2, $4, &@$);
-            /*% %*/
-            /*% ripper[$4]: bodystmt!($4, Qnil, Qnil, Qnil) %*/
-            /*% ripper: def!(get_value($1), $2, $4) %*/
-            local_pop(p);
-            }
         | defn_head f_opt_paren_args '=' command modifier_rescue arg
-            {
-            endless_method_name(p, $<node>1, &@1);
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $4 = rescued_expr(p, $4, $6, &@4, &@5, &@6);
-            $$ = set_defun_body(p, $1, $2, $4, &@$);
-            /*% %*/
-            /*% ripper[$4]: bodystmt!(rescue_mod!($4, $6), Qnil, Qnil, Qnil) %*/
-            /*% ripper: def!(get_value($1), $2, $4) %*/
-            local_pop(p);
-            }
         | defs_head f_opt_paren_args '=' command
-            {
-            endless_method_name(p, $<node>1, &@1);
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $$ = set_defun_body(p, $1, $2, $4, &@$);
-            /*%
-            $1 = get_value($1);
-            %*/
-            /*% ripper[$4]: bodystmt!($4, Qnil, Qnil, Qnil) %*/
-            /*% ripper: defs!(AREF($1, 0), AREF($1, 1), AREF($1, 2), $2, $4) %*/
-            local_pop(p);
-            }
         | defs_head f_opt_paren_args '=' command modifier_rescue arg
-            {
-            endless_method_name(p, $<node>1, &@1);
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $4 = rescued_expr(p, $4, $6, &@4, &@5, &@6);
-            $$ = set_defun_body(p, $1, $2, $4, &@$);
-            /*%
-            $1 = get_value($1);
-            %*/
-            /*% ripper[$4]: bodystmt!(rescue_mod!($4, $6), Qnil, Qnil, Qnil) %*/
-            /*% ripper: defs!(AREF($1, 0), AREF($1, 1), AREF($1, 2), $2, $4) %*/
-            local_pop(p);
-            }
         | backref tOP_ASGN lex_ctxt command_rhs
-            {
-            /*%%%*/
-            rb_backref_error(p, $1);
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper[error]: backref_error(p, RNODE($1), assign!(var_field(p, $1), $4)) %*/
-            }
-        ;
 
-command_rhs : command_call   %prec tOP_ASGN
-            {
-            value_expr($1);
-            $$ = $1;
-            }
+command_rhs: command_call   %prec tOP_ASGN
         | command_call modifier_rescue stmt
-            {
-            /*%%%*/
-            YYLTYPE loc = code_loc_gen(&@2, &@3);
-            value_expr($1);
-            $$ = NEW_RESCUE($1, NEW_RESBODY(0, remove_begin($3), 0, &loc), 0, &@$);
-            /*% %*/
-            /*% ripper: rescue_mod!($1, $3) %*/
-            }
         | command_asgn
         ;
 
-expr        : command_call
+expr: command_call
         | expr keyword_and expr
-            {
-            $$ = logop(p, idAND, $1, $3, &@2, &@$);
-            }
         | expr keyword_or expr
-            {
-            $$ = logop(p, idOR, $1, $3, &@2, &@$);
-            }
         | keyword_not opt_nl expr
-            {
-            $$ = call_uni_op(p, method_cond(p, $3, &@3), METHOD_NOT, &@1, &@$);
-            }
         | '!' command_call
-            {
-            $$ = call_uni_op(p, method_cond(p, $2, &@2), '!', &@1, &@$);
-            }
-        | arg tASSOC
-            {
-            value_expr($1);
-            SET_LEX_STATE(EXPR_BEG|EXPR_LABEL);
-            p->command_start = FALSE;
-            $<ctxt>2 = p->ctxt;
-            p->ctxt.in_kwarg = 1;
-            $<tbl>$ = push_pvtbl(p);
-            }
-          p_top_expr_body
-            {
-            pop_pvtbl(p, $<tbl>3);
-            p->ctxt.in_kwarg = $<ctxt>2.in_kwarg;
-            /*%%%*/
-            $$ = NEW_CASE3($1, NEW_IN($4, 0, 0, &@4), &@$);
-            /*% %*/
-            /*% ripper: case!($1, in!($4, Qnil, Qnil)) %*/
-            }
-        | arg keyword_in
-            {
-            value_expr($1);
-            SET_LEX_STATE(EXPR_BEG|EXPR_LABEL);
-            p->command_start = FALSE;
-            $<ctxt>2 = p->ctxt;
-            p->ctxt.in_kwarg = 1;
-            $<tbl>$ = push_pvtbl(p);
-            }
-          p_top_expr_body
-            {
-            pop_pvtbl(p, $<tbl>3);
-            p->ctxt.in_kwarg = $<ctxt>2.in_kwarg;
-            /*%%%*/
-            $$ = NEW_CASE3($1, NEW_IN($4, NEW_TRUE(&@4), NEW_FALSE(&@4), &@4), &@$);
-            /*% %*/
-            /*% ripper: case!($1, in!($4, Qnil, Qnil)) %*/
-            }
+        | arg tASSOC p_top_expr_body
+        | arg keyword_in p_top_expr_body
         | arg %prec tLBRACE_ARG
-        ;
 
-def_name    : fname
-            {
-            ID fname = get_id($1);
-            ID cur_arg = p->cur_arg;
-            YYSTYPE c = {.ctxt = p->ctxt};
-            numparam_name(p, fname);
-            local_push(p, 0);
-            p->cur_arg = 0;
-            p->ctxt.in_def = 1;
-            $<node>$ = NEW_NODE(NODE_SELF, /*vid*/cur_arg, /*mid*/fname, /*cval*/c.val, &@$);
-            /*%%%*/
-            /*%
-            $$ = NEW_RIPPER(fname, get_value($1), $$, &NULL_LOC);
-            %*/
-            }
-        ;
+def_name: fname
 
-defn_head   : k_def def_name
-            {
-            $$ = $2;
-            /*%%%*/
-            $$ = NEW_NODE(NODE_DEFN, 0, $$->nd_mid, $$, &@$);
-            /*% %*/
-            }
-        ;
+defn_head: k_def def_name
 
-defs_head   : k_def singleton dot_or_colon
-            {
-            SET_LEX_STATE(EXPR_FNAME);
-            p->ctxt.in_argdef = 1;
-            }
-          def_name
-            {
-            SET_LEX_STATE(EXPR_ENDFN|EXPR_LABEL); /* force for args */
-            $$ = $5;
-            /*%%%*/
-            $$ = NEW_NODE(NODE_DEFS, $2, $$->nd_mid, $$, &@$);
-            /*%
-            VALUE ary = rb_ary_new_from_args(3, $2, $3, get_value($$));
-            add_mark_object(p, ary);
-            $<node>$->nd_rval = ary;
-            %*/
-            }
-        ;
+defs_head: k_def singleton dot_or_colon def_name
 
-expr_value  : expr
-            {
-            value_expr($1);
-            $$ = $1;
-            }
-        ;
+expr_value: expr
 
-expr_value_do   : {COND_PUSH(1);} expr_value do {COND_POP();}
-            {
-            $$ = $2;
-            }
-        ;
+expr_value_do: expr_value do
 
-command_call    : command
+command_call: command
         | block_command
-        ;
 
-block_command   : block_call
+block_command: block_call
         | block_call call_op2 operation2 command_args
-            {
-            /*%%%*/
-            $$ = new_qcall(p, $2, $1, $3, $4, &@3, &@$);
-            /*% %*/
-            /*% ripper: method_add_arg!(call!($1, $2, $3), $4) %*/
-            }
-        ;
 
-cmd_brace_block : tLBRACE_ARG brace_body '}'
-            {
-            $$ = $2;
-            /*%%%*/
-            $$->nd_body->nd_loc = code_loc_gen(&@1, &@3);
-            nd_set_line($$, @1.end_pos.lineno);
-            /*% %*/
-            }
-        ;
+cmd_brace_block: tLBRACE_ARG brace_body '}'
 
-fcall       : operation
-            {
-            /*%%%*/
-            $$ = NEW_FCALL($1, 0, &@$);
-            nd_set_line($$, p->tokline);
-            /*% %*/
-            /*% ripper: $1 %*/
-            }
-        ;
+fcall: operation
 
 command     : fcall command_args       %prec tLOWEST
             {
