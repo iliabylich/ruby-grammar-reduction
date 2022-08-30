@@ -89,470 +89,116 @@ cmd_brace_block: tLBRACE_ARG brace_body '}'
 
 fcall: operation
 
-command     : fcall command_args       %prec tLOWEST
-            {
-            /*%%%*/
-            $1->nd_args = $2;
-            nd_set_last_loc($1, @2.end_pos);
-            $$ = $1;
-            /*% %*/
-            /*% ripper: command!($1, $2) %*/
-            }
+command: fcall command_args       %prec tLOWEST
         | fcall command_args cmd_brace_block
-            {
-            /*%%%*/
-            block_dup_check(p, $2, $3);
-            $1->nd_args = $2;
-            $$ = method_add_block(p, $1, $3, &@$);
-            fixpos($$, $1);
-            nd_set_last_loc($1, @2.end_pos);
-            /*% %*/
-            /*% ripper: method_add_block!(command!($1, $2), $3) %*/
-            }
         | primary_value call_op operation2 command_args %prec tLOWEST
-            {
-            /*%%%*/
-            $$ = new_command_qcall(p, $2, $1, $3, $4, Qnull, &@3, &@$);
-            /*% %*/
-            /*% ripper: command_call!($1, $2, $3, $4) %*/
-            }
         | primary_value call_op operation2 command_args cmd_brace_block
-            {
-            /*%%%*/
-            $$ = new_command_qcall(p, $2, $1, $3, $4, $5, &@3, &@$);
-            /*% %*/
-            /*% ripper: method_add_block!(command_call!($1, $2, $3, $4), $5) %*/
-            }
         | primary_value tCOLON2 operation2 command_args %prec tLOWEST
-            {
-            /*%%%*/
-            $$ = new_command_qcall(p, ID2VAL(idCOLON2), $1, $3, $4, Qnull, &@3, &@$);
-            /*% %*/
-            /*% ripper: command_call!($1, ID2VAL(idCOLON2), $3, $4) %*/
-            }
         | primary_value tCOLON2 operation2 command_args cmd_brace_block
-            {
-            /*%%%*/
-            $$ = new_command_qcall(p, ID2VAL(idCOLON2), $1, $3, $4, $5, &@3, &@$);
-            /*% %*/
-            /*% ripper: method_add_block!(command_call!($1, ID2VAL(idCOLON2), $3, $4), $5) %*/
-           }
         | keyword_super command_args
-            {
-            /*%%%*/
-            $$ = NEW_SUPER($2, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: super!($2) %*/
-            }
         | keyword_yield command_args
-            {
-            /*%%%*/
-            $$ = new_yield(p, $2, &@$);
-            fixpos($$, $2);
-            /*% %*/
-            /*% ripper: yield!($2) %*/
-            }
         | k_return call_args
-            {
-            /*%%%*/
-            $$ = NEW_RETURN(ret_args(p, $2), &@$);
-            /*% %*/
-            /*% ripper: return!($2) %*/
-            }
         | keyword_break call_args
-            {
-            /*%%%*/
-            $$ = NEW_BREAK(ret_args(p, $2), &@$);
-            /*% %*/
-            /*% ripper: break!($2) %*/
-            }
         | keyword_next call_args
-            {
-            /*%%%*/
-            $$ = NEW_NEXT(ret_args(p, $2), &@$);
-            /*% %*/
-            /*% ripper: next!($2) %*/
-            }
-        ;
 
-mlhs        : mlhs_basic
+mlhs: mlhs_basic
         | tLPAREN mlhs_inner rparen
-            {
-            /*%%%*/
-            $$ = $2;
-            /*% %*/
-            /*% ripper: mlhs_paren!($2) %*/
-            }
-        ;
 
-mlhs_inner  : mlhs_basic
+mlhs_inner: mlhs_basic
         | tLPAREN mlhs_inner rparen
-            {
-            /*%%%*/
-            $$ = NEW_MASGN(NEW_LIST($2, &@$), 0, &@$);
-            /*% %*/
-            /*% ripper: mlhs_paren!($2) %*/
-            }
-        ;
 
-mlhs_basic  : mlhs_head
-            {
-            /*%%%*/
-            $$ = NEW_MASGN($1, 0, &@$);
-            /*% %*/
-            /*% ripper: $1 %*/
-            }
+mlhs_basic: mlhs_head
         | mlhs_head mlhs_item
-            {
-            /*%%%*/
-            $$ = NEW_MASGN(list_append(p, $1,$2), 0, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add!($1, $2) %*/
-            }
         | mlhs_head tSTAR mlhs_node
-            {
-            /*%%%*/
-            $$ = NEW_MASGN($1, $3, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_star!($1, $3) %*/
-            }
         | mlhs_head tSTAR mlhs_node ',' mlhs_post
-            {
-            /*%%%*/
-            $$ = NEW_MASGN($1, NEW_POSTARG($3,$5,&@$), &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_post!(mlhs_add_star!($1, $3), $5) %*/
-            }
         | mlhs_head tSTAR
-            {
-            /*%%%*/
-            $$ = NEW_MASGN($1, NODE_SPECIAL_NO_NAME_REST, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_star!($1, Qnil) %*/
-            }
         | mlhs_head tSTAR ',' mlhs_post
-            {
-            /*%%%*/
-            $$ = NEW_MASGN($1, NEW_POSTARG(NODE_SPECIAL_NO_NAME_REST, $4, &@$), &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_post!(mlhs_add_star!($1, Qnil), $4) %*/
-            }
         | tSTAR mlhs_node
-            {
-            /*%%%*/
-            $$ = NEW_MASGN(0, $2, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_star!(mlhs_new!, $2) %*/
-            }
         | tSTAR mlhs_node ',' mlhs_post
-            {
-            /*%%%*/
-            $$ = NEW_MASGN(0, NEW_POSTARG($2,$4,&@$), &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_post!(mlhs_add_star!(mlhs_new!, $2), $4) %*/
-            }
         | tSTAR
-            {
-            /*%%%*/
-            $$ = NEW_MASGN(0, NODE_SPECIAL_NO_NAME_REST, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_star!(mlhs_new!, Qnil) %*/
-            }
         | tSTAR ',' mlhs_post
-            {
-            /*%%%*/
-            $$ = NEW_MASGN(0, NEW_POSTARG(NODE_SPECIAL_NO_NAME_REST, $3, &@$), &@$);
-            /*% %*/
-            /*% ripper: mlhs_add_post!(mlhs_add_star!(mlhs_new!, Qnil), $3) %*/
-            }
-        ;
 
-mlhs_item   : mlhs_node
+mlhs_item: mlhs_node
         | tLPAREN mlhs_inner rparen
-            {
-            /*%%%*/
-            $$ = $2;
-            /*% %*/
-            /*% ripper: mlhs_paren!($2) %*/
-            }
-        ;
 
-mlhs_head   : mlhs_item ','
-            {
-            /*%%%*/
-            $$ = NEW_LIST($1, &@1);
-            /*% %*/
-            /*% ripper: mlhs_add!(mlhs_new!, $1) %*/
-            }
+mlhs_head: mlhs_item ','
         | mlhs_head mlhs_item ','
-            {
-            /*%%%*/
-            $$ = list_append(p, $1, $2);
-            /*% %*/
-            /*% ripper: mlhs_add!($1, $2) %*/
-            }
-        ;
 
-mlhs_post   : mlhs_item
-            {
-            /*%%%*/
-            $$ = NEW_LIST($1, &@$);
-            /*% %*/
-            /*% ripper: mlhs_add!(mlhs_new!, $1) %*/
-            }
+mlhs_post: mlhs_item
         | mlhs_post ',' mlhs_item
-            {
-            /*%%%*/
-            $$ = list_append(p, $1, $3);
-            /*% %*/
-            /*% ripper: mlhs_add!($1, $3) %*/
-            }
-        ;
 
-mlhs_node   : user_variable
-            {
-            /*%%%*/
-            $$ = assignable(p, $1, 0, &@$);
-            /*% %*/
-            /*% ripper: assignable(p, var_field(p, $1)) %*/
-            }
+mlhs_node: user_variable
         | keyword_variable
-            {
-            /*%%%*/
-            $$ = assignable(p, $1, 0, &@$);
-            /*% %*/
-            /*% ripper: assignable(p, var_field(p, $1)) %*/
-            }
         | primary_value '[' opt_call_args rbracket
-            {
-            /*%%%*/
-            $$ = aryset(p, $1, $3, &@$);
-            /*% %*/
-            /*% ripper: aref_field!($1, escape_Qundef($3)) %*/
-            }
         | primary_value call_op tIDENTIFIER
-            {
-            if ($2 == tANDDOT) {
-                yyerror1(&@2, "&. inside multiple assignment destination");
-            }
-            /*%%%*/
-            $$ = attrset(p, $1, $2, $3, &@$);
-            /*% %*/
-            /*% ripper: field!($1, $2, $3) %*/
-            }
         | primary_value tCOLON2 tIDENTIFIER
-            {
-            /*%%%*/
-            $$ = attrset(p, $1, idCOLON2, $3, &@$);
-            /*% %*/
-            /*% ripper: const_path_field!($1, $3) %*/
-            }
         | primary_value call_op tCONSTANT
-            {
-            if ($2 == tANDDOT) {
-                yyerror1(&@2, "&. inside multiple assignment destination");
-            }
-            /*%%%*/
-            $$ = attrset(p, $1, $2, $3, &@$);
-            /*% %*/
-            /*% ripper: field!($1, $2, $3) %*/
-            }
         | primary_value tCOLON2 tCONSTANT
-            {
-            /*%%%*/
-            $$ = const_decl(p, NEW_COLON2($1, $3, &@$), &@$);
-            /*% %*/
-            /*% ripper: const_decl(p, const_path_field!($1, $3)) %*/
-            }
         | tCOLON3 tCONSTANT
-            {
-            /*%%%*/
-            $$ = const_decl(p, NEW_COLON3($2, &@$), &@$);
-            /*% %*/
-            /*% ripper: const_decl(p, top_const_field!($2)) %*/
-            }
         | backref
-            {
-            /*%%%*/
-            rb_backref_error(p, $1);
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper[error]: backref_error(p, RNODE($1), var_field(p, $1)) %*/
-            }
-        ;
 
-lhs     : user_variable
-            {
-            /*%%%*/
-            $$ = assignable(p, $1, 0, &@$);
-            /*% %*/
-            /*% ripper: assignable(p, var_field(p, $1)) %*/
-            }
+lhs: user_variable
         | keyword_variable
-            {
-            /*%%%*/
-            $$ = assignable(p, $1, 0, &@$);
-            /*% %*/
-            /*% ripper: assignable(p, var_field(p, $1)) %*/
-            }
         | primary_value '[' opt_call_args rbracket
-            {
-            /*%%%*/
-            $$ = aryset(p, $1, $3, &@$);
-            /*% %*/
-            /*% ripper: aref_field!($1, escape_Qundef($3)) %*/
-            }
         | primary_value call_op tIDENTIFIER
-            {
-            /*%%%*/
-            $$ = attrset(p, $1, $2, $3, &@$);
-            /*% %*/
-            /*% ripper: field!($1, $2, $3) %*/
-            }
         | primary_value tCOLON2 tIDENTIFIER
-            {
-            /*%%%*/
-            $$ = attrset(p, $1, idCOLON2, $3, &@$);
-            /*% %*/
-            /*% ripper: field!($1, ID2VAL(idCOLON2), $3) %*/
-            }
         | primary_value call_op tCONSTANT
-            {
-            /*%%%*/
-            $$ = attrset(p, $1, $2, $3, &@$);
-            /*% %*/
-            /*% ripper: field!($1, $2, $3) %*/
-            }
         | primary_value tCOLON2 tCONSTANT
-            {
-            /*%%%*/
-            $$ = const_decl(p, NEW_COLON2($1, $3, &@$), &@$);
-            /*% %*/
-            /*% ripper: const_decl(p, const_path_field!($1, $3)) %*/
-            }
         | tCOLON3 tCONSTANT
-            {
-            /*%%%*/
-            $$ = const_decl(p, NEW_COLON3($2, &@$), &@$);
-            /*% %*/
-            /*% ripper: const_decl(p, top_const_field!($2)) %*/
-            }
         | backref
-            {
-            /*%%%*/
-            rb_backref_error(p, $1);
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper[error]: backref_error(p, RNODE($1), var_field(p, $1)) %*/
-            }
-        ;
 
-cname       : tIDENTIFIER
-            {
-            static const char mesg[] = "class/module name must be CONSTANT";
-            /*%%%*/
-            yyerror1(&@1, mesg);
-            /*% %*/
-            /*% ripper[error]: class_name_error!(ERR_MESG(), $1) %*/
-            }
+cname: tIDENTIFIER
         | tCONSTANT
-        ;
 
-cpath       : tCOLON3 cname
-            {
-            /*%%%*/
-            $$ = NEW_COLON3($2, &@$);
-            /*% %*/
-            /*% ripper: top_const_ref!($2) %*/
-            }
+cpath: tCOLON3 cname
         | cname
-            {
-            /*%%%*/
-            $$ = NEW_COLON2(0, $$, &@$);
-            /*% %*/
-            /*% ripper: const_ref!($1) %*/
-            }
         | primary_value tCOLON2 cname
-            {
-            /*%%%*/
-            $$ = NEW_COLON2($1, $3, &@$);
-            /*% %*/
-            /*% ripper: const_path_ref!($1, $3) %*/
-            }
-        ;
 
-fname       : tIDENTIFIER
+fname: tIDENTIFIER
         | tCONSTANT
         | tFID
         | op
-            {
-            SET_LEX_STATE(EXPR_ENDFN);
-            $$ = $1;
-            }
         | reswords
-        ;
 
-fitem       : fname
-            {
-            /*%%%*/
-            $$ = NEW_LIT(ID2SYM($1), &@$);
-            /*% %*/
-            /*% ripper: symbol_literal!($1) %*/
-            }
+fitem: fname
         | symbol
-        ;
 
-undef_list  : fitem
-            {
-            /*%%%*/
-            $$ = NEW_UNDEF($1, &@$);
-            /*% %*/
-            /*% ripper: rb_ary_new3(1, get_value($1)) %*/
-            }
+undef_list: fitem
         | undef_list ',' {SET_LEX_STATE(EXPR_FNAME|EXPR_FITEM);} fitem
-            {
-            /*%%%*/
-            NODE *undef = NEW_UNDEF($4, &@4);
-            $$ = block_append(p, $1, undef);
-            /*% %*/
-            /*% ripper: rb_ary_push($1, get_value($4)) %*/
-            }
+
+op      : '|'
+        | '^'
+        | '&'
+        | tCMP
+        | tEQ
+        | tEQQ
+        | tMATCH
+        | tNMATCH
+        | '>'
+        | tGEQ
+        | '<'
+        | tLEQ
+        | tNEQ
+        | tLSHFT
+        | tRSHFT
+        | '+'
+        | '-'
+        | '*'
+        | tSTAR
+        | '/'
+        | '%'
+        | tPOW
+        | tDSTAR
+        | '!'
+        | '~'
+        | tUPLUS
+        | tUMINUS
+        | tAREF
+        | tASET
+        | '`'
         ;
 
-op      : '|'       { ifndef_ripper($$ = '|'); }
-        | '^'       { ifndef_ripper($$ = '^'); }
-        | '&'       { ifndef_ripper($$ = '&'); }
-        | tCMP      { ifndef_ripper($$ = tCMP); }
-        | tEQ       { ifndef_ripper($$ = tEQ); }
-        | tEQQ      { ifndef_ripper($$ = tEQQ); }
-        | tMATCH    { ifndef_ripper($$ = tMATCH); }
-        | tNMATCH   { ifndef_ripper($$ = tNMATCH); }
-        | '>'       { ifndef_ripper($$ = '>'); }
-        | tGEQ      { ifndef_ripper($$ = tGEQ); }
-        | '<'       { ifndef_ripper($$ = '<'); }
-        | tLEQ      { ifndef_ripper($$ = tLEQ); }
-        | tNEQ      { ifndef_ripper($$ = tNEQ); }
-        | tLSHFT    { ifndef_ripper($$ = tLSHFT); }
-        | tRSHFT    { ifndef_ripper($$ = tRSHFT); }
-        | '+'       { ifndef_ripper($$ = '+'); }
-        | '-'       { ifndef_ripper($$ = '-'); }
-        | '*'       { ifndef_ripper($$ = '*'); }
-        | tSTAR     { ifndef_ripper($$ = '*'); }
-        | '/'       { ifndef_ripper($$ = '/'); }
-        | '%'       { ifndef_ripper($$ = '%'); }
-        | tPOW      { ifndef_ripper($$ = tPOW); }
-        | tDSTAR    { ifndef_ripper($$ = tDSTAR); }
-        | '!'       { ifndef_ripper($$ = '!'); }
-        | '~'       { ifndef_ripper($$ = '~'); }
-        | tUPLUS    { ifndef_ripper($$ = tUPLUS); }
-        | tUMINUS   { ifndef_ripper($$ = tUMINUS); }
-        | tAREF     { ifndef_ripper($$ = tAREF); }
-        | tASET     { ifndef_ripper($$ = tASET); }
-        | '`'       { ifndef_ripper($$ = '`'); }
-        ;
-
-reswords    : keyword__LINE__ | keyword__FILE__ | keyword__ENCODING__
+reswords: keyword__LINE__ | keyword__FILE__ | keyword__ENCODING__
         | keyword_BEGIN | keyword_END
         | keyword_alias | keyword_and | keyword_begin
         | keyword_break | keyword_case | keyword_class | keyword_def
@@ -566,354 +212,74 @@ reswords    : keyword__LINE__ | keyword__FILE__ | keyword__ENCODING__
         | keyword_while | keyword_until
         ;
 
-arg     : lhs '=' lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            $$ = node_assign(p, $1, $4, $3, &@$);
-            /*% %*/
-            /*% ripper: assign!($1, $4) %*/
-            }
+arg: lhs '=' lex_ctxt arg_rhs
         | var_lhs tOP_ASGN lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            $$ = new_op_assign(p, $1, $2, $4, $3, &@$);
-            /*% %*/
-            /*% ripper: opassign!($1, $2, $4) %*/
-            }
         | primary_value '[' opt_call_args rbracket tOP_ASGN lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            $$ = new_ary_op_assign(p, $1, $3, $5, $7, &@3, &@$);
-            /*% %*/
-            /*% ripper: opassign!(aref_field!($1, escape_Qundef($3)), $5, $7) %*/
-            }
         | primary_value call_op tIDENTIFIER tOP_ASGN lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            $$ = new_attr_op_assign(p, $1, $2, $3, $4, $6, &@$);
-            /*% %*/
-            /*% ripper: opassign!(field!($1, $2, $3), $4, $6) %*/
-            }
         | primary_value call_op tCONSTANT tOP_ASGN lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            $$ = new_attr_op_assign(p, $1, $2, $3, $4, $6, &@$);
-            /*% %*/
-            /*% ripper: opassign!(field!($1, $2, $3), $4, $6) %*/
-            }
         | primary_value tCOLON2 tIDENTIFIER tOP_ASGN lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            $$ = new_attr_op_assign(p, $1, ID2VAL(idCOLON2), $3, $4, $6, &@$);
-            /*% %*/
-            /*% ripper: opassign!(field!($1, ID2VAL(idCOLON2), $3), $4, $6) %*/
-            }
         | primary_value tCOLON2 tCONSTANT tOP_ASGN lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            YYLTYPE loc = code_loc_gen(&@1, &@3);
-            $$ = new_const_op_assign(p, NEW_COLON2($1, $3, &loc), $4, $6, $5, &@$);
-            /*% %*/
-            /*% ripper: opassign!(const_path_field!($1, $3), $4, $6) %*/
-            }
         | tCOLON3 tCONSTANT tOP_ASGN lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            YYLTYPE loc = code_loc_gen(&@1, &@2);
-            $$ = new_const_op_assign(p, NEW_COLON3($2, &loc), $3, $5, $4, &@$);
-            /*% %*/
-            /*% ripper: opassign!(top_const_field!($2), $3, $5) %*/
-            }
         | backref tOP_ASGN lex_ctxt arg_rhs
-            {
-            /*%%%*/
-            rb_backref_error(p, $1);
-            $$ = NEW_BEGIN(0, &@$);
-            /*% %*/
-            /*% ripper[error]: backref_error(p, RNODE($1), opassign!(var_field(p, $1), $2, $4)) %*/
-            }
         | arg tDOT2 arg
-            {
-            /*%%%*/
-            value_expr($1);
-            value_expr($3);
-            $$ = NEW_DOT2($1, $3, &@$);
-            /*% %*/
-            /*% ripper: dot2!($1, $3) %*/
-            }
         | arg tDOT3 arg
-            {
-            /*%%%*/
-            value_expr($1);
-            value_expr($3);
-            $$ = NEW_DOT3($1, $3, &@$);
-            /*% %*/
-            /*% ripper: dot3!($1, $3) %*/
-            }
         | arg tDOT2
-            {
-            /*%%%*/
-            value_expr($1);
-            $$ = NEW_DOT2($1, new_nil_at(p, &@2.end_pos), &@$);
-            /*% %*/
-            /*% ripper: dot2!($1, Qnil) %*/
-            }
         | arg tDOT3
-            {
-            /*%%%*/
-            value_expr($1);
-            $$ = NEW_DOT3($1, new_nil_at(p, &@2.end_pos), &@$);
-            /*% %*/
-            /*% ripper: dot3!($1, Qnil) %*/
-            }
         | tBDOT2 arg
-            {
-            /*%%%*/
-            value_expr($2);
-            $$ = NEW_DOT2(new_nil_at(p, &@1.beg_pos), $2, &@$);
-            /*% %*/
-            /*% ripper: dot2!(Qnil, $2) %*/
-            }
         | tBDOT3 arg
-            {
-            /*%%%*/
-            value_expr($2);
-            $$ = NEW_DOT3(new_nil_at(p, &@1.beg_pos), $2, &@$);
-            /*% %*/
-            /*% ripper: dot3!(Qnil, $2) %*/
-            }
         | arg '+' arg
-            {
-            $$ = call_bin_op(p, $1, '+', $3, &@2, &@$);
-            }
         | arg '-' arg
-            {
-            $$ = call_bin_op(p, $1, '-', $3, &@2, &@$);
-            }
         | arg '*' arg
-            {
-            $$ = call_bin_op(p, $1, '*', $3, &@2, &@$);
-            }
         | arg '/' arg
-            {
-            $$ = call_bin_op(p, $1, '/', $3, &@2, &@$);
-            }
         | arg '%' arg
-            {
-            $$ = call_bin_op(p, $1, '%', $3, &@2, &@$);
-            }
         | arg tPOW arg
-            {
-            $$ = call_bin_op(p, $1, idPow, $3, &@2, &@$);
-            }
         | tUMINUS_NUM simple_numeric tPOW arg
-            {
-            $$ = call_uni_op(p, call_bin_op(p, $2, idPow, $4, &@2, &@$), idUMinus, &@1, &@$);
-            }
         | tUPLUS arg
-            {
-            $$ = call_uni_op(p, $2, idUPlus, &@1, &@$);
-            }
         | tUMINUS arg
-            {
-            $$ = call_uni_op(p, $2, idUMinus, &@1, &@$);
-            }
         | arg '|' arg
-            {
-            $$ = call_bin_op(p, $1, '|', $3, &@2, &@$);
-            }
         | arg '^' arg
-            {
-            $$ = call_bin_op(p, $1, '^', $3, &@2, &@$);
-            }
         | arg '&' arg
-            {
-            $$ = call_bin_op(p, $1, '&', $3, &@2, &@$);
-            }
         | arg tCMP arg
-            {
-            $$ = call_bin_op(p, $1, idCmp, $3, &@2, &@$);
-            }
         | rel_expr   %prec tCMP
         | arg tEQ arg
-            {
-            $$ = call_bin_op(p, $1, idEq, $3, &@2, &@$);
-            }
         | arg tEQQ arg
-            {
-            $$ = call_bin_op(p, $1, idEqq, $3, &@2, &@$);
-            }
         | arg tNEQ arg
-            {
-            $$ = call_bin_op(p, $1, idNeq, $3, &@2, &@$);
-            }
         | arg tMATCH arg
-            {
-            $$ = match_op(p, $1, $3, &@2, &@$);
-            }
         | arg tNMATCH arg
-            {
-            $$ = call_bin_op(p, $1, idNeqTilde, $3, &@2, &@$);
-            }
         | '!' arg
-            {
-            $$ = call_uni_op(p, method_cond(p, $2, &@2), '!', &@1, &@$);
-            }
         | '~' arg
-            {
-            $$ = call_uni_op(p, $2, '~', &@1, &@$);
-            }
         | arg tLSHFT arg
-            {
-            $$ = call_bin_op(p, $1, idLTLT, $3, &@2, &@$);
-            }
         | arg tRSHFT arg
-            {
-            $$ = call_bin_op(p, $1, idGTGT, $3, &@2, &@$);
-            }
         | arg tANDOP arg
-            {
-            $$ = logop(p, idANDOP, $1, $3, &@2, &@$);
-            }
         | arg tOROP arg
-            {
-            $$ = logop(p, idOROP, $1, $3, &@2, &@$);
-            }
-        | keyword_defined opt_nl {p->ctxt.in_defined = 1;} arg
-            {
-            p->ctxt.in_defined = 0;
-            $$ = new_defined(p, $4, &@$);
-            }
+        | keyword_defined opt_nl arg
         | arg '?' arg opt_nl ':' arg
-            {
-            /*%%%*/
-            value_expr($1);
-            $$ = new_if(p, $1, $3, $6, &@$);
-            fixpos($$, $1);
-            /*% %*/
-            /*% ripper: ifop!($1, $3, $6) %*/
-            }
         | defn_head f_opt_paren_args '=' arg
-            {
-            endless_method_name(p, $<node>1, &@1);
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $$ = set_defun_body(p, $1, $2, $4, &@$);
-            /*% %*/
-            /*% ripper[$4]: bodystmt!($4, Qnil, Qnil, Qnil) %*/
-            /*% ripper: def!(get_value($1), $2, $4) %*/
-            local_pop(p);
-            }
         | defn_head f_opt_paren_args '=' arg modifier_rescue arg
-            {
-            endless_method_name(p, $<node>1, &@1);
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $4 = rescued_expr(p, $4, $6, &@4, &@5, &@6);
-            $$ = set_defun_body(p, $1, $2, $4, &@$);
-            /*% %*/
-            /*% ripper[$4]: bodystmt!(rescue_mod!($4, $6), Qnil, Qnil, Qnil) %*/
-            /*% ripper: def!(get_value($1), $2, $4) %*/
-            local_pop(p);
-            }
         | defs_head f_opt_paren_args '=' arg
-            {
-            endless_method_name(p, $<node>1, &@1);
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $$ = set_defun_body(p, $1, $2, $4, &@$);
-            /*%
-            $1 = get_value($1);
-            %*/
-            /*% ripper[$4]: bodystmt!($4, Qnil, Qnil, Qnil) %*/
-            /*% ripper: defs!(AREF($1, 0), AREF($1, 1), AREF($1, 2), $2, $4) %*/
-            local_pop(p);
-            }
         | defs_head f_opt_paren_args '=' arg modifier_rescue arg
-            {
-            endless_method_name(p, $<node>1, &@1);
-            restore_defun(p, $<node>1->nd_defn);
-            /*%%%*/
-            $4 = rescued_expr(p, $4, $6, &@4, &@5, &@6);
-            $$ = set_defun_body(p, $1, $2, $4, &@$);
-            /*%
-            $1 = get_value($1);
-            %*/
-            /*% ripper[$4]: bodystmt!(rescue_mod!($4, $6), Qnil, Qnil, Qnil) %*/
-            /*% ripper: defs!(AREF($1, 0), AREF($1, 1), AREF($1, 2), $2, $4) %*/
-            local_pop(p);
-            }
         | primary
-            {
-            $$ = $1;
-            }
+
+relop: '>'
+        | '<'
+        | tGEQ
+        | tLEQ
         ;
 
-relop       : '>'  {$$ = '>';}
-        | '<'  {$$ = '<';}
-        | tGEQ {$$ = idGE;}
-        | tLEQ {$$ = idLE;}
-        ;
-
-rel_expr    : arg relop arg   %prec '>'
-            {
-            $$ = call_bin_op(p, $1, $2, $3, &@2, &@$);
-            }
+rel_expr: arg relop arg   %prec '>'
         | rel_expr relop arg   %prec '>'
-            {
-            rb_warning1("comparison '%s' after comparison", WARN_ID($2));
-            $$ = call_bin_op(p, $1, $2, $3, &@2, &@$);
-            }
-        ;
 
-lex_ctxt    : none
-            {
-            $$ = p->ctxt;
-            }
-        ;
+lex_ctxt: none
 
-arg_value   : arg
-            {
-            value_expr($1);
-            $$ = $1;
-            }
-        ;
+arg_value: arg
 
-aref_args   : none
+aref_args: none
         | args trailer
-            {
-            $$ = $1;
-            }
         | args ',' assocs trailer
-            {
-            /*%%%*/
-            $$ = $3 ? arg_append(p, $1, new_hash(p, $3, &@3), &@$) : $1;
-            /*% %*/
-            /*% ripper: args_add!($1, bare_assoc_hash!($3)) %*/
-            }
         | assocs trailer
-            {
-            /*%%%*/
-            $$ = $1 ? NEW_LIST(new_hash(p, $1, &@1), &@$) : 0;
-            /*% %*/
-            /*% ripper: args_add!(args_new!, bare_assoc_hash!($1)) %*/
-            }
-        ;
 
 arg_rhs     : arg   %prec tOP_ASGN
-            {
-            value_expr($1);
-            $$ = $1;
-            }
         | arg modifier_rescue arg
-            {
-            /*%%%*/
-            value_expr($1);
-            $$ = rescued_expr(p, $1, $3, &@1, &@2, &@3);
-            /*% %*/
-            /*% ripper: rescue_mod!($1, $3) %*/
-            }
-        ;
 
 paren_args  : '(' opt_call_args rparen
             {
