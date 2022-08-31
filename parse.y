@@ -39,7 +39,7 @@
 
         command_asgn: lhs '=' command_rhs
                     | var_lhs tOP_ASGN command_rhs
-                    | primary_value '[' opt_call_args rbracket tOP_ASGN command_rhs
+                    | primary_value '[' opt_call_args ']' tOP_ASGN command_rhs
                     | primary_value call_op tIDENTIFIER tOP_ASGN command_rhs
                     | primary_value call_op tCONSTANT tOP_ASGN command_rhs
                     | primary_value '::' tCONSTANT tOP_ASGN command_rhs
@@ -67,15 +67,13 @@
 
            defs_head: 'def' singleton dot_or_colon fname
 
-       expr_do: expr do
-
         command_call: command
                     | block_command
 
        block_command: block_call
                     | block_call call_op2 operation2 call_args
 
-     cmd_brace_block: '{' brace_body '}'
+     cmd_brace_block: '{' opt_block_param compstmt '}'
 
              command: operation call_args
                     | operation call_args cmd_brace_block
@@ -117,7 +115,7 @@
 
            mlhs_node: user_variable
                     | keyword_variable
-                    | primary_value '[' opt_call_args rbracket
+                    | primary_value '[' opt_call_args ']'
                     | primary_value call_op tIDENTIFIER
                     | primary_value '::' tIDENTIFIER
                     | primary_value call_op tCONSTANT
@@ -127,7 +125,7 @@
 
                  lhs: user_variable
                     | keyword_variable
-                    | primary_value '[' opt_call_args rbracket
+                    | primary_value '[' opt_call_args ']'
                     | primary_value call_op tIDENTIFIER
                     | primary_value '::' tIDENTIFIER
                     | primary_value call_op tCONSTANT
@@ -229,7 +227,7 @@
 
                  arg: lhs '=' arg_rhs
                     | var_lhs tOP_ASGN arg_rhs
-                    | primary_value '[' opt_call_args rbracket tOP_ASGN arg_rhs
+                    | primary_value '[' opt_call_args ']' tOP_ASGN arg_rhs
                     | primary_value call_op tIDENTIFIER tOP_ASGN arg_rhs
                     | primary_value call_op tCONSTANT tOP_ASGN arg_rhs
                     | primary_value '::' tIDENTIFIER tOP_ASGN arg_rhs
@@ -284,9 +282,9 @@
                     | rel_expr relop arg
 
            aref_args: none
-                    | args trailer
-                    | args ',' assocs trailer
-                    | assocs trailer
+                    | args ','
+                    | args ',' assocs ','
+                    | assocs ','
 
              arg_rhs: arg
                     | arg 'rescue' arg
@@ -362,12 +360,12 @@
                     | lambda
                     | 'if' expr then compstmt if_tail 'end'
                     | 'unless' expr then compstmt opt_else 'end'
-                    | 'while' expr_do compstmt 'end'
-                    | 'until' expr_do compstmt 'end'
+                    | 'while' expr do compstmt 'end'
+                    | 'until' expr do compstmt 'end'
                     | 'case' expr opt_terms case_body 'end'
                     | 'case' opt_terms case_body 'end'
                     | 'case' expr opt_terms p_case_body 'end'
-                    | 'for' for_var 'in' expr_do compstmt 'end'
+                    | 'for' for_var 'in' expr do compstmt 'end'
                     | 'class' cpath superclass bodystmt 'end'
                     | 'class' tLSHFT expr term bodystmt 'end'
                     | 'module' cpath bodystmt 'end'
@@ -412,7 +410,7 @@
                     | '*'
 
         f_any_kwrest: f_kwrest
-                    | p_kwnorest
+                    | '**' 'nil'
 
      block_args_tail: f_block_kwarg ',' f_kwrest opt_f_block_arg
                     | f_block_kwarg opt_f_block_arg
@@ -446,7 +444,6 @@
      block_param_def: '|' opt_bv_decl '|'
                     | '|' block_param opt_bv_decl '|'
 
-
          opt_bv_decl: ';' bv_decls
 
             bv_decls: bvar
@@ -463,10 +460,10 @@
          lambda_body: tLAMBEG compstmt '}'
                     | kDO_LAMBDA bodystmt 'end'
 
-          block_call: command 'do' do_body 'end'
+          block_call: command 'do' opt_block_param bodystmt 'end'
                     | block_call call_op2 operation2 opt_paren_args
                     | block_call call_op2 operation2 opt_paren_args brace_block
-                    | block_call call_op2 operation2 call_args 'do' do_body 'end'
+                    | block_call call_op2 operation2 call_args 'do' opt_block_param bodystmt 'end'
 
          method_call: operation paren_args
                     | primary_value call_op operation2 opt_paren_args
@@ -476,14 +473,10 @@
                     | primary_value '::' paren_args
                     | 'super' paren_args
                     | 'super'
-                    | primary_value '[' opt_call_args rbracket
+                    | primary_value '[' opt_call_args ']'
 
-         brace_block: '{' brace_body '}'
-                    | 'do' do_body 'end'
-
-          brace_body: opt_block_param compstmt
-
-             do_body: opt_block_param bodystmt
+         brace_block: '{' opt_block_param compstmt '}'
+                    | 'do' opt_block_param bodystmt 'end'
 
            case_args: arg
                     | '*' arg
@@ -523,15 +516,15 @@
                     | p_const '(' p_find ')'
                     | p_const '(' p_kwargs ')'
                     | p_const '(' ')'
-                    | p_const '[' p_args rbracket
-                    | p_const '[' p_find rbracket
-                    | p_const '[' p_kwargs rbracket
-                    | p_const '[' rbracket
-                    | '[' p_args rbracket
-                    | '[' p_find rbracket
-                    | '[' rbracket
-                    | '{' p_kwargs rbrace
-                    | '{' rbrace
+                    | p_const '[' p_args ']'
+                    | p_const '[' p_find ']'
+                    | p_const '[' p_kwargs ']'
+                    | p_const '[' ']'
+                    | '[' p_args ']'
+                    | '[' p_find ']'
+                    | '[' ']'
+                    | '{' p_kwargs '}'
+                    | '{' '}'
                     | '(' p_expr ')'
 
               p_args: p_expr
@@ -569,13 +562,11 @@
           p_kw_label: tLABEL
                     | tSTRING_BEG string_contents tLABEL_END
 
-            p_kwrest: kwrest_mark tIDENTIFIER
-                    | kwrest_mark
-
-          p_kwnorest: kwrest_mark 'nil'
+            p_kwrest: '**' tIDENTIFIER
+                    | '**'
 
         p_any_kwrest: p_kwrest
-                    | p_kwnorest
+                    | '**' 'nil'
 
              p_value: p_primitive
                     | p_primitive '..' p_primitive
@@ -624,11 +615,9 @@
              literal: numeric
                     | symbol
 
-             strings: string
-
-              string: tCHAR
+             strings: tCHAR
                     | string1
-                    | string string1
+                    | strings string1
 
              string1: tSTRING_BEG string_contents tSTRING_END
 
@@ -719,12 +708,10 @@
           superclass: '<' expr term
                     | /* none */
 
-    f_opt_paren_args: f_paren_args
+    f_opt_paren_args: '(' f_args ')'
                     | none
 
-        f_paren_args: '(' f_args ')'
-
-           f_arglist: f_paren_args
+           f_arglist: '(' f_args ')'
                     | f_args term
 
            args_tail: f_kwarg ',' f_kwrest opt_f_block_arg
@@ -751,7 +738,6 @@
                     | f_rest_arg ',' f_arg opt_args_tail
                     | args_tail
                     | /* none */
-
 
            f_bad_arg: tCONSTANT
                     | tIVAR
@@ -780,10 +766,8 @@
              f_kwarg: f_kw
                     | f_kwarg ',' f_kw
 
-         kwrest_mark: '**'
-
-            f_kwrest: kwrest_mark tIDENTIFIER
-                    | kwrest_mark
+            f_kwrest: '**' tIDENTIFIER
+                    | '**'
 
                f_opt: f_norm_arg '=' arg
 
@@ -808,7 +792,7 @@
                     | '(' expr ')'
 
           assoc_list: none
-                    | assocs trailer
+                    | assocs ','
 
               assocs: assoc
                     | assocs ',' assoc
@@ -842,12 +826,6 @@
 
            opt_terms: /* none */
                     | terms
-
-            rbracket: ']'
-
-              rbrace: '}'
-
-             trailer: ','
 
                 term: ';'
                     | '\n'
