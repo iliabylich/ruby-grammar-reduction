@@ -82,6 +82,12 @@
                     | 'while'
                     | 'until'
 
+               fname: tIDENTIFIER
+                    | tCONSTANT
+                    | tFID
+                    | op
+                    | reswords
+
                relop: '>'
                     | '<'
                     | '>='

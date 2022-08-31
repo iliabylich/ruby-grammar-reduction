@@ -144,12 +144,6 @@
                     | cname
                     | primary_value '::' cname
 
-               fname: tIDENTIFIER
-                    | tCONSTANT
-                    | tFID
-                    | op
-                    | reswords
-
                fitem: fname
                     | symbol
 
@@ -177,25 +171,25 @@
                     | arg '/' arg
                     | arg '%' arg
                     | arg '**' arg
-                    | tUMINUS_NUM simple_numeric '**' arg
-                    | tUPLUS arg
-                    | tUMINUS arg
+                    | '-' simple_numeric '**' arg
+                    | '+' arg
+                    | '-' arg
                     | arg '|' arg
                     | arg '^' arg
                     | arg '&' arg
-                    | arg tCMP arg
-                    | rel_expr   %prec tCMP
-                    | arg tEQ arg
-                    | arg tEQQ arg
-                    | arg tNEQ arg
-                    | arg tMATCH arg
-                    | arg tNMATCH arg
+                    | arg '<=>' arg
+                    | rel_expr
+                    | arg '=' arg
+                    | arg '==' arg
+                    | arg '!=' arg
+                    | arg '=~' arg
+                    | arg '!~' arg
                     | '!' arg
                     | '~' arg
-                    | arg tLSHFT arg
-                    | arg tRSHFT arg
-                    | arg tANDOP arg
-                    | arg tOROP arg
+                    | arg '<<' arg
+                    | arg '>>' arg
+                    | arg '&&' arg
+                    | arg '||' arg
                     | 'defined?' arg
                     | arg '?' arg ':' arg
                     | defn_head f_opt_paren_args '=' arg
@@ -290,7 +284,7 @@
                     | 'case' expr opt_terms p_case_body 'end'
                     | 'for' for_var 'in' expr do compstmt 'end'
                     | 'class' cpath superclass bodystmt 'end'
-                    | 'class' tLSHFT expr term bodystmt 'end'
+                    | 'class' '<<' expr term bodystmt 'end'
                     | 'module' cpath bodystmt 'end'
                     | defn_head f_arglist bodystmt 'end'
                     | defs_head f_arglist bodystmt 'end'
@@ -471,7 +465,7 @@
                     | nonlocal_var
 
              numeric: simple_numeric
-                    | tUMINUS_NUM simple_numeric
+                    | '-' simple_numeric
 
              var_ref: user_variable
                     | keyword_variable
