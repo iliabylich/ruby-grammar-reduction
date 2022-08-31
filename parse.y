@@ -57,7 +57,7 @@
                 expr: command_call
                     | expr 'and' expr
                     | expr 'or' expr
-                    | 'not' opt_nl expr
+                    | 'not' expr
                     | '!' command_call
                     | arg '=>' p_top_expr_body
                     | arg 'in' p_top_expr_body
@@ -90,10 +90,10 @@
                     | 'next' call_args
 
                 mlhs: mlhs_basic
-                    | '(' mlhs_inner opt_nl ')'
+                    | '(' mlhs_inner ')'
 
           mlhs_inner: mlhs_basic
-                    | '(' mlhs_inner opt_nl ')'
+                    | '(' mlhs_inner ')'
 
           mlhs_basic: mlhs_head
                     | mlhs_head mlhs_item
@@ -107,7 +107,7 @@
                     | '*' ',' mlhs_post
 
            mlhs_item: mlhs_node
-                    | '(' mlhs_inner opt_nl ')'
+                    | '(' mlhs_inner ')'
 
            mlhs_head: mlhs_item ','
                     | mlhs_head mlhs_item ','
@@ -267,8 +267,8 @@
                     | arg tRSHFT arg
                     | arg tANDOP arg
                     | arg tOROP arg
-                    | 'defined?' opt_nl arg
-                    | arg '?' arg opt_nl ':' arg
+                    | 'defined?' arg
+                    | arg '?' arg ':' arg
                     | defn_head f_opt_paren_args '=' arg
                     | defn_head f_opt_paren_args '=' arg 'rescue' arg
                     | defs_head f_opt_paren_args '=' arg
@@ -291,9 +291,9 @@
              arg_rhs: arg
                     | arg 'rescue' arg
 
-          paren_args: '(' opt_call_args opt_nl ')'
-                    | '(' args ',' '...' opt_nl ')'
-                    | '(' '...' opt_nl ')'
+          paren_args: '(' opt_call_args ')'
+                    | '(' args ',' '...' ')'
+                    | '(' '...' ')'
 
       opt_paren_args: none
                     | paren_args
@@ -342,20 +342,20 @@
                     | backref
                     | tFID
                     | 'begin' bodystmt 'end'
-                    | '(' opt_nl ')'
-                    | '(' stmt opt_nl ')'
+                    | '(' ')'
+                    | '(' stmt ')'
                     | '(' compstmt ')'
                     | primary_value '::' tCONSTANT
                     | '::' tCONSTANT
                     | '[' aref_args ']'
                     | '{' assoc_list '}'
                     | 'return'
-                    | 'yield' '(' call_args opt_nl ')'
-                    | 'yield' '(' opt_nl ')'
+                    | 'yield' '(' call_args ')'
+                    | 'yield' '(' ')'
                     | 'yield'
-                    | 'defined?' opt_nl '(' expr opt_nl ')'
-                    | 'not' '(' expr opt_nl ')'
-                    | 'not' '(' opt_nl ')'
+                    | 'defined?' '(' expr ')'
+                    | 'not' '(' expr ')'
+                    | 'not' '(' ')'
                     | operation brace_block
                     | method_call
                     | method_call brace_block
@@ -397,7 +397,7 @@
                     | mlhs
 
               f_marg: f_norm_arg
-                    | '(' f_margs opt_nl ')'
+                    | '(' f_margs ')'
 
          f_marg_list: f_marg
                     | f_marg_list ',' f_marg
@@ -447,8 +447,7 @@
                     | '|' block_param opt_bv_decl '|'
 
 
-         opt_bv_decl: opt_nl
-                    | opt_nl ';' bv_decls opt_nl
+         opt_bv_decl: ';' bv_decls
 
             bv_decls: bvar
                     | bv_decls ',' bvar
@@ -520,10 +519,10 @@
 
         p_expr_basic: p_value
                     | tIDENTIFIER
-                    | p_const '(' p_args opt_nl ')'
-                    | p_const '(' p_find opt_nl ')'
-                    | p_const '(' p_kwargs opt_nl ')'
-                    | p_const '(' opt_nl ')'
+                    | p_const '(' p_args ')'
+                    | p_const '(' p_find ')'
+                    | p_const '(' p_kwargs ')'
+                    | p_const '(' ')'
                     | p_const '[' p_args rbracket
                     | p_const '[' p_find rbracket
                     | p_const '[' p_kwargs rbracket
@@ -533,7 +532,7 @@
                     | '[' rbracket
                     | '{' p_kwargs rbrace
                     | '{' rbrace
-                    | '(' p_expr opt_nl ')'
+                    | '(' p_expr ')'
 
               p_args: p_expr
                     | p_args_head
@@ -723,7 +722,7 @@
     f_opt_paren_args: f_paren_args
                     | none
 
-        f_paren_args: '(' f_args opt_nl ')'
+        f_paren_args: '(' f_args ')'
 
            f_arglist: f_paren_args
                     | f_args term
@@ -763,7 +762,7 @@
                     | tIDENTIFIER
 
           f_arg_item: f_norm_arg
-                    | '(' f_margs opt_nl ')'
+                    | '(' f_margs ')'
 
                f_arg: f_arg_item
                     | f_arg ',' f_arg_item
@@ -806,7 +805,7 @@
                     | none
 
            singleton: var_ref
-                    | '(' expr opt_nl ')'
+                    | '(' expr ')'
 
           assoc_list: none
                     | assocs trailer
@@ -844,15 +843,11 @@
            opt_terms: /* none */
                     | terms
 
-              opt_nl: /* none */
-                    | '\n'
+            rbracket: ']'
 
-            rbracket: opt_nl ']'
+              rbrace: '}'
 
-              rbrace: opt_nl '}'
-
-             trailer: opt_nl
-                    | ','
+             trailer: ','
 
                 term: ';'
                     | '\n'
