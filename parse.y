@@ -13,8 +13,7 @@
             top_stmt: stmt
                     | 'BEGIN' '{' top_compstmt '}'
 
-            bodystmt: compstmt opt_rescue 'else' compstmt opt_ensure
-                    | compstmt opt_rescue                 opt_ensure
+            bodystmt: compstmt opt_rescue maybe('else' compstmt) opt_ensure
 
             compstmt: stmts opt_terms
 
@@ -27,13 +26,18 @@
                     | 'alias' tGVAR tGVAR
                     | 'alias' tGVAR tBACK_REF
                     | 'alias' tGVAR tNTH_REF
-                    | 'undef' undef_list
-                    | stmt 'if' expr
+                    |
+                    | 'undef' fitem repeat(',' fitem)
+                    |
+                    | stmt 'if'     expr
                     | stmt 'unless' expr
-                    | stmt 'while' expr
-                    | stmt 'until' expr
+                    | stmt 'while'  expr
+                    | stmt 'until'  expr
+                    |
                     | stmt 'rescue' stmt
+                    |
                     | 'END' '{' compstmt '}'
+                    |
                     | command_asgn
                     | mlhs '=' command_call
                     | lhs '=' mrhs
@@ -43,11 +47,11 @@
 
         command_asgn: lhs '=' command_rhs
                     | var_lhs tOP_ASGN command_rhs
-                    | primary_value '[' opt_call_args ']' tOP_ASGN command_rhs
-                    | primary_value call_op tIDENTIFIER tOP_ASGN command_rhs
-                    | primary_value call_op tCONSTANT tOP_ASGN command_rhs
-                    | primary_value '::' tCONSTANT tOP_ASGN command_rhs
-                    | primary_value '::' tIDENTIFIER tOP_ASGN command_rhs
+                    | primary '[' opt_call_args ']' tOP_ASGN command_rhs
+                    | primary call_op tIDENTIFIER tOP_ASGN command_rhs
+                    | primary call_op tCONSTANT tOP_ASGN command_rhs
+                    | primary '::' tCONSTANT tOP_ASGN command_rhs
+                    | primary '::' tIDENTIFIER tOP_ASGN command_rhs
                     | defn_head f_opt_paren_args '=' command
                     | defn_head f_opt_paren_args '=' command 'rescue' arg
                     | defs_head f_opt_paren_args '=' command
@@ -60,7 +64,7 @@
 
                 expr: command_call
                     | expr 'and' expr
-                    | expr 'or' expr
+                    | expr 'or'  expr
                     | 'not' expr
                     | '!' command_call
                     | arg '=>' p_top_expr_body
@@ -81,10 +85,10 @@
 
              command: operation call_args
                     | operation call_args cmd_brace_block
-                    | primary_value call_op operation2 call_args
-                    | primary_value call_op operation2 call_args cmd_brace_block
-                    | primary_value '::' operation2 call_args
-                    | primary_value '::' operation2 call_args cmd_brace_block
+                    | primary call_op operation2 call_args
+                    | primary call_op operation2 call_args cmd_brace_block
+                    | primary '::' operation2 call_args
+                    | primary '::' operation2 call_args cmd_brace_block
                     | 'super' call_args
                     | 'yield' call_args
                     | 'return' call_args
@@ -119,21 +123,21 @@
 
            mlhs_node: user_variable
                     | keyword_variable
-                    | primary_value '[' opt_call_args ']'
-                    | primary_value call_op tIDENTIFIER
-                    | primary_value '::' tIDENTIFIER
-                    | primary_value call_op tCONSTANT
-                    | primary_value '::' tCONSTANT
+                    | primary '[' opt_call_args ']'
+                    | primary call_op tIDENTIFIER
+                    | primary call_op tCONSTANT
+                    | primary '::' tIDENTIFIER
+                    | primary '::' tCONSTANT
                     | '::' tCONSTANT
                     | backref
 
                  lhs: user_variable
                     | keyword_variable
-                    | primary_value '[' opt_call_args ']'
-                    | primary_value call_op tIDENTIFIER
-                    | primary_value '::' tIDENTIFIER
-                    | primary_value call_op tCONSTANT
-                    | primary_value '::' tCONSTANT
+                    | primary '[' opt_call_args ']'
+                    | primary call_op tIDENTIFIER
+                    | primary call_op tCONSTANT
+                    | primary '::' tIDENTIFIER
+                    | primary '::' tCONSTANT
                     | '::' tCONSTANT
                     | backref
 
@@ -142,21 +146,18 @@
 
                cpath: '::' cname
                     | cname
-                    | primary_value '::' cname
+                    | primary '::' cname
 
                fitem: fname
                     | symbol
 
-          undef_list: fitem
-                    | undef_list ',' fitem
-
                  arg: lhs '=' arg_rhs
                     | var_lhs tOP_ASGN arg_rhs
-                    | primary_value '[' opt_call_args ']' tOP_ASGN arg_rhs
-                    | primary_value call_op tIDENTIFIER tOP_ASGN arg_rhs
-                    | primary_value call_op tCONSTANT tOP_ASGN arg_rhs
-                    | primary_value '::' tIDENTIFIER tOP_ASGN arg_rhs
-                    | primary_value '::' tCONSTANT tOP_ASGN arg_rhs
+                    | primary '[' opt_call_args ']' tOP_ASGN arg_rhs
+                    | primary call_op tIDENTIFIER tOP_ASGN arg_rhs
+                    | primary call_op tCONSTANT tOP_ASGN arg_rhs
+                    | primary '::' tIDENTIFIER tOP_ASGN arg_rhs
+                    | primary '::' tCONSTANT tOP_ASGN arg_rhs
                     | '::' tCONSTANT tOP_ASGN arg_rhs
                     | backref tOP_ASGN arg_rhs
                     | arg '..' arg
@@ -260,7 +261,7 @@
                     | '(' ')'
                     | '(' stmt ')'
                     | '(' compstmt ')'
-                    | primary_value '::' tCONSTANT
+                    | primary '::' tCONSTANT
                     | '::' tCONSTANT
                     | '[' aref_args ']'
                     | '{' assoc_list '}'
@@ -275,32 +276,35 @@
                     | method_call
                     | method_call brace_block
                     | lambda
-                    | 'if' expr then compstmt if_tail 'end'
+                    |
+                    | 'if'     expr then compstmt if_tail 'end'
                     | 'unless' expr then compstmt opt_else 'end'
-                    | 'while' expr do compstmt 'end'
-                    | 'until' expr do compstmt 'end'
+                    | 'while'  expr do compstmt 'end'
+                    | 'until'  expr do compstmt 'end'
+                    |
                     | 'case' expr opt_terms case_body 'end'
                     | 'case' opt_terms case_body 'end'
                     | 'case' expr opt_terms p_case_body 'end'
+                    |
                     | 'for' for_var 'in' expr do compstmt 'end'
+                    |
                     | 'class' cpath superclass bodystmt 'end'
                     | 'class' '<<' expr term bodystmt 'end'
+                    |
                     | 'module' cpath bodystmt 'end'
+                    |
                     | defn_head f_arglist bodystmt 'end'
                     | defs_head f_arglist bodystmt 'end'
+                    |
                     | 'break'
                     | 'next'
                     | 'redo'
                     | 'retry'
 
-       primary_value: primary
-
-                then: term
-                    | 'then'
-                    | term 'then'
+                then: maybe(term) maybe('then')
 
                   do: term
-                    | 'do_cond
+                    | 'do'
 
              if_tail: opt_else
                     | 'elsif' expr then compstmt if_tail
@@ -377,47 +381,43 @@
                     | block_call call_op2 operation2 call_args 'do' opt_block_param bodystmt 'end'
 
          method_call: operation paren_args
-                    | primary_value call_op operation2 opt_paren_args
-                    | primary_value '::' operation2 paren_args
-                    | primary_value '::' operation3
-                    | primary_value call_op paren_args
-                    | primary_value '::' paren_args
+                    | primary call_op operation2 opt_paren_args
+                    | primary '::' operation2 paren_args
+                    | primary '::' operation3
+                    | primary call_op paren_args
+                    | primary '::' paren_args
                     | 'super' paren_args
                     | 'super'
-                    | primary_value '[' opt_call_args ']'
+                    | primary '[' opt_call_args ']'
 
-         brace_block: '{' opt_block_param compstmt '}'
+         brace_block: '{'  opt_block_param compstmt '}'
                     | 'do' opt_block_param bodystmt 'end'
 
-           case_args: arg
+           case_args: separated_by(item = case_arg, sep = ',')
+
+            case_arg: arg
                     | '*' arg
-                    | case_args ',' arg
-                    | case_args ',' '*' arg
 
            case_body: 'when' case_args then compstmt cases
 
                cases: opt_else
                     | case_body
 
-          opt_rescue: 'rescue' exc_list exc_var then compstmt opt_rescue
-                    | none
+          opt_rescue: maybe('rescue' exc_list exc_var then compstmt opt_rescue)
 
             exc_list: arg
                     | mrhs
                     | none
 
-             exc_var: '=>' lhs
-                    | none
+             exc_var: maybe('=>' lhs)
 
-          opt_ensure: 'ensure' compstmt
-                    | none
+          opt_ensure: maybe('ensure' compstmt)
 
              literal: numeric
                     | symbol
 
              strings: tCHAR
-                    | string1
-                    | strings string1
+                    | at_least_once(string1)
 
              string1: tSTRING_BEG string_contents tSTRING_END
 
@@ -510,30 +510,24 @@
                f_arg: f_arg_item
                     | f_arg ',' f_arg_item
 
-                f_kw: tLABEL arg
-                    | tLABEL
+                f_kw: tLABEL maybe(arg)
 
-          f_block_kw: tLABEL primary_value
-                    | tLABEL
+          f_block_kw: tLABEL maybe(primary)
 
        f_block_kwarg: f_block_kw
                     | f_block_kwarg ',' f_block_kw
 
-
-             f_kwarg: f_kw
-                    | f_kwarg ',' f_kw
+             f_kwarg: separated_by(item = f_kw, sep = ',')
 
             f_kwrest: '**' maybe(tIDENTIFIER)
 
                f_opt: f_norm_arg '=' arg
 
-         f_block_opt: f_norm_arg '=' primary_value
+         f_block_opt: f_norm_arg '=' primary
 
-      f_block_optarg: f_block_opt
-                    | f_block_optarg ',' f_block_opt
+      f_block_optarg: separated_by(item = f_block_opt, sep = ',')
 
-            f_optarg: f_opt
-                    | f_optarg ',' f_opt
+            f_optarg: separated_by(item = f_opt, sep = ',')
 
           f_rest_arg: '*' maybe(tIDENTIFIER)
 
@@ -547,8 +541,7 @@
           assoc_list: separated_by(item = assoc, sep = ',')
 
                assoc: arg '=>' arg
-                    | tLABEL arg
-                    | tLABEL
+                    | tLABEL maybe(arg)
                     | tSTRING_BEG string_contents tLABEL_END arg
                     | '**' arg
                     | '**'
