@@ -1,3 +1,11 @@
+# A B means "A followed by B"
+# A | B means "A or B"
+# A? means "maybe A"
+# (A B) means "A followed by B, together"
+# A* means "A zero or more times"
+# A+ means "A one or more times"
+# sep_by(A B) means "zero or more A separated by B"
+
              program: top_stmts opt_terms
 
            top_stmts: none
