@@ -117,14 +117,6 @@
              backref: tNTH_REF
                     | tBACK_REF
 
-           f_bad_arg: tCONSTANT
-                    | tIVAR
-                    | tGVAR
-                    | tCVAR
-
-          f_norm_arg: f_bad_arg
-                    | tIDENTIFIER
-
         dot_or_colon: '.'
                     | '::'
 

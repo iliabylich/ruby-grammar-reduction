@@ -315,7 +315,7 @@
              for_var: lhs
                     | mlhs
 
-              f_marg: f_norm_arg
+              f_marg: tIDENTIFIER
                     | '(' f_margs ')'
 
          f_marg_list: f_marg
@@ -327,7 +327,7 @@
                     | f_rest_marg
                     | f_rest_marg ',' f_marg_list
 
-         f_rest_marg: '*' maybe(f_norm_arg)
+         f_rest_marg: '*' maybe(tIDENTIFIER)
 
         f_any_kwrest: '**' maybe(tIDENTIFIER)
                     | '**' 'nil'
@@ -365,7 +365,6 @@
             bv_decls: separated_by(item = bvar, sep = ',')
 
                 bvar: tIDENTIFIER
-                    | f_bad_arg
 
               lambda: tLAMBDA f_larglist lambda_body
 
@@ -504,7 +503,7 @@
                     | args_tail
                     | /* none */
 
-          f_arg_item: f_norm_arg
+          f_arg_item: tIDENTIFIER
                     | '(' f_margs ')'
 
                f_arg: f_arg_item
@@ -521,9 +520,9 @@
 
             f_kwrest: '**' maybe(tIDENTIFIER)
 
-               f_opt: f_norm_arg '=' arg
+               f_opt: tIDENTIFIER '=' arg
 
-         f_block_opt: f_norm_arg '=' primary
+         f_block_opt: tIDENTIFIER '=' primary
 
       f_block_optarg: separated_by(item = f_block_opt, sep = ',')
 
