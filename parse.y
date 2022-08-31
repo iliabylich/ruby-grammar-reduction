@@ -156,79 +156,6 @@
           undef_list: fitem
                     | undef_list ',' fitem
 
-                  op: '|'
-                    | '^'
-                    | '&'
-                    | tCMP
-                    | tEQ
-                    | tEQQ
-                    | tMATCH
-                    | tNMATCH
-                    | '>'
-                    | '>='
-                    | '<'
-                    | '<='
-                    | tNEQ
-                    | tLSHFT
-                    | tRSHFT
-                    | '+'
-                    | '-'
-                    | '*'
-                    | '*'
-                    | '/'
-                    | '%'
-                    | '**'
-                    | '**'
-                    | '!'
-                    | '~'
-                    | tUPLUS
-                    | tUMINUS
-                    | tAREF
-                    | tASET
-                    | '`'
-
-            reswords: '__LINE__'
-                    | '__FILE__'
-                    | '__ENCODING__'
-                    | 'BEGIN'
-                    | 'END'
-                    | 'alias'
-                    | 'and'
-                    | 'begin'
-                    | 'break'
-                    | 'case'
-                    | 'class'
-                    | 'def'
-                    | 'defined?'
-                    | 'do'
-                    | 'else'
-                    | 'elsif'
-                    | 'end'
-                    | 'ensure'
-                    | 'false'
-                    | 'for'
-                    | 'in'
-                    | 'module'
-                    | 'next'
-                    | 'nil'
-                    | 'not'
-                    | 'or'
-                    | 'redo'
-                    | 'rescue'
-                    | 'retry'
-                    | 'return'
-                    | 'self'
-                    | 'super'
-                    | 'then'
-                    | 'true'
-                    | 'undef'
-                    | 'when'
-                    | 'yield'
-                    | 'if'
-                    | 'unless'
-                    | 'while'
-                    | 'until'
-
                  arg: lhs '=' arg_rhs
                     | var_lhs tOP_ASGN arg_rhs
                     | primary_value '[' opt_call_args ']' tOP_ASGN arg_rhs
@@ -276,11 +203,6 @@
                     | defs_head f_opt_paren_args '=' arg
                     | defs_head f_opt_paren_args '=' arg 'rescue' arg
                     | primary
-
-               relop: '>'
-                    | '<'
-                    | '>='
-                    | '<='
 
             rel_expr: arg relop arg
                     | rel_expr relop arg
@@ -551,35 +473,11 @@
              numeric: simple_numeric
                     | tUMINUS_NUM simple_numeric
 
-      simple_numeric: tINTEGER
-                    | tFLOAT
-                    | tRATIONAL
-                    | tIMAGINARY
-
-        nonlocal_var: tIVAR
-                    | tGVAR
-                    | tCVAR
-
-       user_variable: tIDENTIFIER
-                    | tCONSTANT
-                    | nonlocal_var
-
-    keyword_variable: 'nil'
-                    | 'self'
-                    | 'true'
-                    | 'false'
-                    | '__FILE__'
-                    | '__LINE__'
-                    | '__ENCODING__'
-
              var_ref: user_variable
                     | keyword_variable
 
              var_lhs: user_variable
                     | keyword_variable
-
-             backref: tNTH_REF
-                    | tBACK_REF
 
           superclass: maybe('<' expr term)
 
@@ -612,14 +510,6 @@
                     | args_tail
                     | /* none */
 
-           f_bad_arg: tCONSTANT
-                    | tIVAR
-                    | tGVAR
-                    | tCVAR
-
-          f_norm_arg: f_bad_arg
-                    | tIDENTIFIER
-
           f_arg_item: f_norm_arg
                     | '(' f_margs ')'
 
@@ -651,7 +541,6 @@
             f_optarg: f_opt
                     | f_optarg ',' f_opt
 
-
           f_rest_arg: '*' maybe(tIDENTIFIER)
 
          f_block_arg: '&' tIDENTIFIER
@@ -670,30 +559,7 @@
                     | '**' arg
                     | '**'
 
-           operation: tIDENTIFIER
-                    | tCONSTANT
-                    | tFID
-
-          operation2: operation
-                    | op
-
-          operation3: tIDENTIFIER
-                    | tFID
-                    | op
-
-        dot_or_colon: '.'
-                    | '::'
-
-             call_op: '.'
-                    | '&.'
-
-            call_op2: call_op
-                    | '::'
-
            opt_terms: maybe(terms)
-
-                term: ';'
-                    | '\n'
 
                terms: separated_by(item = term, sep = ';')
 
