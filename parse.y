@@ -412,33 +412,21 @@
 
              string1: tSTRING_BEG string_contents tSTRING_END
 
-             xstring: tXSTRING_BEG xstring_contents tSTRING_END
+             xstring: tXSTRING_BEG repeat(string_content) tSTRING_END
 
-              regexp: tREGEXP_BEG regexp_contents tREGEXP_END
+              regexp: tREGEXP_BEG repeat(string_content) tREGEXP_END
 
-               words: tWORDS_BEG ' ' word_list tSTRING_END
-
-           word_list: separated_by(item = word, sep = ' ')
+               words: tWORDS_BEG separated_by(item = word, sep = ' ') tSTRING_END
 
                 word: at_least_once(string_content)
 
-             symbols: tSYMBOLS_BEG ' ' symbol_list tSTRING_END
+             symbols: tSYMBOLS_BEG separated_by(item = word, sep = ' ') tSTRING_END
 
-         symbol_list: separated_by(item = word, sep = ' ')
+              qwords: tQWORDS_BEG separated_by(item = tSTRING_CONTENT, item = ' ') tSTRING_END
 
-              qwords: tQWORDS_BEG ' ' qword_list tSTRING_END
-
-            qsymbols: tQSYMBOLS_BEG ' ' qsym_list tSTRING_END
-
-          qword_list: separated_by(item = tSTRING_CONTENT, item = ' ')
-
-           qsym_list: separated_by(item = tSTRING_CONTENT, item = ' ')
+            qsymbols: tQSYMBOLS_BEG ' ' separated_by(item = tSTRING_CONTENT, item = ' ') tSTRING_END
 
      string_contents: repeat(string_content)
-
-    xstring_contents: repeat(string_content)
-
-     regexp_contents: repeat(string_content)
 
       string_content: tSTRING_CONTENT
                     | tSTRING_DVAR string_dvar
