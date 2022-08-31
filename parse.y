@@ -155,52 +155,60 @@
                     | symbol
 
                  arg: lhs '=' arg_rhs
-                    | var_lhs_t tOP_ASGN arg_rhs
+                    |
+                    | var_lhs_t                       tOP_ASGN arg_rhs
                     | primary '[' opt_call_args ']'   tOP_ASGN arg_rhs
                     | primary call_op_t method_name_t tOP_ASGN arg_rhs
                     | primary '::' method_name_t      tOP_ASGN arg_rhs
                     | '::' tCONSTANT                  tOP_ASGN arg_rhs
                     | backref_t                       tOP_ASGN arg_rhs
+                    |
                     | arg '..' arg
                     | arg '...' arg
                     | arg '..'
                     | arg '...'
-                    | '..' arg
-                    | '...' arg
                     | arg '+' arg
                     | arg '-' arg
                     | arg '*' arg
                     | arg '/' arg
                     | arg '%' arg
                     | arg '**' arg
-                    | '-' simple_numeric_t '**' arg
-                    | '+' arg
-                    | '-' arg
                     | arg '|' arg
                     | arg '^' arg
                     | arg '&' arg
                     | arg '<=>' arg
-                    | rel_expr
                     | arg '=' arg
                     | arg '==' arg
                     | arg '!=' arg
                     | arg '=~' arg
                     | arg '!~' arg
-                    | '!' arg
-                    | '~' arg
                     | arg '<<' arg
                     | arg '>>' arg
                     | arg '&&' arg
                     | arg '||' arg
+                    | arg '>' arg
+                    | arg '<' arg
+                    | arg '>=' arg
+                    | arg '<=' arg
+                    |
+                    | '..' arg
+                    | '...' arg
+                    | '-' simple_numeric_t '**' arg
+                    | '+' arg
+                    | '-' arg
+                    | '!' arg
+                    | '~' arg
+                    |
                     | 'defined?' arg
+                    |
                     | arg '?' arg ':' arg
+                    |
                     | defn_head f_opt_paren_args '=' arg
                     | defn_head f_opt_paren_args '=' arg 'rescue' arg
                     | defs_head f_opt_paren_args '=' arg
                     | defs_head f_opt_paren_args '=' arg 'rescue' arg
+                    |
                     | primary
-
-            rel_expr: arg at_least_once(relop_t arg)
 
            aref_args: maybe(separated_by(item = args, sep = ',') maybe(',')) maybe(separated_by(assocs ',') maybe(','))
 
@@ -384,8 +392,7 @@
 
            case_args: separated_by(item = case_arg, sep = ',')
 
-            case_arg: arg
-                    | '*' arg
+            case_arg: maybe('*') arg
 
            case_body: 'when' case_args then compstmt cases
 
@@ -472,15 +479,13 @@
           f_arg_item: tIDENTIFIER
                     | '(' f_margs ')'
 
-               f_arg: f_arg_item
-                    | f_arg ',' f_arg_item
+               f_arg: separated_by(item = f_arg_item, sep = ',')
 
                 f_kw: tLABEL maybe(arg)
 
           f_block_kw: tLABEL maybe(primary)
 
-       f_block_kwarg: f_block_kw
-                    | f_block_kwarg ',' f_block_kw
+       f_block_kwarg: separated_by(item = f_block_kw, sep = ',')
 
              f_kwarg: separated_by(item = f_kw, sep = ',')
 
