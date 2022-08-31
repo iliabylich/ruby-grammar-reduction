@@ -32,10 +32,8 @@
                     | stmt 'until'  expr
                     | stmt 'rescue' stmt
                     |
-                    | defn_head f_opt_paren_args '=' command
-                    | defn_head f_opt_paren_args '=' command 'rescue' arg
-                    | defs_head f_opt_paren_args '=' command
-                    | defs_head f_opt_paren_args '=' command 'rescue' arg
+                    | defn_head f_opt_paren_args '=' command maybe('rescue' arg)
+                    | defs_head f_opt_paren_args '=' command maybe('rescue' arg)
                     |
                     | lhs '=' command_rhs
                     | lhs '=' mrhs
@@ -44,7 +42,7 @@
                     |
                     | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
                     | primary call_op_t method_name_t tOP_ASGN command_rhs
-                    | primary '::'    method_name_t   tOP_ASGN command_rhs
+                    | primary '::'      method_name_t tOP_ASGN command_rhs
                     | backref_t                       tOP_ASGN command_rhs
                     |
                     | mlhs '=' command_call
@@ -59,18 +57,19 @@
 
                undef: 'undef' fitem repeat(',' fitem)
 
-         command_rhs: command_call
-                    | command_call 'rescue' stmt
+         command_rhs: command_call maybe('rescue' stmt)
+                    |
+                    | defn_head f_opt_paren_args '=' command maybe('rescue' arg)
+                    | defs_head f_opt_paren_args '=' command maybe('rescue' arg)
+                    |
                     | lhs '=' command_rhs
+                    |
                     | var_lhs tOP_ASGN command_rhs
+                    |
                     | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
                     | primary call_op_t method_name_t tOP_ASGN command_rhs
-                    | primary '::' method_name_t      tOP_ASGN command_rhs
-                    | defn_head f_opt_paren_args '=' command
-                    | defn_head f_opt_paren_args '=' command 'rescue' arg
-                    | defs_head f_opt_paren_args '=' command
-                    | defs_head f_opt_paren_args '=' command 'rescue' arg
-                    | backref_t tOP_ASGN command_rhs
+                    | primary '::'      method_name_t tOP_ASGN command_rhs
+                    | backref_t                       tOP_ASGN command_rhs
 
                 expr: command_call
                     | expr 'and' expr
@@ -93,17 +92,15 @@
 
      cmd_brace_block: '{' opt_block_param compstmt '}'
 
-             command: operation_t call_args
-                    | operation_t call_args cmd_brace_block
-                    | primary call_op_t operation2_t call_args
-                    | primary call_op_t operation2_t call_args cmd_brace_block
-                    | primary '::' operation2_t call_args
-                    | primary '::' operation2_t call_args cmd_brace_block
-                    | 'super' call_args
-                    | 'yield' call_args
+             command: operation_t call_args maybe(cmd_brace_block)
+                    | primary call_op_t operation2_t call_args maybe(cmd_brace_block)
+                    | primary '::' operation2_t call_args maybe(cmd_brace_block)
+                    |
+                    | 'super'  call_args
+                    | 'yield'  call_args
                     | 'return' call_args
-                    | 'break' call_args
-                    | 'next' call_args
+                    | 'break'  call_args
+                    | 'next'   call_args
 
                 mlhs: mlhs_basic
                     | '(' mlhs_inner ')'
@@ -203,20 +200,17 @@
                     | defs_head f_opt_paren_args '=' arg 'rescue' arg
                     | primary
 
-            rel_expr: arg relop_t arg
-                    | rel_expr relop_t arg
+            rel_expr: arg at_least_once(relop_t arg)
 
            aref_args: maybe(separated_by(item = args, sep = ',') maybe(',')) maybe(separated_by(assocs ',') maybe(','))
 
-             arg_rhs: arg
-                    | arg 'rescue' arg
+             arg_rhs: arg repeat('rescue' arg)
 
           paren_args: '(' opt_call_args ')'
                     | '(' args ',' '...' ')'
                     | '(' '...' ')'
 
-      opt_paren_args: none
-                    | paren_args
+      opt_paren_args: maybe(paren_args)
 
        opt_call_args: none
                     | call_args
@@ -230,18 +224,14 @@
                     | args ',' assocs opt_block_arg
                     | block_arg
 
-           block_arg: '&' arg
-                    | '&'
+           block_arg: '&' maybe(arg)
 
-       opt_block_arg: ',' block_arg
-                    | none
+       opt_block_arg: maybe(',' block_arg)
 
                 args: arg
-                    | '*' arg
-                    | '*'
+                    | '*' maybe(arg)
                     | args ',' arg
-                    | args ',' '*' arg
-                    | args ',' '*'
+                    | args ',' '*' maybe(arg)
 
             mrhs_arg: mrhs
                     | arg
