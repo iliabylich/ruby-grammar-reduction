@@ -89,7 +89,8 @@
                     | '..' p_primitive
                     | '...' p_primitive
 
-         p_primitive: literal
+         p_primitive: numeric
+                    | symbol
                     | strings
                     | xstring
                     | regexp

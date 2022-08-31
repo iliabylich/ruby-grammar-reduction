@@ -240,7 +240,8 @@
                     | args ',' '*' arg
                     | '*' arg
 
-             primary: literal
+             primary: numeric
+                    | symbol
                     | strings
                     | xstring
                     | regexp
@@ -404,8 +405,6 @@
 
           opt_ensure: maybe('ensure' compstmt)
 
-             literal: numeric
-                    | symbol
 
              strings: tCHAR
                     | at_least_once(string1)
