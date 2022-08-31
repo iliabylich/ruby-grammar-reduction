@@ -24,10 +24,10 @@
                     | 'alias' tGVAR tBACK_REF
                     | 'alias' tGVAR tNTH_REF
                     | 'undef' undef_list
-                    | stmt 'if' expr_value
-                    | stmt 'unless' expr_value
-                    | stmt 'while' expr_value
-                    | stmt 'until' expr_value
+                    | stmt 'if' expr
+                    | stmt 'unless' expr
+                    | stmt 'while' expr
+                    | stmt 'until' expr
                     | stmt 'rescue' stmt
                     | 'END' '{' compstmt '}'
                     | command_asgn
@@ -67,26 +67,24 @@
 
            defs_head: 'def' singleton dot_or_colon fname
 
-          expr_value: expr
-
-       expr_value_do: expr_value do
+       expr_do: expr do
 
         command_call: command
                     | block_command
 
        block_command: block_call
-                    | block_call call_op2 operation2 command_args
+                    | block_call call_op2 operation2 call_args
 
      cmd_brace_block: '{' brace_body '}'
 
-             command: operation command_args
-                    | operation command_args cmd_brace_block
-                    | primary_value call_op operation2 command_args
-                    | primary_value call_op operation2 command_args cmd_brace_block
-                    | primary_value '::' operation2 command_args
-                    | primary_value '::' operation2 command_args cmd_brace_block
-                    | 'super' command_args
-                    | 'yield' command_args
+             command: operation call_args
+                    | operation call_args cmd_brace_block
+                    | primary_value call_op operation2 call_args
+                    | primary_value call_op operation2 call_args cmd_brace_block
+                    | primary_value '::' operation2 call_args
+                    | primary_value '::' operation2 call_args cmd_brace_block
+                    | 'super' call_args
+                    | 'yield' call_args
                     | 'return' call_args
                     | 'break' call_args
                     | 'next' call_args
@@ -285,8 +283,6 @@
             rel_expr: arg relop arg
                     | rel_expr relop arg
 
-           arg_value: arg
-
            aref_args: none
                     | args trailer
                     | args ',' assocs trailer
@@ -314,27 +310,25 @@
                     | args ',' assocs opt_block_arg
                     | block_arg
 
-        command_args: call_args
-
-           block_arg: '&' arg_value
+           block_arg: '&' arg
                     | '&'
 
        opt_block_arg: ',' block_arg
                     | none
 
-                args: arg_value
-                    | '*' arg_value
+                args: arg
+                    | '*' arg
                     | '*'
-                    | args ',' arg_value
-                    | args ',' '*' arg_value
+                    | args ',' arg
+                    | args ',' '*' arg
                     | args ',' '*'
 
             mrhs_arg: mrhs
-                    | arg_value
+                    | arg
 
-                mrhs: args ',' arg_value
-                    | args ',' '*' arg_value
-                    | '*' arg_value
+                mrhs: args ',' arg
+                    | args ',' '*' arg
+                    | '*' arg
 
              primary: literal
                     | strings
@@ -366,14 +360,14 @@
                     | method_call
                     | method_call brace_block
                     | lambda
-                    | 'if' expr_value then compstmt if_tail 'end'
-                    | 'unless' expr_value then compstmt opt_else 'end'
-                    | 'while' expr_value_do compstmt 'end'
-                    | 'until' expr_value_do compstmt 'end'
-                    | 'case' expr_value opt_terms case_body 'end'
+                    | 'if' expr then compstmt if_tail 'end'
+                    | 'unless' expr then compstmt opt_else 'end'
+                    | 'while' expr_do compstmt 'end'
+                    | 'until' expr_do compstmt 'end'
+                    | 'case' expr opt_terms case_body 'end'
                     | 'case' opt_terms case_body 'end'
-                    | 'case' expr_value opt_terms p_case_body 'end'
-                    | 'for' for_var 'in' expr_value_do compstmt 'end'
+                    | 'case' expr opt_terms p_case_body 'end'
+                    | 'for' for_var 'in' expr_do compstmt 'end'
                     | 'class' cpath superclass bodystmt 'end'
                     | 'class' tLSHFT expr term bodystmt 'end'
                     | 'module' cpath bodystmt 'end'
@@ -394,7 +388,7 @@
                     | 'do_cond
 
              if_tail: opt_else
-                    | 'elsif' expr_value then compstmt if_tail
+                    | 'elsif' expr then compstmt if_tail
 
             opt_else: none
                     | 'else' compstmt
@@ -418,7 +412,7 @@
                     | '*'
 
         f_any_kwrest: f_kwrest
-                    | f_no_kwarg
+                    | p_kwnorest
 
      block_args_tail: f_block_kwarg ',' f_kwrest opt_f_block_arg
                     | f_block_kwarg opt_f_block_arg
@@ -470,12 +464,10 @@
          lambda_body: tLAMBEG compstmt '}'
                     | kDO_LAMBDA bodystmt 'end'
 
-            do_block: 'do' do_body 'end'
-
-          block_call: command do_block
+          block_call: command 'do' do_body 'end'
                     | block_call call_op2 operation2 opt_paren_args
                     | block_call call_op2 operation2 opt_paren_args brace_block
-                    | block_call call_op2 operation2 command_args do_block
+                    | block_call call_op2 operation2 call_args 'do' do_body 'end'
 
          method_call: operation paren_args
                     | primary_value call_op operation2 opt_paren_args
@@ -494,10 +486,10 @@
 
              do_body: opt_block_param bodystmt
 
-           case_args: arg_value
-                    | '*' arg_value
-                    | case_args ',' arg_value
-                    | case_args ',' '*' arg_value
+           case_args: arg
+                    | '*' arg
+                    | case_args ',' arg
+                    | case_args ',' '*' arg
 
            case_body: 'when' case_args then compstmt cases
 
@@ -510,8 +502,8 @@
                     | p_case_body
 
           p_top_expr: p_top_expr_body
-                    | p_top_expr_body 'if' expr_value
-                    | p_top_expr_body 'unless' expr_value
+                    | p_top_expr_body 'if' expr
+                    | p_top_expr_body 'unless' expr
 
      p_top_expr_body: p_expr
                     | p_expr ','
@@ -520,26 +512,21 @@
                     | p_args_tail
                     | p_kwargs
 
-              p_expr: p_as
-
-                p_as: p_expr '=>' tIDENTIFIER
+              p_expr: p_expr '=>' tIDENTIFIER
                     | p_alt
 
                p_alt: p_alt '|' p_expr_basic
                     | p_expr_basic
 
-            p_lparen: '('
-          p_lbracket: '['
-
         p_expr_basic: p_value
                     | tIDENTIFIER
-                    | p_const p_lparen p_args opt_nl ')'
-                    | p_const p_lparen p_find opt_nl ')'
-                    | p_const p_lparen p_kwargs opt_nl ')'
+                    | p_const '(' p_args opt_nl ')'
+                    | p_const '(' p_find opt_nl ')'
+                    | p_const '(' p_kwargs opt_nl ')'
                     | p_const '(' opt_nl ')'
-                    | p_const p_lbracket p_args rbracket
-                    | p_const p_lbracket p_find rbracket
-                    | p_const p_lbracket p_kwargs rbracket
+                    | p_const '[' p_args rbracket
+                    | p_const '[' p_find rbracket
+                    | p_const '[' p_kwargs rbracket
                     | p_const '[' rbracket
                     | '[' p_args rbracket
                     | '[' p_find rbracket
@@ -616,7 +603,7 @@
            p_var_ref: '^' tIDENTIFIER
                     | '^' nonlocal_var
 
-          p_expr_ref: '^' '(' expr_value ')'
+          p_expr_ref: '^' '(' expr ')'
 
              p_const: '::' cname
                     | p_const '::' cname
@@ -625,7 +612,7 @@
           opt_rescue: 'rescue' exc_list exc_var then compstmt opt_rescue
                     | none
 
-            exc_list: arg_value
+            exc_list: arg
                     | mrhs
                     | none
 
@@ -691,15 +678,11 @@
                     | tCVAR
                     | backref
 
-              symbol: ssym
-                    | dsym
-
-                ssym: tSYMBEG sym
+              symbol: tSYMBEG sym
+                    | tSYMBEG string_contents tSTRING_END
 
                  sym: fname
                     | nonlocal_var
-
-                dsym: tSYMBEG string_contents tSTRING_END
 
              numeric: simple_numeric
                     | tUMINUS_NUM simple_numeric
@@ -734,7 +717,7 @@
              backref: tNTH_REF
                     | tBACK_REF
 
-          superclass: '<' expr_value term
+          superclass: '<' expr term
                     | /* none */
 
     f_opt_paren_args: f_paren_args
@@ -779,21 +762,17 @@
           f_norm_arg: f_bad_arg
                     | tIDENTIFIER
 
-          f_arg_asgn: f_norm_arg
-
-          f_arg_item: f_arg_asgn
+          f_arg_item: f_norm_arg
                     | '(' f_margs opt_nl ')'
 
                f_arg: f_arg_item
                     | f_arg ',' f_arg_item
 
-             f_label: tLABEL
+                f_kw: tLABEL arg
+                    | tLABEL
 
-                f_kw: f_label arg_value
-                    | f_label
-
-          f_block_kw: f_label primary_value
-                    | f_label
+          f_block_kw: tLABEL primary_value
+                    | tLABEL
 
        f_block_kwarg: f_block_kw
                     | f_block_kwarg ',' f_block_kw
@@ -803,16 +782,13 @@
                     | f_kwarg ',' f_kw
 
          kwrest_mark: '**'
-                    | '**'
-
-          f_no_kwarg: p_kwnorest
 
             f_kwrest: kwrest_mark tIDENTIFIER
                     | kwrest_mark
 
-               f_opt: f_arg_asgn '=' arg_value
+               f_opt: f_norm_arg '=' arg
 
-         f_block_opt: f_arg_asgn '=' primary_value
+         f_block_opt: f_norm_arg '=' primary_value
 
       f_block_optarg: f_block_opt
                     | f_block_optarg ',' f_block_opt
@@ -824,10 +800,7 @@
           f_rest_arg: '*' tIDENTIFIER
                     | '*'
 
-         blkarg_mark: '&'
-                    | '&'
-
-         f_block_arg: blkarg_mark tIDENTIFIER
+         f_block_arg: '&' tIDENTIFIER
 
      opt_f_block_arg: ',' f_block_arg
                     | none
@@ -841,11 +814,11 @@
               assocs: assoc
                     | assocs ',' assoc
 
-               assoc: arg_value '=>' arg_value
-                    | tLABEL arg_value
+               assoc: arg '=>' arg
+                    | tLABEL arg
                     | tLABEL
-                    | tSTRING_BEG string_contents tLABEL_END arg_value
-                    | '**' arg_value
+                    | tSTRING_BEG string_contents tLABEL_END arg
+                    | '**' arg
                     | '**'
 
            operation: tIDENTIFIER
