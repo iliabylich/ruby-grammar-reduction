@@ -1,28 +1,24 @@
-# A B means "A followed by B"
-# A | B means "A or B"
-# A? means "maybe A"
-# (A B) means "A followed by B, together"
-# A* means "A zero or more times"
-# A+ means "A one or more times"
-# sep_by(A B) means "zero or more A separated by B"
+// A B means "A followed by B"
+// A | B means "A or B"
+// maybe(A) means "maybe A"
+// (A B) means "A followed by B, together"
+// repeat(A) means "A zero or more times"
+// at_least_once(A) means "A one or more times"
+// separated_by(item = A, sep = B) means "zero or more A separated by B"
 
              program: top_stmts opt_terms
 
-           top_stmts: none
-                    | top_stmt
-                    | top_stmts terms top_stmt
+           top_stmts: separated_by(item = top_stmt, sep = terms)
 
             top_stmt: stmt
                     | 'BEGIN' '{' top_compstmt '}'
 
             bodystmt: compstmt opt_rescue 'else' compstmt opt_ensure
-                    | compstmt opt_rescue opt_ensure
+                    | compstmt opt_rescue                 opt_ensure
 
             compstmt: stmts opt_terms
 
-               stmts: none
-                    | stmt_or_begin
-                    | stmts terms stmt_or_begin
+               stmts: separated_by(item = stmt_or_begin, sep = terms)
 
        stmt_or_begin: stmt
                     | 'BEGIN' '{' top_compstmt '}'
@@ -289,10 +285,7 @@
             rel_expr: arg relop arg
                     | rel_expr relop arg
 
-           aref_args: none
-                    | args ','
-                    | args ',' assocs ','
-                    | assocs ','
+           aref_args: maybe(separated_by(item = args, sep = ',') maybe(',')) maybe(separated_by(assocs ',') maybe(','))
 
              arg_rhs: arg
                     | arg 'rescue' arg
@@ -414,10 +407,9 @@
                     | f_rest_marg
                     | f_rest_marg ',' f_marg_list
 
-         f_rest_marg: '*' f_norm_arg
-                    | '*'
+         f_rest_marg: '*' maybe(f_norm_arg)
 
-        f_any_kwrest: f_kwrest
+        f_any_kwrest: '**' maybe(tIDENTIFIER)
                     | '**' 'nil'
 
      block_args_tail: f_block_kwarg ',' f_kwrest opt_f_block_arg
@@ -425,17 +417,14 @@
                     | f_any_kwrest opt_f_block_arg
                     | f_block_arg
 
- opt_block_args_tail: ',' block_args_tail
-                    | /* none */
-
-      excessed_comma: ','
+ opt_block_args_tail: maybe(',' block_args_tail)
 
          block_param: f_arg ',' f_block_optarg ',' f_rest_arg opt_block_args_tail
                     | f_arg ',' f_block_optarg ',' f_rest_arg ',' f_arg opt_block_args_tail
                     | f_arg ',' f_block_optarg opt_block_args_tail
                     | f_arg ',' f_block_optarg ',' f_arg opt_block_args_tail
                     | f_arg ',' f_rest_arg opt_block_args_tail
-                    | f_arg excessed_comma
+                    | f_arg ','
                     | f_arg ',' f_rest_arg ',' f_arg opt_block_args_tail
                     | f_arg opt_block_args_tail
                     | f_block_optarg ',' f_rest_arg opt_block_args_tail
@@ -446,16 +435,14 @@
                     | f_rest_arg ',' f_arg opt_block_args_tail
                     | block_args_tail
 
-     opt_block_param: none
-                    | block_param_def
+     opt_block_param: maybe(block_param_def)
 
      block_param_def: '|' opt_bv_decl '|'
                     | '|' block_param opt_bv_decl '|'
 
          opt_bv_decl: ';' bv_decls
 
-            bv_decls: bvar
-                    | bv_decls ',' bvar
+            bv_decls: separated_by(item = bvar, sep = ',')
 
                 bvar: tIDENTIFIER
                     | f_bad_arg
@@ -635,35 +622,27 @@
 
                words: tWORDS_BEG ' ' word_list tSTRING_END
 
-           word_list: /* none */
-                    | word_list word ' '
+           word_list: separated_by(item = word, sep = ' ')
 
-                word: string_content
-                    | word string_content
+                word: at_least_once(string_content)
 
              symbols: tSYMBOLS_BEG ' ' symbol_list tSTRING_END
 
-         symbol_list: /* none */
-                    | symbol_list word ' '
+         symbol_list: separated_by(item = word, sep = ' ')
 
               qwords: tQWORDS_BEG ' ' qword_list tSTRING_END
 
             qsymbols: tQSYMBOLS_BEG ' ' qsym_list tSTRING_END
 
-          qword_list: /* none */
-                    | qword_list tSTRING_CONTENT ' '
+          qword_list: separated_by(item = tSTRING_CONTENT, item = ' ')
 
-           qsym_list: /* none */
-                    | qsym_list tSTRING_CONTENT ' '
+           qsym_list: separated_by(item = tSTRING_CONTENT, item = ' ')
 
-     string_contents: /* none */
-                    | string_contents string_content
+     string_contents: repeat(string_content)
 
-    xstring_contents: /* none */
-                    | xstring_contents string_content
+    xstring_contents: repeat(string_content)
 
-     regexp_contents: /* none */
-                    | regexp_contents string_content
+     regexp_contents: repeat(string_content)
 
       string_content: tSTRING_CONTENT
                     | tSTRING_DVAR string_dvar
@@ -713,11 +692,9 @@
              backref: tNTH_REF
                     | tBACK_REF
 
-          superclass: '<' expr term
-                    | /* none */
+          superclass: maybe('<' expr term)
 
-    f_opt_paren_args: '(' f_args ')'
-                    | none
+    f_opt_paren_args: maybe('(' f_args ')')
 
            f_arglist: '(' f_args ')'
                     | f_args term
@@ -728,8 +705,7 @@
                     | f_block_arg
                     | '...'
 
-       opt_args_tail: ',' args_tail
-                    | /* none */
+       opt_args_tail: maybe(',' args_tail)
 
               f_args: f_arg ',' f_optarg ',' f_rest_arg opt_args_tail
                     | f_arg ',' f_optarg ',' f_rest_arg ',' f_arg opt_args_tail
@@ -774,8 +750,7 @@
              f_kwarg: f_kw
                     | f_kwarg ',' f_kw
 
-            f_kwrest: '**' tIDENTIFIER
-                    | '**'
+            f_kwrest: '**' maybe(tIDENTIFIER)
 
                f_opt: f_norm_arg '=' arg
 
@@ -788,22 +763,16 @@
                     | f_optarg ',' f_opt
 
 
-          f_rest_arg: '*' tIDENTIFIER
-                    | '*'
+          f_rest_arg: '*' maybe(tIDENTIFIER)
 
          f_block_arg: '&' tIDENTIFIER
 
-     opt_f_block_arg: ',' f_block_arg
-                    | none
+     opt_f_block_arg: maybe(',' f_block_arg)
 
            singleton: var_ref
                     | '(' expr ')'
 
-          assoc_list: none
-                    | assocs ','
-
-              assocs: assoc
-                    | assocs ',' assoc
+          assoc_list: separated_by(item = assoc, sep = ',')
 
                assoc: arg '=>' arg
                     | tLABEL arg
@@ -832,13 +801,11 @@
             call_op2: call_op
                     | '::'
 
-           opt_terms: /* none */
-                    | terms
+           opt_terms: maybe(terms)
 
                 term: ';'
                     | '\n'
 
-               terms: term
-                    | terms ';'
+               terms: separated_by(item = term, sep = ';')
 
                 none: /* none */
