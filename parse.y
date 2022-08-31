@@ -49,10 +49,8 @@
                     | var_lhs tOP_ASGN command_rhs
                     |
                     | primary '[' opt_call_args ']' tOP_ASGN command_rhs
-                    | primary call_op tIDENTIFIER   tOP_ASGN command_rhs
-                    | primary call_op tCONSTANT     tOP_ASGN command_rhs
-                    | primary '::'    tCONSTANT     tOP_ASGN command_rhs
-                    | primary '::'    tIDENTIFIER   tOP_ASGN command_rhs
+                    | primary call_op method_name   tOP_ASGN command_rhs
+                    | primary '::'    method_name   tOP_ASGN command_rhs
                     | backref                       tOP_ASGN command_rhs
                     |
                     | mlhs '=' command_call
@@ -65,10 +63,8 @@
                     | lhs '=' command_rhs
                     | var_lhs tOP_ASGN command_rhs
                     | primary '[' opt_call_args ']' tOP_ASGN command_rhs
-                    | primary call_op tIDENTIFIER tOP_ASGN command_rhs
-                    | primary call_op tCONSTANT tOP_ASGN command_rhs
-                    | primary '::' tCONSTANT tOP_ASGN command_rhs
-                    | primary '::' tIDENTIFIER tOP_ASGN command_rhs
+                    | primary call_op method_name tOP_ASGN command_rhs
+                    | primary '::' method_name tOP_ASGN command_rhs
                     | defn_head f_opt_paren_args '=' command
                     | defn_head f_opt_paren_args '=' command 'rescue' arg
                     | defs_head f_opt_paren_args '=' command
@@ -137,20 +133,16 @@
            mlhs_node: user_variable
                     | keyword_variable
                     | primary '[' opt_call_args ']'
-                    | primary call_op tIDENTIFIER
-                    | primary call_op tCONSTANT
-                    | primary '::' tIDENTIFIER
-                    | primary '::' tCONSTANT
+                    | primary call_op method_name
+                    | primary '::' method_name
                     | '::' tCONSTANT
                     | backref
 
                  lhs: user_variable
                     | keyword_variable
                     | primary '[' opt_call_args ']'
-                    | primary call_op tIDENTIFIER
-                    | primary call_op tCONSTANT
-                    | primary '::' tIDENTIFIER
-                    | primary '::' tCONSTANT
+                    | primary call_op method_name
+                    | primary '::' method_name
                     | '::' tCONSTANT
                     | backref
 
@@ -167,10 +159,8 @@
                  arg: lhs '=' arg_rhs
                     | var_lhs tOP_ASGN arg_rhs
                     | primary '[' opt_call_args ']' tOP_ASGN arg_rhs
-                    | primary call_op tIDENTIFIER tOP_ASGN arg_rhs
-                    | primary call_op tCONSTANT tOP_ASGN arg_rhs
-                    | primary '::' tIDENTIFIER tOP_ASGN arg_rhs
-                    | primary '::' tCONSTANT tOP_ASGN arg_rhs
+                    | primary call_op method_name tOP_ASGN arg_rhs
+                    | primary '::' method_name tOP_ASGN arg_rhs
                     | '::' tCONSTANT tOP_ASGN arg_rhs
                     | backref tOP_ASGN arg_rhs
                     | arg '..' arg

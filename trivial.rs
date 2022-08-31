@@ -127,5 +127,8 @@
                     | '&.'
                     | '::'
 
+         method_name: tIDENTIFIER
+                    | tCONSTANT
+
                 term: ';'
                     | '\n'
