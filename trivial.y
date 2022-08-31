@@ -98,7 +98,7 @@
                     | tRATIONAL
                     | tIMAGINARY
 
-       user_variable: tIDENTIFIER
+     user_variable_t: tIDENTIFIER
                     | tCONSTANT
                     | nonlocal_var_t
 
@@ -113,6 +113,12 @@
                     | '__FILE__'
                     | '__LINE__'
                     | '__ENCODING__'
+
+           var_ref_t: user_variable_t
+                    | keyword_variable_t
+
+           var_lhs_t: user_variable_t
+                    | keyword_variable_t
 
            backref_t: tNTH_REF
                     | tBACK_REF
@@ -129,6 +135,9 @@
 
        method_name_t: tIDENTIFIER
                     | tCONSTANT
+
+                do_t: term_t
+                    | 'do'
 
               term_t: ';'
                     | '\n'

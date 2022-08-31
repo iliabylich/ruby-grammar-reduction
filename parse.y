@@ -10,7 +10,7 @@
 
            top_stmts: separated_by(item = stmt_or_begin, sep = terms)
 
-            bodystmt: compstmt opt_rescue maybe('else' compstmt) opt_ensure
+            bodystmt: compstmt opt_rescue maybe('else' compstmt) maybe('ensure' compstmt)
 
             compstmt: stmts opt_terms
 
@@ -38,7 +38,7 @@
                     | lhs '=' command_rhs
                     | lhs '=' mrhs
                     |
-                    | var_lhs tOP_ASGN command_rhs
+                    | var_lhs_t tOP_ASGN command_rhs
                     |
                     | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
                     | primary call_op_t method_name_t tOP_ASGN command_rhs
@@ -64,7 +64,7 @@
                     |
                     | lhs '=' command_rhs
                     |
-                    | var_lhs tOP_ASGN command_rhs
+                    | var_lhs_t tOP_ASGN command_rhs
                     |
                     | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
                     | primary call_op_t method_name_t tOP_ASGN command_rhs
@@ -128,7 +128,7 @@
            mlhs_post: mlhs_item
                     | mlhs_post ',' mlhs_item
 
-           mlhs_node: user_variable
+           mlhs_node: user_variable_t
                     | keyword_variable_t
                     | primary '[' opt_call_args ']'
                     | primary call_op_t method_name_t
@@ -136,7 +136,7 @@
                     | '::' tCONSTANT
                     | backref_t
 
-                 lhs: user_variable
+                 lhs: user_variable_t
                     | keyword_variable_t
                     | primary '[' opt_call_args ']'
                     | primary call_op_t method_name_t
@@ -155,12 +155,12 @@
                     | symbol
 
                  arg: lhs '=' arg_rhs
-                    | var_lhs tOP_ASGN arg_rhs
-                    | primary '[' opt_call_args ']' tOP_ASGN arg_rhs
+                    | var_lhs_t tOP_ASGN arg_rhs
+                    | primary '[' opt_call_args ']'   tOP_ASGN arg_rhs
                     | primary call_op_t method_name_t tOP_ASGN arg_rhs
-                    | primary '::' method_name_t tOP_ASGN arg_rhs
-                    | '::' tCONSTANT tOP_ASGN arg_rhs
-                    | backref_t tOP_ASGN arg_rhs
+                    | primary '::' method_name_t      tOP_ASGN arg_rhs
+                    | '::' tCONSTANT                  tOP_ASGN arg_rhs
+                    | backref_t                       tOP_ASGN arg_rhs
                     | arg '..' arg
                     | arg '...' arg
                     | arg '..'
@@ -249,7 +249,7 @@
                     | qwords
                     | symbols
                     | qsymbols
-                    | var_ref
+                    | var_ref_t
                     | backref_t
                     | tFID
                     | 'begin' bodystmt 'end'
@@ -274,14 +274,14 @@
                     |
                     | 'if'     expr then compstmt if_tail 'end'
                     | 'unless' expr then compstmt opt_else 'end'
-                    | 'while'  expr do compstmt 'end'
-                    | 'until'  expr do compstmt 'end'
+                    | 'while'  expr do_t compstmt 'end'
+                    | 'until'  expr do_t compstmt 'end'
                     |
                     | 'case' expr opt_terms case_body 'end'
                     | 'case' opt_terms case_body 'end'
                     | 'case' expr opt_terms p_case_body 'end'
                     |
-                    | 'for' for_var 'in' expr do compstmt 'end'
+                    | 'for' for_var 'in' expr do_t compstmt 'end'
                     |
                     | 'class' cpath superclass bodystmt 'end'
                     | 'class' '<<' expr term_t bodystmt 'end'
@@ -297,9 +297,6 @@
                     | 'retry'
 
                 then: maybe(term_t) maybe('then')
-
-                  do: term_t
-                    | 'do'
 
              if_tail: opt_else
                     | 'elsif' expr then compstmt if_tail
@@ -403,9 +400,6 @@
 
              exc_var: maybe('=>' lhs)
 
-          opt_ensure: maybe('ensure' compstmt)
-
-
              strings: tCHAR
                     | at_least_once(string1)
 
@@ -442,14 +436,7 @@
                  sym: fname_t
                     | nonlocal_var_t
 
-             numeric: simple_numeric_t
-                    | '-' simple_numeric_t
-
-             var_ref: user_variable
-                    | keyword_variable_t
-
-             var_lhs: user_variable
-                    | keyword_variable_t
+             numeric: maybe('-') simple_numeric_t
 
           superclass: maybe('<' expr term_t)
 
@@ -513,7 +500,7 @@
 
      opt_f_block_arg: maybe(',' f_block_arg)
 
-           singleton: var_ref
+           singleton: var_ref_t
                     | '(' expr ')'
 
           assoc_list: separated_by(item = assoc, sep = ',')
