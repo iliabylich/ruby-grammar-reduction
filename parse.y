@@ -38,14 +38,31 @@
                     |
                     | 'END' '{' compstmt '}'
                     |
-                    | command_asgn
-                    | mlhs '=' command_call
+                    | defn_head f_opt_paren_args '=' command
+                    | defn_head f_opt_paren_args '=' command 'rescue' arg
+                    | defs_head f_opt_paren_args '=' command
+                    | defs_head f_opt_paren_args '=' command 'rescue' arg
+                    |
+                    | lhs '=' command_rhs
                     | lhs '=' mrhs
+                    |
+                    | var_lhs tOP_ASGN command_rhs
+                    |
+                    | primary '[' opt_call_args ']' tOP_ASGN command_rhs
+                    | primary call_op tIDENTIFIER   tOP_ASGN command_rhs
+                    | primary call_op tCONSTANT     tOP_ASGN command_rhs
+                    | primary '::'    tCONSTANT     tOP_ASGN command_rhs
+                    | primary '::'    tIDENTIFIER   tOP_ASGN command_rhs
+                    | backref                       tOP_ASGN command_rhs
+                    |
+                    | mlhs '=' command_call
                     | mlhs '=' mrhs_arg 'rescue' stmt
                     | mlhs '=' mrhs_arg
                     | expr
 
-        command_asgn: lhs '=' command_rhs
+         command_rhs: command_call
+                    | command_call 'rescue' stmt
+                    | lhs '=' command_rhs
                     | var_lhs tOP_ASGN command_rhs
                     | primary '[' opt_call_args ']' tOP_ASGN command_rhs
                     | primary call_op tIDENTIFIER tOP_ASGN command_rhs
@@ -57,10 +74,6 @@
                     | defs_head f_opt_paren_args '=' command
                     | defs_head f_opt_paren_args '=' command 'rescue' arg
                     | backref tOP_ASGN command_rhs
-
-         command_rhs: command_call
-                    | command_call 'rescue' stmt
-                    | command_asgn
 
                 expr: command_call
                     | expr 'and' expr
