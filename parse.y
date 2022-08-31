@@ -362,9 +362,7 @@
 
          opt_bv_decl: ';' bv_decls
 
-            bv_decls: separated_by(item = bvar, sep = ',')
-
-                bvar: tIDENTIFIER
+            bv_decls: separated_by(item = tIDENTIFIER, sep = ',')
 
               lambda: tLAMBDA f_larglist lambda_body
 
