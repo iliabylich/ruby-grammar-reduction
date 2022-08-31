@@ -1,4 +1,4 @@
-                  op: '|'
+                op_t: '|'
                     | '^'
                     | '&'
                     | tCMP
@@ -29,18 +29,18 @@
                     | tASET
                     | '`'
 
-           operation: tIDENTIFIER
+         operation_t: tIDENTIFIER
                     | tCONSTANT
                     | tFID
 
-          operation2: operation
-                    | op
+        operation2_t: operation_t
+                    | op_t
 
-          operation3: tIDENTIFIER
+        operation3_t: tIDENTIFIER
                     | tFID
-                    | op
+                    | op_
 
-            reswords: '__LINE__'
+          reswords_t: '__LINE__'
                     | '__FILE__'
                     | '__ENCODING__'
                     | 'BEGIN'
@@ -82,31 +82,31 @@
                     | 'while'
                     | 'until'
 
-               fname: tIDENTIFIER
+             fname_t: tIDENTIFIER
                     | tCONSTANT
                     | tFID
-                    | op
-                    | reswords
+                    | op_t
+                    | reswords_t
 
-               relop: '>'
+             relop_t: '>'
                     | '<'
                     | '>='
                     | '<='
 
-      simple_numeric: tINTEGER
+    simple_numeric_t: tINTEGER
                     | tFLOAT
                     | tRATIONAL
                     | tIMAGINARY
 
        user_variable: tIDENTIFIER
                     | tCONSTANT
-                    | nonlocal_var
+                    | nonlocal_var_t
 
-        nonlocal_var: tIVAR
+      nonlocal_var_t: tIVAR
                     | tGVAR
                     | tCVAR
 
-    keyword_variable: 'nil'
+  keyword_variable_t: 'nil'
                     | 'self'
                     | 'true'
                     | 'false'
@@ -114,21 +114,21 @@
                     | '__LINE__'
                     | '__ENCODING__'
 
-             backref: tNTH_REF
+           backref_t: tNTH_REF
                     | tBACK_REF
 
-        dot_or_colon: '.'
+      dot_or_colon_t: '.'
                     | '::'
 
-             call_op: '.'
+           call_op_t: '.'
                     | '&.'
 
-            call_op2: '.'
+          call_op2_t: '.'
                     | '&.'
                     | '::'
 
-         method_name: tIDENTIFIER
+       method_name_t: tIDENTIFIER
                     | tCONSTANT
 
-                term: ';'
+              term_t: ';'
                     | '\n'

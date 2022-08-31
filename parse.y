@@ -49,9 +49,9 @@
                     | var_lhs tOP_ASGN command_rhs
                     |
                     | primary '[' opt_call_args ']' tOP_ASGN command_rhs
-                    | primary call_op method_name   tOP_ASGN command_rhs
-                    | primary '::'    method_name   tOP_ASGN command_rhs
-                    | backref                       tOP_ASGN command_rhs
+                    | primary call_op_t method_name_t   tOP_ASGN command_rhs
+                    | primary '::'    method_name_t   tOP_ASGN command_rhs
+                    | backref_t                       tOP_ASGN command_rhs
                     |
                     | mlhs '=' command_call
                     | mlhs '=' mrhs_arg 'rescue' stmt
@@ -63,13 +63,13 @@
                     | lhs '=' command_rhs
                     | var_lhs tOP_ASGN command_rhs
                     | primary '[' opt_call_args ']' tOP_ASGN command_rhs
-                    | primary call_op method_name tOP_ASGN command_rhs
-                    | primary '::' method_name tOP_ASGN command_rhs
+                    | primary call_op_t method_name_t tOP_ASGN command_rhs
+                    | primary '::' method_name_t tOP_ASGN command_rhs
                     | defn_head f_opt_paren_args '=' command
                     | defn_head f_opt_paren_args '=' command 'rescue' arg
                     | defs_head f_opt_paren_args '=' command
                     | defs_head f_opt_paren_args '=' command 'rescue' arg
-                    | backref tOP_ASGN command_rhs
+                    | backref_t tOP_ASGN command_rhs
 
                 expr: command_call
                     | expr 'and' expr
@@ -80,24 +80,24 @@
                     | arg 'in' p_top_expr_body
                     | arg
 
-           defn_head: 'def' fname
+           defn_head: 'def' fname_t
 
-           defs_head: 'def' singleton dot_or_colon fname
+           defs_head: 'def' singleton dot_or_colon_t fname_t
 
         command_call: command
                     | block_command
 
        block_command: block_call
-                    | block_call call_op2 operation2 call_args
+                    | block_call call_op2_t operation2_t call_args
 
      cmd_brace_block: '{' opt_block_param compstmt '}'
 
-             command: operation call_args
-                    | operation call_args cmd_brace_block
-                    | primary call_op operation2 call_args
-                    | primary call_op operation2 call_args cmd_brace_block
-                    | primary '::' operation2 call_args
-                    | primary '::' operation2 call_args cmd_brace_block
+             command: operation_t call_args
+                    | operation_t call_args cmd_brace_block
+                    | primary call_op_t operation2_t call_args
+                    | primary call_op_t operation2_t call_args cmd_brace_block
+                    | primary '::' operation2_t call_args
+                    | primary '::' operation2_t call_args cmd_brace_block
                     | 'super' call_args
                     | 'yield' call_args
                     | 'return' call_args
@@ -131,20 +131,20 @@
                     | mlhs_post ',' mlhs_item
 
            mlhs_node: user_variable
-                    | keyword_variable
+                    | keyword_variable_t
                     | primary '[' opt_call_args ']'
-                    | primary call_op method_name
-                    | primary '::' method_name
+                    | primary call_op_t method_name_t
+                    | primary '::' method_name_t
                     | '::' tCONSTANT
-                    | backref
+                    | backref_t
 
                  lhs: user_variable
-                    | keyword_variable
+                    | keyword_variable_t
                     | primary '[' opt_call_args ']'
-                    | primary call_op method_name
-                    | primary '::' method_name
+                    | primary call_op_t method_name_t
+                    | primary '::' method_name_t
                     | '::' tCONSTANT
-                    | backref
+                    | backref_t
 
                cname: tIDENTIFIER
                     | tCONSTANT
@@ -153,16 +153,16 @@
                     | cname
                     | primary '::' cname
 
-               fitem: fname
+               fitem: fname_t
                     | symbol
 
                  arg: lhs '=' arg_rhs
                     | var_lhs tOP_ASGN arg_rhs
                     | primary '[' opt_call_args ']' tOP_ASGN arg_rhs
-                    | primary call_op method_name tOP_ASGN arg_rhs
-                    | primary '::' method_name tOP_ASGN arg_rhs
+                    | primary call_op_t method_name_t tOP_ASGN arg_rhs
+                    | primary '::' method_name_t tOP_ASGN arg_rhs
                     | '::' tCONSTANT tOP_ASGN arg_rhs
-                    | backref tOP_ASGN arg_rhs
+                    | backref_t tOP_ASGN arg_rhs
                     | arg '..' arg
                     | arg '...' arg
                     | arg '..'
@@ -175,7 +175,7 @@
                     | arg '/' arg
                     | arg '%' arg
                     | arg '**' arg
-                    | '-' simple_numeric '**' arg
+                    | '-' simple_numeric_t '**' arg
                     | '+' arg
                     | '-' arg
                     | arg '|' arg
@@ -202,8 +202,8 @@
                     | defs_head f_opt_paren_args '=' arg 'rescue' arg
                     | primary
 
-            rel_expr: arg relop arg
-                    | rel_expr relop arg
+            rel_expr: arg relop_t arg
+                    | rel_expr relop_t arg
 
            aref_args: maybe(separated_by(item = args, sep = ',') maybe(',')) maybe(separated_by(assocs ',') maybe(','))
 
@@ -258,7 +258,7 @@
                     | symbols
                     | qsymbols
                     | var_ref
-                    | backref
+                    | backref_t
                     | tFID
                     | 'begin' bodystmt 'end'
                     | '(' ')'
@@ -275,7 +275,7 @@
                     | 'defined?' '(' expr ')'
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
-                    | operation brace_block
+                    | operation_t brace_block
                     | method_call
                     | method_call brace_block
                     | lambda
@@ -292,7 +292,7 @@
                     | 'for' for_var 'in' expr do compstmt 'end'
                     |
                     | 'class' cpath superclass bodystmt 'end'
-                    | 'class' '<<' expr term bodystmt 'end'
+                    | 'class' '<<' expr term_t bodystmt 'end'
                     |
                     | 'module' cpath bodystmt 'end'
                     |
@@ -304,9 +304,9 @@
                     | 'redo'
                     | 'retry'
 
-                then: maybe(term) maybe('then')
+                then: maybe(term_t) maybe('then')
 
-                  do: term
+                  do: term_t
                     | 'do'
 
              if_tail: opt_else
@@ -376,15 +376,15 @@
                     | kDO_LAMBDA bodystmt 'end'
 
           block_call: command 'do' opt_block_param bodystmt 'end'
-                    | block_call call_op2 operation2 opt_paren_args
-                    | block_call call_op2 operation2 opt_paren_args brace_block
-                    | block_call call_op2 operation2 call_args 'do' opt_block_param bodystmt 'end'
+                    | block_call call_op2_t operation2_t opt_paren_args
+                    | block_call call_op2_t operation2_t opt_paren_args brace_block
+                    | block_call call_op2_t operation2_t call_args 'do' opt_block_param bodystmt 'end'
 
-         method_call: operation paren_args
-                    | primary call_op operation2 opt_paren_args
-                    | primary '::' operation2 paren_args
-                    | primary '::' operation3
-                    | primary call_op paren_args
+         method_call: operation_t paren_args
+                    | primary call_op_t operation2_t opt_paren_args
+                    | primary '::' operation2_t paren_args
+                    | primary '::' operation3_t
+                    | primary call_op_t paren_args
                     | primary '::' paren_args
                     | 'super' paren_args
                     | 'super'
@@ -456,29 +456,29 @@
          string_dvar: tGVAR
                     | tIVAR
                     | tCVAR
-                    | backref
+                    | backref_t
 
               symbol: tSYMBEG sym
                     | tSYMBEG string_contents tSTRING_END
 
-                 sym: fname
-                    | nonlocal_var
+                 sym: fname_t
+                    | nonlocal_var_t
 
-             numeric: simple_numeric
-                    | '-' simple_numeric
+             numeric: simple_numeric_t
+                    | '-' simple_numeric_t
 
              var_ref: user_variable
-                    | keyword_variable
+                    | keyword_variable_t
 
              var_lhs: user_variable
-                    | keyword_variable
+                    | keyword_variable_t
 
-          superclass: maybe('<' expr term)
+          superclass: maybe('<' expr term_t)
 
     f_opt_paren_args: maybe('(' f_args ')')
 
            f_arglist: '(' f_args ')'
-                    | f_args term
+                    | f_args term_t
 
            args_tail: f_kwarg ',' f_kwrest opt_f_block_arg
                     | f_kwarg opt_f_block_arg
@@ -548,6 +548,6 @@
 
            opt_terms: maybe(terms)
 
-               terms: separated_by(item = term, sep = ';')
+               terms: separated_by(item = term_t, sep = ';')
 
                 none: /* none */
