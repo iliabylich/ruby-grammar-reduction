@@ -8,10 +8,7 @@
 
              program: top_stmts opt_terms
 
-           top_stmts: separated_by(item = top_stmt, sep = terms)
-
-            top_stmt: stmt
-                    | 'BEGIN' '{' top_compstmt '}'
+           top_stmts: separated_by(item = stmt_or_begin, sep = terms)
 
             bodystmt: compstmt opt_rescue maybe('else' compstmt) opt_ensure
 
@@ -20,23 +17,20 @@
                stmts: separated_by(item = stmt_or_begin, sep = terms)
 
        stmt_or_begin: stmt
-                    | 'BEGIN' '{' top_compstmt '}'
+                    | preexe
 
-                stmt: 'alias' fitem fitem
-                    | 'alias' tGVAR tGVAR
-                    | 'alias' tGVAR tBACK_REF
-                    | 'alias' tGVAR tNTH_REF
-                    |
-                    | 'undef' fitem repeat(',' fitem)
+               preexe: 'BEGIN' '{' top_compstmt '}'
+              postexe: 'END'   '{' compstmt     '}'
+
+                stmt: alias
+                    | undef
+                    | postexe
                     |
                     | stmt 'if'     expr
                     | stmt 'unless' expr
                     | stmt 'while'  expr
                     | stmt 'until'  expr
-                    |
                     | stmt 'rescue' stmt
-                    |
-                    | 'END' '{' compstmt '}'
                     |
                     | defn_head f_opt_paren_args '=' command
                     | defn_head f_opt_paren_args '=' command 'rescue' arg
@@ -48,8 +42,8 @@
                     |
                     | var_lhs tOP_ASGN command_rhs
                     |
-                    | primary '[' opt_call_args ']' tOP_ASGN command_rhs
-                    | primary call_op_t method_name_t   tOP_ASGN command_rhs
+                    | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
+                    | primary call_op_t method_name_t tOP_ASGN command_rhs
                     | primary '::'    method_name_t   tOP_ASGN command_rhs
                     | backref_t                       tOP_ASGN command_rhs
                     |
@@ -58,13 +52,20 @@
                     | mlhs '=' mrhs_arg
                     | expr
 
+               alias: 'alias' fitem fitem
+                    | 'alias' tGVAR tGVAR
+                    | 'alias' tGVAR tBACK_REF
+                    | 'alias' tGVAR tNTH_REF
+
+               undef: 'undef' fitem repeat(',' fitem)
+
          command_rhs: command_call
                     | command_call 'rescue' stmt
                     | lhs '=' command_rhs
                     | var_lhs tOP_ASGN command_rhs
-                    | primary '[' opt_call_args ']' tOP_ASGN command_rhs
+                    | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
                     | primary call_op_t method_name_t tOP_ASGN command_rhs
-                    | primary '::' method_name_t tOP_ASGN command_rhs
+                    | primary '::' method_name_t      tOP_ASGN command_rhs
                     | defn_head f_opt_paren_args '=' command
                     | defn_head f_opt_paren_args '=' command 'rescue' arg
                     | defs_head f_opt_paren_args '=' command
