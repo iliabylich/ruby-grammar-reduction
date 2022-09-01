@@ -54,12 +54,6 @@
                     | backref_t                       tOP_ASGN RHS
                     | '::' tCONSTANT                  tOP_ASGN RHS
 
-               alias: 'alias' fitem fitem
-                    | 'alias' tGVAR tGVAR
-                    | 'alias' tGVAR tBACK_REF
-                    | 'alias' tGVAR tNTH_REF
-
-               undef: 'undef' fitem repeat<',' fitem>
 
          command_rhs: command_call maybe<'rescue' stmt>
                     |
@@ -133,9 +127,6 @@
                cpath: '::' cname_t
                     | cname_t
                     | primary '::' cname_t
-
-               fitem: fname_t
-                    | symbol
 
                  arg: lhs '=' arg_rhs
                     |
