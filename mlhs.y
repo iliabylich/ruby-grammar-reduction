@@ -11,8 +11,7 @@
                     | mlhs_splat
                     | mlhs_splat mlhs_post
 
-          mlhs_splat: '*' lhs
-                    | '*'
+          mlhs_splat: '*' maybe<lhs>
 
            mlhs_item: lhs
                     | '(' mlhs_inner ')'
