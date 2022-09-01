@@ -4,7 +4,7 @@
           mlhs_inner: mlhs_basic
                     | '(' mlhs_inner ')'
 
-          mlhs_basic: repeat<mlhs_item ','> maybe<mlhs_item>
+          mlhs_basic: separated_by<Item = mlhs_item, Sep = ','>
                     | repeat<mlhs_item ','> mlhs_splat maybe<mlhs_post>
                     | mlhs_splat maybe<mlhs_post>
 
