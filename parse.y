@@ -32,8 +32,7 @@
                     | stmt 'until'  expr
                     | stmt 'rescue' stmt
                     |
-                    | defn_head f_opt_paren_args '=' command maybe('rescue' arg)
-                    | defs_head f_opt_paren_args '=' command maybe('rescue' arg)
+                    | endless_method_def_stmt
                     |
                     | lhs '=' command_rhs
                     | lhs '=' mrhs
@@ -59,8 +58,7 @@
 
          command_rhs: command_call maybe('rescue' stmt)
                     |
-                    | defn_head f_opt_paren_args '=' command maybe('rescue' arg)
-                    | defs_head f_opt_paren_args '=' command maybe('rescue' arg)
+                    | endless_method_def_stmt
                     |
                     | lhs '=' command_rhs
                     |
@@ -79,10 +77,6 @@
                     | arg '=>' p_top_expr_body
                     | arg 'in' p_top_expr_body
                     | arg
-
-           defn_head: 'def' fname_t
-
-           defs_head: 'def' singleton dot_or_colon_t fname_t
 
         command_call: command
                     | block_command
@@ -195,10 +189,7 @@
                     |
                     | arg '?' arg ':' arg
                     |
-                    | defn_head f_opt_paren_args '=' arg
-                    | defn_head f_opt_paren_args '=' arg 'rescue' arg
-                    | defs_head f_opt_paren_args '=' arg
-                    | defs_head f_opt_paren_args '=' arg 'rescue' arg
+                    | endless_method_def_arg
                     |
                     | primary
 
@@ -288,8 +279,7 @@
                     |
                     | 'module' cpath bodystmt 'end'
                     |
-                    | defn_head f_arglist bodystmt 'end'
-                    | defs_head f_arglist bodystmt 'end'
+                    | method_def
                     |
                     | 'break'
                     | 'next'
