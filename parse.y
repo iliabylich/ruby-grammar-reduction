@@ -84,11 +84,11 @@
                     | primary call_op_t operation2_t call_args maybe<cmd_brace_block>
                     | primary '::' operation2_t call_args maybe<cmd_brace_block>
                     |
-                    | 'super'  call_args
-                    | 'yield'  call_args
-                    | 'return' call_args
-                    | 'break'  call_args
-                    | 'next'   call_args
+                    | keyword_cmd<Token = 'super',  Args = call_args>
+                    | keyword_cmd<Token = 'yield',  Args = call_args>
+                    | keyword_cmd<Token = 'return', Args = call_args>
+                    | keyword_cmd<Token = 'break',  Args = call_args>
+                    | keyword_cmd<Token = 'next',   Args = call_args>
 
                 mlhs: mlhs_basic
                     | '(' mlhs_inner ')'
@@ -168,7 +168,7 @@
                     | '!' arg
                     | '~' arg
                     |
-                    | 'defined?' arg
+                    | keyword_cmd<Keyword = 'defined?', Args = arg>
                     |
                     | arg '?' arg ':' arg
                     |
@@ -238,11 +238,6 @@
                     | '::' tCONSTANT
                     | '[' aref_args ']'
                     | '{' assoc_list '}'
-                    | 'return'
-                    | 'yield' '(' call_args ')'
-                    | 'yield' '(' ')'
-                    | 'yield'
-                    | 'defined?' '(' expr ')'
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
                     | operation_t brace_block
@@ -268,10 +263,15 @@
                     |
                     | method_def
                     |
-                    | 'break'
-                    | 'next'
-                    | 'redo'
-                    | 'retry'
+                    | keyword_cmd<Keyword = 'break', Args = none>
+                    | keyword_cmd<Keyword = 'next',  Args = none>
+                    | keyword_cmd<Keyword = 'redo',  Args = none>
+                    | keyword_cmd<Keyword = 'retry', Args = none>
+                    | keyword_cmd<Keyword = 'return', Args = none>
+                    | keyword_cmd<Keyword = 'yield', Args = '(' call_args ')'>
+                    | keyword_cmd<Keyword = 'yield', Args = '(' ')'>
+                    | keyword_cmd<Keyword = 'yield', Args = None>
+                    | keyword_cmd<Keyword = 'defined?', Args = '(' expr ')'>
 
                 then: maybe<term_t> maybe<'then'>
 
@@ -352,9 +352,10 @@
                     | primary '::' operation3_t
                     | primary call_op_t paren_args
                     | primary '::' paren_args
-                    | 'super' paren_args
-                    | 'super'
                     | primary '[' opt_call_args ']'
+                    |
+                    | keyword_cmd<Keyword = 'super', Args = paren_args>
+                    | keyword_cmd<Keyword = 'super', Args = none>
 
          brace_block: '{'  opt_block_param compstmt '}'
                     | 'do' opt_block_param bodystmt 'end'
