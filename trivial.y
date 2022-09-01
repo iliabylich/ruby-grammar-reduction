@@ -123,6 +123,17 @@
            backref_t: tNTH_REF
                     | tBACK_REF
 
+             cname_t: tIDENTIFIER
+                    | tCONSTANT
+
+       string_dvar_t: tGVAR
+                    | tIVAR
+                    | tCVAR
+                    | backref_t
+
+               sym_t: fname_t
+                    | nonlocal_var_t
+
       dot_or_colon_t: '.'
                     | '::'
 

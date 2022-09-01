@@ -130,12 +130,9 @@
                     | '::' tCONSTANT
                     | backref_t
 
-               cname: tIDENTIFIER
-                    | tCONSTANT
-
-               cpath: '::' cname
-                    | cname
-                    | primary '::' cname
+               cpath: '::' cname_t
+                    | cname_t
+                    | primary '::' cname_t
 
                fitem: fname_t
                     | symbol
@@ -411,19 +408,11 @@
      string_contents: repeat(string_content)
 
       string_content: tSTRING_CONTENT
-                    | tSTRING_DVAR string_dvar
+                    | tSTRING_DVAR string_dvar_t
                     | tSTRING_DBEG compstmt tSTRING_DEND
 
-         string_dvar: tGVAR
-                    | tIVAR
-                    | tCVAR
-                    | backref_t
-
-              symbol: tSYMBEG sym
+              symbol: tSYMBEG sym_t
                     | tSYMBEG string_contents tSTRING_END
-
-                 sym: fname_t
-                    | nonlocal_var_t
 
              numeric: maybe('-') simple_numeric_t
 
