@@ -4,12 +4,9 @@
           mlhs_inner: mlhs_basic
                     | '(' mlhs_inner ')'
 
-          mlhs_basic: mlhs_head
-                    | mlhs_head mlhs_item
-                    | mlhs_head mlhs_splat
-                    | mlhs_head mlhs_splat mlhs_post
-                    | mlhs_splat
-                    | mlhs_splat mlhs_post
+          mlhs_basic: mlhs_head maybe<mlhs_item>
+                    | mlhs_head mlhs_splat maybe<mlhs_post>
+                    | mlhs_splat maybe<mlhs_post>
 
           mlhs_splat: '*' maybe<lhs>
 
