@@ -390,9 +390,9 @@
 
              string1: tSTRING_BEG string_contents tSTRING_END
 
-             xstring: tXSTRING_BEG repeat<string_content> tSTRING_END
+             xstring: tXSTRING_BEG string_contents tSTRING_END
 
-              regexp: tREGEXP_BEG repeat<string_content> tREGEXP_END
+              regexp: tREGEXP_BEG string_contents tREGEXP_END
 
                words: tWORDS_BEG separated_by<Item = word, Sep = ' '> tSTRING_END
 
