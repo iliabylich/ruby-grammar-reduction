@@ -5,6 +5,9 @@
 // repeat(A) means "A zero or more times"
 // at_least_once(A) means "A one or more times"
 // separated_by(item = A, sep = B) means "zero or more A separated by B"
+//
+// foo<T>: T '=' T means that rule 'foo' is parameterized over T
+// foo: bar<T> means that foo has a derivation bar applied with rule T
 
              program: top_stmts opt_terms
 
@@ -37,16 +40,19 @@
                     | lhs '=' command_rhs
                     | lhs '=' mrhs
                     |
-                    | var_lhs_t                       tOP_ASGN command_rhs
-                    | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
-                    | primary call_op_t method_name_t tOP_ASGN command_rhs
-                    | primary '::'      method_name_t tOP_ASGN command_rhs
-                    | backref_t                       tOP_ASGN command_rhs
+                    | op_asgn<RHS = command_rhs>
                     |
                     | mlhs '=' command_call
                     | mlhs '=' mrhs_arg 'rescue' stmt
                     | mlhs '=' mrhs_arg
                     | expr
+
+        op_asgn<RHS>: var_lhs_t                       tOP_ASGN RHS
+                    | primary '[' opt_call_args ']'   tOP_ASGN RHS
+                    | primary call_op_t method_name_t tOP_ASGN RHS
+                    | primary '::'      method_name_t tOP_ASGN RHS
+                    | backref_t                       tOP_ASGN RHS
+                    | '::' tCONSTANT                  tOP_ASGN RHS
 
                alias: 'alias' fitem fitem
                     | 'alias' tGVAR tGVAR
@@ -61,11 +67,7 @@
                     |
                     | lhs '=' command_rhs
                     |
-                    | var_lhs_t                       tOP_ASGN command_rhs
-                    | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
-                    | primary call_op_t method_name_t tOP_ASGN command_rhs
-                    | primary '::'      method_name_t tOP_ASGN command_rhs
-                    | backref_t                       tOP_ASGN command_rhs
+                    | op_asgn<RHS = command_rhs>
 
                 expr: command_call
                     | expr 'and' expr
@@ -137,12 +139,7 @@
 
                  arg: lhs '=' arg_rhs
                     |
-                    | var_lhs_t                       tOP_ASGN arg_rhs
-                    | primary '[' opt_call_args ']'   tOP_ASGN arg_rhs
-                    | primary call_op_t method_name_t tOP_ASGN arg_rhs
-                    | primary '::'      method_name_t tOP_ASGN arg_rhs
-                    | '::' tCONSTANT                  tOP_ASGN arg_rhs
-                    | backref_t                       tOP_ASGN arg_rhs
+                    | op_asgn<RHS = arg_rhs>
                     |
                     | arg '..' arg
                     | arg '...' arg
