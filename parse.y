@@ -37,8 +37,7 @@
                     | lhs '=' command_rhs
                     | lhs '=' mrhs
                     |
-                    | var_lhs_t tOP_ASGN command_rhs
-                    |
+                    | var_lhs_t                       tOP_ASGN command_rhs
                     | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
                     | primary call_op_t method_name_t tOP_ASGN command_rhs
                     | primary '::'      method_name_t tOP_ASGN command_rhs
@@ -62,8 +61,7 @@
                     |
                     | lhs '=' command_rhs
                     |
-                    | var_lhs_t tOP_ASGN command_rhs
-                    |
+                    | var_lhs_t                       tOP_ASGN command_rhs
                     | primary '[' opt_call_args ']'   tOP_ASGN command_rhs
                     | primary call_op_t method_name_t tOP_ASGN command_rhs
                     | primary '::'      method_name_t tOP_ASGN command_rhs
@@ -142,7 +140,7 @@
                     | var_lhs_t                       tOP_ASGN arg_rhs
                     | primary '[' opt_call_args ']'   tOP_ASGN arg_rhs
                     | primary call_op_t method_name_t tOP_ASGN arg_rhs
-                    | primary '::' method_name_t      tOP_ASGN arg_rhs
+                    | primary '::'      method_name_t tOP_ASGN arg_rhs
                     | '::' tCONSTANT                  tOP_ASGN arg_rhs
                     | backref_t                       tOP_ASGN arg_rhs
                     |
