@@ -110,16 +110,16 @@
 
           mlhs_basic: mlhs_head
                     | mlhs_head mlhs_item
-                    | mlhs_head '*' mlhs_node
-                    | mlhs_head '*' mlhs_node ',' mlhs_post
+                    | mlhs_head '*' lhs
+                    | mlhs_head '*' lhs ',' mlhs_post
                     | mlhs_head '*'
                     | mlhs_head '*' ',' mlhs_post
-                    | '*' mlhs_node
-                    | '*' mlhs_node ',' mlhs_post
+                    | '*' lhs
+                    | '*' lhs ',' mlhs_post
                     | '*'
                     | '*' ',' mlhs_post
 
-           mlhs_item: mlhs_node
+           mlhs_item: lhs
                     | '(' mlhs_inner ')'
 
            mlhs_head: mlhs_item ','
@@ -127,14 +127,6 @@
 
            mlhs_post: mlhs_item
                     | mlhs_post ',' mlhs_item
-
-           mlhs_node: user_variable_t
-                    | keyword_variable_t
-                    | primary '[' opt_call_args ']'
-                    | primary call_op_t method_name_t
-                    | primary '::' method_name_t
-                    | '::' tCONSTANT
-                    | backref_t
 
                  lhs: user_variable_t
                     | keyword_variable_t
