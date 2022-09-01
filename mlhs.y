@@ -1,4 +1,4 @@
-                mlhs: mlhs_list
+                mlhs: mlhs_primitive maybe<',' mlhs_list>
                     | '(' mlhs ')'
 
         // Runtime validation: this list can have only one splat
