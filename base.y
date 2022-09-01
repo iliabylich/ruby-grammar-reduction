@@ -9,3 +9,8 @@
 separated_by<Item, Sep>: none
                        | Item
                        | Item Sep separated_by<Item, Sep>
+
+       parenthesized<T>: '(' T ')'
+
+ maybe_parenthesized<T>: T
+                       | parenthesized<T>
