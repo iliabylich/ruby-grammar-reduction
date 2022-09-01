@@ -4,13 +4,9 @@
           mlhs_inner: mlhs_basic
                     | '(' mlhs_inner ')'
 
+        // Runtime validation: this list can have only one splat
           mlhs_basic: separated_by<Item = mlhs_item, Sep = ','>
-                    | repeat<mlhs_item ','> mlhs_splat maybe<mlhs_post>
-                    | mlhs_splat maybe<mlhs_post>
-
-          mlhs_splat: '*' maybe<lhs>
 
            mlhs_item: lhs
+                    | '*' maybe<lhs>
                     | '(' mlhs_inner ')'
-
-           mlhs_post: repeat<',' mlhs_item>
