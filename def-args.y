@@ -14,32 +14,32 @@
             // req -> opt -> (single) rest -> post -> kw[req/opt/rest] -> block
             def_args: separated_by<Item = def_arg, Sep = ','>
 
-             def_arg: required_arg
-                    | optional_arg
-                    | rest_arg
-                    | required_arg
-                    | required_kwarg
-                    | optional_kwarg
-                    | kwrest_arg
-                    | block_arg
+             def_arg: _arg
+                    | _optarg
+                    | _rest
+                    | _arg
+                    | _kwarg
+                    | _kwoptarg
+                    | _kwrest
+                    | _blockarg
 
-        required_arg: tIDENTIFIER
+                _arg: tIDENTIFIER
                     | '(' multi_args ')'
 
-        optional_arg: tIDENTIFIER '=' primary
+             _optarg: tIDENTIFIER '=' primary
 
-            rest_arg: '*' maybe<tIDENTIFIER>
+               _rest: '*' maybe<tIDENTIFIER>
 
-      required_kwarg: tLABEL
+              _kwarg: tLABEL
 
-      optional_kwarg: tLABEL maybe<primary>
+           _kwoptarg: tLABEL maybe<primary>
 
-          kwrest_arg: '**' maybe<tIDENTIFIER>
+             _kwrest: '**' maybe<tIDENTIFIER>
 
-           block_arg: '&' tIDENTIFIER
+           _blockarg: '&' tIDENTIFIER
 
-          // There must must be a runtime check that rest_arg appears only once
+          // There must must be a runtime check that restarg appears only once
           multi_args: separated_by<Item = multi_arg, Sep = ','>
 
-           multi_arg: required_arg
-                    | rest_arg
+           multi_arg: _arg
+                    | _rest
