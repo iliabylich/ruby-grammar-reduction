@@ -35,7 +35,7 @@
                     | stmt 'until'  expr
                     | stmt 'rescue' stmt
                     |
-                    | endless_method_def_stmt
+                    | endless_method_def<Return = command>
                     |
                     | lhs '=' command_rhs
                     | lhs '=' mrhs
@@ -57,7 +57,7 @@
 
          command_rhs: command_call maybe<'rescue' stmt>
                     |
-                    | endless_method_def_stmt
+                    | endless_method_def<Return = command>
                     |
                     | lhs '=' command_rhs
                     |
@@ -146,7 +146,7 @@
                     |
                     | arg '?' arg ':' arg
                     |
-                    | endless_method_def_arg
+                    | endless_method_def<Return = arg>
                     |
                     | primary
 
