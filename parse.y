@@ -295,6 +295,7 @@
                     | '|' block_param opt_bv_decl '|'
 
          opt_bv_decl: ';' bv_decls
+                    | none
 
             bv_decls: separated_by<Item = tIDENTIFIER, Sep = ','>
 
