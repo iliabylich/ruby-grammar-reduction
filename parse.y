@@ -25,15 +25,15 @@
                preexe: 'BEGIN' '{' top_compstmt '}'
               postexe: 'END'   '{' compstmt     '}'
 
-                stmt: alias
+                stmt: stmt_head 'if'     expr
+                    | stmt_head 'unless' expr
+                    | stmt_head 'while'  expr
+                    | stmt_head 'until'  expr
+                    | stmt_head 'rescue' stmt
+
+           stmt_head: alias
                     | undef
                     | postexe
-                    |
-                    | stmt 'if'     expr
-                    | stmt 'unless' expr
-                    | stmt 'while'  expr
-                    | stmt 'until'  expr
-                    | stmt 'rescue' stmt
                     |
                     | endless_method_def<Return = command>
                     |
