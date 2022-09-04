@@ -43,10 +43,8 @@
                     | op_asgn<RHS = command_rhs>
                     |
                     | mlhs '=' command_call
-                    | mlhs '=' mrhs 'rescue' stmt
-                    | mlhs '=' arg 'rescue' stmt
-                    | mlhs '=' mrhs
-                    | mlhs '=' arg
+                    | mlhs '=' mrhs maybe('rescue' stmt)
+                    | mlhs '=' arg maybe('rescue' stmt)
                     | expr
 
         op_asgn<RHS>: var_lhs_t                       tOP_ASGN RHS
