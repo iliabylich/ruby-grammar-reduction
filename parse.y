@@ -295,9 +295,9 @@
 
             bv_decls: separated_by<Item = tIDENTIFIER, Sep = ','>
 
-              lambda: tLAMBDA f_larglist lambda_body
+              lambda: tLAMBDA lambda_args lambda_body
 
-          f_larglist: '(' f_args maybe<';' bv_decls> ')'
+         lambda_args: '(' f_args maybe<';' bv_decls> ')'
                     | f_args
 
          lambda_body: tLAMBEG compstmt '}'
