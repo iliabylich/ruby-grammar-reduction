@@ -117,9 +117,6 @@
            var_ref_t: user_variable_t
                     | keyword_variable_t
 
-           var_lhs_t: user_variable_t
-                    | keyword_variable_t
-
            backref_t: tNTH_REF
                     | tBACK_REF
 
