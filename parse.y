@@ -25,6 +25,8 @@
                preexe: 'BEGIN' '{' top_compstmt '}'
               postexe: 'END'   '{' compstmt     '}'
 
+                // %nonassoc 'if' 'unless' 'while' 'until'
+                // %left 'rescue'
                 stmt: stmt_head 'if'     expr
                     | stmt_head 'unless' expr
                     | stmt_head 'while'  expr
