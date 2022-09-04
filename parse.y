@@ -339,10 +339,10 @@
 
           superclass: maybe<'<' expr term_t>
 
-    f_opt_paren_args: maybe<'(' f_args ')'>
+    f_opt_paren_args: maybe<'(' maybe<f_args> ')'>
 
-           f_arglist: '(' f_args ')'
-                    | f_args term_t
+           f_arglist: '(' maybe<f_args> ')'
+                    | maybe<f_args> term_t
 
            args_tail: f_kwarg ',' f_kwrest opt_f_block_arg
                     | f_kwarg opt_f_block_arg
@@ -366,7 +366,6 @@
                     | f_rest_arg opt_args_tail
                     | f_rest_arg ',' f_arg opt_args_tail
                     | args_tail
-                    | /* none */
 
           f_arg_item: tIDENTIFIER
                     | '(' f_margs ')'
