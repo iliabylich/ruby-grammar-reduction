@@ -266,39 +266,7 @@
         f_any_kwrest: '**' maybe<tIDENTIFIER>
                     | '**' 'nil'
 
-     block_args_tail: f_block_kwarg ',' f_kwrest opt_f_block_arg
-                    | f_block_kwarg opt_f_block_arg
-                    | f_any_kwrest opt_f_block_arg
-                    | f_block_arg
-
- opt_block_args_tail: maybe<',' block_args_tail>
-
-         block_param: f_arg ',' f_block_optarg ',' f_rest_arg opt_block_args_tail
-                    | f_arg ',' f_block_optarg ',' f_rest_arg ',' f_arg opt_block_args_tail
-                    | f_arg ',' f_block_optarg opt_block_args_tail
-                    | f_arg ',' f_block_optarg ',' f_arg opt_block_args_tail
-                    | f_arg ',' f_rest_arg opt_block_args_tail
-                    | f_arg ','
-                    | f_arg ',' f_rest_arg ',' f_arg opt_block_args_tail
-                    | f_arg opt_block_args_tail
-                    | f_block_optarg ',' f_rest_arg opt_block_args_tail
-                    | f_block_optarg ',' f_rest_arg ',' f_arg opt_block_args_tail
-                    | f_block_optarg opt_block_args_tail
-                    | f_block_optarg ',' f_arg opt_block_args_tail
-                    | f_rest_arg opt_block_args_tail
-                    | f_rest_arg ',' f_arg opt_block_args_tail
-                    | block_args_tail
-
-     opt_block_param: maybe<block_params>
-
-        block_params: '|' maybe(block_param) maybe<';' bv_decls> '|'
-
-            bv_decls: separated_by<Item = tIDENTIFIER, Sep = ','>
-
               lambda: tLAMBDA lambda_args lambda_body
-
-         lambda_args: '(' f_args maybe<';' bv_decls> ')'
-                    | f_args
 
          lambda_body: tLAMBEG compstmt '}'
                     | kDO_LAMBDA bodystmt 'end'
