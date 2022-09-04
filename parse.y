@@ -44,8 +44,8 @@
                     | lhs tOP_ASGN command_rhs
                     |
                     | mlhs '=' command_call
-                    | mlhs '=' mrhs maybe('rescue' stmt)
-                    | mlhs '=' arg maybe('rescue' stmt)
+                    | mlhs '=' mrhs maybe<'rescue' stmt>
+                    | mlhs '=' arg maybe<'rescue' stmt>
                     | expr
 
                  lhs: user_variable_t
@@ -289,19 +289,15 @@
                     | f_rest_arg ',' f_arg opt_block_args_tail
                     | block_args_tail
 
-     opt_block_param: maybe<block_param_def>
+     opt_block_param: maybe<block_params>
 
-     block_param_def: '|' opt_bv_decl '|'
-                    | '|' block_param opt_bv_decl '|'
-
-         opt_bv_decl: ';' bv_decls
-                    | none
+        block_params: '|' maybe(block_param) maybe<';' bv_decls> '|'
 
             bv_decls: separated_by<Item = tIDENTIFIER, Sep = ','>
 
               lambda: tLAMBDA f_larglist lambda_body
 
-          f_larglist: '(' f_args opt_bv_decl ')'
+          f_larglist: '(' f_args maybe<';' bv_decls> ')'
                     | f_args
 
          lambda_body: tLAMBEG compstmt '}'
