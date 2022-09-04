@@ -5,6 +5,11 @@
                         def_head: defn_head
                                 | defs_head
 
-                      method_def: def_head f_arglist bodystmt 'end'
+                      method_def: def_head method_def_args bodystmt 'end'
 
-        endless_method_def<Body>: def_head f_opt_paren_args '=' Body maybe('rescue' arg)
+                 method_def_args: '(' maybe<def_args> ')'
+                                | maybe<def_args> term_t
+
+        endless_method_def<Body>: def_head endless_method_args '=' Body maybe('rescue' arg)
+
+             endless_method_args: maybe<'(' maybe<def_args> ')'>

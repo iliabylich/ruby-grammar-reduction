@@ -25,7 +25,7 @@
                     | f_any_kwrest opt_f_block_arg
                     | f_block_arg
 
-         lambda_args: '(' f_args maybe<';' block_params2> ')'
-                    | f_args
+         lambda_args: '(' def_args maybe<';' block_params2> ')'
+                    | def_args
 
        block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
