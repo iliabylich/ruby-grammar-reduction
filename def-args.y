@@ -2,7 +2,7 @@
 
         block_params: '|' maybe(block_params1) maybe<';' block_params2> '|'
 
-      // There must be a runtime check that ',' goes after a sole required argument
+       // There must be a runtime check that ',' goes after a sole required argument
        block_params1: def_args maybe<','>
 
          lambda_args: '(' def_args maybe<';' block_params2> ')'
@@ -11,7 +11,7 @@
        block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
 
             // There must be a runtime check that params are ordered
-            // req -> opt -> rest -> post -> kw[req/opt/rest] -> block
+            // req -> opt -> (single) rest -> post -> kw[req/opt/rest] -> block
             def_args: separated_by<Item = def_arg, Sep = ','>
 
              def_arg: required_arg
@@ -24,7 +24,7 @@
                     | block_arg
 
         required_arg: tIDENTIFIER
-                    | '(' f_margs ')'
+                    | '(' multi_args ')'
 
         optional_arg: tIDENTIFIER '=' primary
 
@@ -38,16 +38,8 @@
 
            block_arg: '&' tIDENTIFIER
 
-              f_marg: tIDENTIFIER
-                    | '(' f_margs ')'
+          // There must must be a runtime check that rest_arg appears only once
+          multi_args: separated_by<Item = multi_arg, Sep = ','>
 
-         f_marg_list: f_marg
-                    | f_marg_list ',' f_marg
-
-             f_margs: f_marg_list
-                    | f_marg_list ',' f_rest_marg
-                    | f_marg_list ',' f_rest_marg ',' f_marg_list
-                    | f_rest_marg
-                    | f_rest_marg ',' f_marg_list
-
-         f_rest_marg: '*' maybe<tIDENTIFIER>
+           multi_arg: required_arg
+                    | rest_arg
