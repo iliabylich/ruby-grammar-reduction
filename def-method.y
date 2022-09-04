@@ -2,14 +2,12 @@
 
                defs_head: 'def' singleton dot_or_colon_t fname_t
 
-              method_def: defn_head f_arglist bodystmt 'end'
-                        | defs_head f_arglist bodystmt 'end'
+                def_head: defn_head
+                        | defs_head
 
- endless_method_def_stmt: defn_head f_opt_paren_args '=' command maybe('rescue' arg)
-                        | defs_head f_opt_paren_args '=' command maybe('rescue' arg)
+              method_def: def_head f_arglist bodystmt 'end'
 
-  endless_method_def_arg: defn_head f_opt_paren_args '=' arg
-                        | defn_head f_opt_paren_args '=' arg 'rescue' arg
-                        | defs_head f_opt_paren_args '=' arg
-                        | defs_head f_opt_paren_args '=' arg 'rescue' arg
+ endless_method_def_stmt: def_head f_opt_paren_args '=' command maybe('rescue' arg)
+
+  endless_method_def_arg: def_head f_opt_paren_args '=' arg maybe('rescue' arg)
 
