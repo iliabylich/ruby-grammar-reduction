@@ -1,8 +1,8 @@
     opt_block_params: maybe<block_params>
 
-        block_params: '|' maybe(block_param) maybe<';' bv_decls> '|'
+        block_params: '|' maybe(block_params1) maybe<';' block_params2> '|'
 
-         block_param: f_arg ',' f_block_optarg ',' f_rest_arg opt_block_args_tail
+       block_params1: f_arg ',' f_block_optarg ',' f_rest_arg opt_block_args_tail
                     | f_arg ',' f_block_optarg ',' f_rest_arg ',' f_arg opt_block_args_tail
                     | f_arg ',' f_block_optarg opt_block_args_tail
                     | f_arg ',' f_block_optarg ',' f_arg opt_block_args_tail
@@ -25,7 +25,7 @@
                     | f_any_kwrest opt_f_block_arg
                     | f_block_arg
 
-         lambda_args: '(' f_args maybe<';' bv_decls> ')'
+         lambda_args: '(' f_args maybe<';' block_params2> ')'
                     | f_args
 
-            bv_decls: separated_by<Item = tIDENTIFIER, Sep = ','>
+       block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
