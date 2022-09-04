@@ -47,13 +47,7 @@
                     | mlhs '=' arg maybe('rescue' stmt)
                     | expr
 
-        op_asgn<RHS>: user_variable_t                 tOP_ASGN RHS
-                    | keyword_variable_t              tOP_ASGN RHS
-                    | primary '[' opt_call_args ']'   tOP_ASGN RHS
-                    | primary call_op_t method_name_t tOP_ASGN RHS
-                    | primary '::' method_name_t      tOP_ASGN RHS
-                    | backref_t                       tOP_ASGN RHS
-                    | '::' tCONSTANT                  tOP_ASGN RHS
+        op_asgn<RHS>: lhs tOP_ASGN RHS
 
                  lhs: user_variable_t
                     | keyword_variable_t
