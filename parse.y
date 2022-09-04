@@ -39,15 +39,12 @@
                     |
                     | lhs '=' command_rhs
                     | lhs '=' mrhs
-                    |
-                    | op_asgn<RHS = command_rhs>
+                    | lhs tOP_ASGN command_rhs
                     |
                     | mlhs '=' command_call
                     | mlhs '=' mrhs maybe('rescue' stmt)
                     | mlhs '=' arg maybe('rescue' stmt)
                     | expr
-
-        op_asgn<RHS>: lhs tOP_ASGN RHS
 
                  lhs: user_variable_t
                     | keyword_variable_t
@@ -64,7 +61,7 @@
                     |
                     | lhs '=' command_rhs
                     |
-                    | op_asgn<RHS = command_rhs>
+                    | lhs tOP_ASGN command_rhs
 
                 expr: command_call
                     | expr 'and' expr
@@ -99,7 +96,7 @@
 
                  arg: lhs '=' arg_rhs
                     |
-                    | op_asgn<RHS = arg_rhs>
+                    | lhs tOP_ASGN = arg_rhs
                     |
                     | arg '..' arg
                     | arg '...' arg
