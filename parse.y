@@ -249,23 +249,6 @@
              for_var: lhs
                     | mlhs
 
-              f_marg: tIDENTIFIER
-                    | '(' f_margs ')'
-
-         f_marg_list: f_marg
-                    | f_marg_list ',' f_marg
-
-             f_margs: f_marg_list
-                    | f_marg_list ',' f_rest_marg
-                    | f_marg_list ',' f_rest_marg ',' f_marg_list
-                    | f_rest_marg
-                    | f_rest_marg ',' f_marg_list
-
-         f_rest_marg: '*' maybe<tIDENTIFIER>
-
-        f_any_kwrest: '**' maybe<tIDENTIFIER>
-                    | '**' 'nil'
-
               lambda: tLAMBDA lambda_args lambda_body
 
          lambda_body: tLAMBEG compstmt '}'

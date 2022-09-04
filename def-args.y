@@ -37,3 +37,17 @@
           kwrest_arg: '**' maybe<tIDENTIFIER>
 
            block_arg: '&' tIDENTIFIER
+
+              f_marg: tIDENTIFIER
+                    | '(' f_margs ')'
+
+         f_marg_list: f_marg
+                    | f_marg_list ',' f_marg
+
+             f_margs: f_marg_list
+                    | f_marg_list ',' f_rest_marg
+                    | f_marg_list ',' f_rest_marg ',' f_marg_list
+                    | f_rest_marg
+                    | f_rest_marg ',' f_marg_list
+
+         f_rest_marg: '*' maybe<tIDENTIFIER>
