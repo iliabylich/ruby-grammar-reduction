@@ -80,7 +80,7 @@
        block_command: block_call
                     | block_call call_op2_t operation2_t call_args
 
-     cmd_brace_block: '{' opt_block_param compstmt '}'
+     cmd_brace_block: '{' opt_block_params compstmt '}'
 
              command: operation_t call_args maybe<cmd_brace_block>
                     | primary call_op_t operation2_t call_args maybe<cmd_brace_block>
@@ -271,10 +271,10 @@
          lambda_body: tLAMBEG compstmt '}'
                     | kDO_LAMBDA bodystmt 'end'
 
-          block_call: command 'do' opt_block_param bodystmt 'end'
+          block_call: command 'do' opt_block_params bodystmt 'end'
                     | block_call call_op2_t operation2_t opt_paren_args
                     | block_call call_op2_t operation2_t opt_paren_args brace_block
-                    | block_call call_op2_t operation2_t call_args 'do' opt_block_param bodystmt 'end'
+                    | block_call call_op2_t operation2_t call_args 'do' opt_block_params bodystmt 'end'
 
          method_call: operation_t paren_args
                     | primary call_op_t operation2_t opt_paren_args
@@ -287,8 +287,8 @@
                     | keyword_cmd<Keyword = 'super', Args = paren_args>
                     | keyword_cmd<Keyword = 'super', Args = none>
 
-         brace_block: '{'  opt_block_param compstmt '}'
-                    | 'do' opt_block_param bodystmt 'end'
+         brace_block: '{'  opt_block_params compstmt '}'
+                    | 'do' opt_block_params bodystmt 'end'
 
            case_args: separated_by<Item = case_arg, Sep = ','>
 

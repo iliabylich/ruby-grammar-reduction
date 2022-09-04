@@ -1,4 +1,4 @@
-     opt_block_param: maybe<block_params>
+    opt_block_params: maybe<block_params>
 
         block_params: '|' maybe(block_param) maybe<';' bv_decls> '|'
 
