@@ -179,6 +179,7 @@
 
              primary: literal
                     | array
+                    | hash
                     | var_ref_t
                     | backref_t
                     | tFID
@@ -188,7 +189,6 @@
                     | '(' compstmt ')'
                     | primary '::' tCONSTANT
                     | '::' tCONSTANT
-                    | '{' assoc_list '}'
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
                     | operation_t brace_block
@@ -272,14 +272,6 @@
 
            singleton: var_ref_t
                     | '(' expr ')'
-
-          assoc_list: separated_by<Item = assoc, Sep = ','>
-
-               assoc: arg '=>' arg
-                    | tLABEL maybe<arg>
-                    | tSTRING_BEG string_contents tLABEL_END arg
-                    | '**' arg
-                    | '**'
 
            opt_terms: maybe<terms>
 
