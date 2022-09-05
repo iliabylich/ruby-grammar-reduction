@@ -5,9 +5,7 @@
                 // 2. ',' requires non-empty list of items
               _items: separated_by<Item = _item, Sep = ','> maybe<','>
 
-               _item:
-                    // values:
-                    | '*' arg
+               _item: '*' arg
                     | arg
                     |
                     // pairs:
