@@ -274,14 +274,6 @@
                cases: opt_else
                     | case_body
 
-          opt_rescue: maybe<'rescue' exc_list exc_var then compstmt opt_rescue>
-
-            exc_list: arg
-                    | mrhs
-                    | none
-
-             exc_var: maybe<'=>' lhs>
-
           superclass: maybe<'<' expr term_t>
 
            singleton: var_ref_t
