@@ -185,15 +185,7 @@
                     | args ',' '*' arg
                     | '*' arg
 
-             primary: numeric
-                    | symbol
-                    | strings
-                    | xstring
-                    | regexp
-                    | words
-                    | qwords
-                    | symbols
-                    | qsymbols
+             primary: literal
                     | var_ref_t
                     | backref_t
                     | tFID
@@ -291,36 +283,6 @@
                     | none
 
              exc_var: maybe<'=>' lhs>
-
-             strings: tCHAR
-                    | at_least_once<string1>
-
-             string1: tSTRING_BEG string_contents tSTRING_END
-
-             xstring: tXSTRING_BEG string_contents tSTRING_END
-
-              regexp: tREGEXP_BEG string_contents tREGEXP_END
-
-               words: tWORDS_BEG separated_by<Item = word, Sep = ' '> tSTRING_END
-
-                word: at_least_once<string_content>
-
-             symbols: tSYMBOLS_BEG separated_by<Item = word, Sep = ' '> tSTRING_END
-
-              qwords: tQWORDS_BEG separated_by<Item = tSTRING_CONTENT, item = ' ') tSTRING_END
-
-            qsymbols: tQSYMBOLS_BEG ' ' separated_by<Item = tSTRING_CONTENT, item = ' ') tSTRING_END
-
-     string_contents: repeat<string_content>
-
-      string_content: tSTRING_CONTENT
-                    | tSTRING_DVAR string_dvar_t
-                    | tSTRING_DBEG compstmt tSTRING_DEND
-
-              symbol: tSYMBEG sym_t
-                    | tSYMBEG string_contents tSTRING_END
-
-             numeric: maybe<'-'> simple_numeric_t
 
           superclass: maybe<'<' expr term_t>
 
