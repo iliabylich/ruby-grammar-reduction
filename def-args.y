@@ -2,7 +2,8 @@
 
         block_params: '|' maybe(block_params1) maybe<';' block_params2> '|'
 
-       // There must be a runtime check that ',' goes after a sole required argument
+        // There must be runtime validations:
+        // 1. ',' is allowed after a sole required argument
        block_params1: def_args maybe<','>
 
          lambda_args: '(' def_args maybe<';' block_params2> ')'
@@ -10,8 +11,9 @@
 
        block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
 
-            // There must be a runtime check that params are ordered
-            // req -> opt -> (single) rest -> post -> kw[req/opt/rest] -> block
+            // There must be runtime validations:
+            // 1. params are ordered
+            //    req -> opt -> (single) rest -> post -> kw[req/opt/rest] -> block
             def_args: separated_by<Item = def_arg, Sep = ','>
 
              def_arg: _arg
@@ -38,7 +40,8 @@
 
            _blockarg: '&' tIDENTIFIER
 
-          // There must must be a runtime check that restarg appears only once
+          // There must be runtime validations:
+          // 1. restarg appears only once
           multi_args: separated_by<Item = multi_arg, Sep = ','>
 
            multi_arg: _arg

@@ -1,7 +1,8 @@
                 mlhs: mlhs_primitive maybe<',' mlhs_list>
                     | '(' mlhs ')'
 
-        // Runtime validation: this list can have only one splat
+            // There must be runtime validations:
+            // 1. the list can have only one splat
            mlhs_list: separated_by<Item = mlhs_item, Sep = ','>
 
       mlhs_primitive: lhs
