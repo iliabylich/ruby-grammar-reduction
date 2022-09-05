@@ -25,13 +25,7 @@
                preexe: 'BEGIN' '{' top_compstmt '}'
               postexe: 'END'   '{' compstmt     '}'
 
-                // %nonassoc 'if' 'unless' 'while' 'until'
-                // %left 'rescue'
-                stmt: stmt_head 'if'     expr
-                    | stmt_head 'unless' expr
-                    | stmt_head 'while'  expr
-                    | stmt_head 'until'  expr
-                    | stmt_head 'rescue' stmt
+                stmt: stmt_head maybe<stmt_tail>
 
            stmt_head: alias
                     | undef
@@ -47,6 +41,14 @@
                     | mlhs '=' mrhs maybe<'rescue' stmt>
                     | mlhs '=' arg maybe<'rescue' stmt>
                     | expr
+
+            // %nonassoc 'if' 'unless' 'while' 'until'
+            // %left 'rescue'
+           stmt_tail: 'if'     expr
+                    | 'unless' expr
+                    | 'while'  expr
+                    | 'until'  expr
+                    | 'rescue' stmt
 
                  lhs: user_variable_t
                     | keyword_variable_t
