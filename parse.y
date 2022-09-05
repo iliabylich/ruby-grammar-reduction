@@ -88,11 +88,7 @@
                     | primary call_op_t operation2_t call_args maybe<cmd_brace_block>
                     | primary '::' operation2_t call_args maybe<cmd_brace_block>
                     |
-                    | keyword_cmd<Token = 'super',  Args = call_args>
-                    | keyword_cmd<Token = 'yield',  Args = call_args>
-                    | keyword_cmd<Token = 'return', Args = call_args>
-                    | keyword_cmd<Token = 'break',  Args = call_args>
-                    | keyword_cmd<Token = 'next',   Args = call_args>
+                    | command_keyword_cmd
 
                cpath: maybe<maybe<primary> '::'> cname_t
 
@@ -136,7 +132,7 @@
                     | '!' arg
                     | '~' arg
                     |
-                    | keyword_cmd<Keyword = 'defined?', Args = arg>
+                    | expr_keyword_cmd
                     |
                     | arg '?' arg ':' arg
                     |
@@ -214,15 +210,7 @@
                     |
                     | method_def
                     |
-                    | keyword_cmd<Keyword = 'break', Args = none>
-                    | keyword_cmd<Keyword = 'next',  Args = none>
-                    | keyword_cmd<Keyword = 'redo',  Args = none>
-                    | keyword_cmd<Keyword = 'retry', Args = none>
-                    | keyword_cmd<Keyword = 'return', Args = none>
-                    | keyword_cmd<Keyword = 'yield', Args = '(' call_args ')'>
-                    | keyword_cmd<Keyword = 'yield', Args = '(' ')'>
-                    | keyword_cmd<Keyword = 'yield', Args = None>
-                    | keyword_cmd<Keyword = 'defined?', Args = '(' expr ')'>
+                    | primary_keyword_cmd
 
                 then: maybe<term_t> maybe<'then'>
 
@@ -253,8 +241,7 @@
                     | primary '::' paren_args
                     | primary '[' opt_call_args ']'
                     |
-                    | keyword_cmd<Keyword = 'super', Args = paren_args>
-                    | keyword_cmd<Keyword = 'super', Args = none>
+                    | method_call_keyword_cmd
 
          brace_block: '{'  opt_block_params compstmt '}'
                     | 'do' opt_block_params bodystmt 'end'
