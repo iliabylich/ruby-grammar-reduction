@@ -94,9 +94,7 @@
                     | keyword_cmd<Token = 'break',  Args = call_args>
                     | keyword_cmd<Token = 'next',   Args = call_args>
 
-               cpath: '::' cname_t
-                    | cname_t
-                    | primary '::' cname_t
+               cpath: maybe<maybe<primary> '::'> cname_t
 
                  arg: lhs '=' arg_rhs
                     |
