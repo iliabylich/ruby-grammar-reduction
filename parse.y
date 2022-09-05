@@ -144,12 +144,6 @@
                     |
                     | primary
 
-           aref_args: maybe<
-                        separated_by<Item = args, Sep = ','>
-                        maybe<','>>
-                      maybe<
-                        separated_by<Item = assocs, Item = ','> maybe<','>>
-
              arg_rhs: arg repeat<'rescue' arg>
 
           paren_args: '(' opt_call_args ')'
@@ -184,6 +178,7 @@
                     | '*' arg
 
              primary: literal
+                    | array
                     | var_ref_t
                     | backref_t
                     | tFID
@@ -193,7 +188,6 @@
                     | '(' compstmt ')'
                     | primary '::' tCONSTANT
                     | '::' tCONSTANT
-                    | '[' aref_args ']'
                     | '{' assoc_list '}'
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
