@@ -17,7 +17,7 @@
 
 separated_by<Item, Sep>: none
                        | Item
-                       | Item Sep separated_by<Item, Sep>
+                       | Item Sep separated_by<Item = Item, Sep = Sep>
 
        parenthesized<T>: '(' T ')'
 

@@ -11,7 +11,7 @@
             _numeric: maybe1<T = '-'> simple_numeric_t
 
             _strings: tCHAR
-                    | at_least_once<_string1>
+                    | at_least_once<T = _string1>
 
             _string1: tSTRING_BEG string_contents tSTRING_END
 
@@ -21,7 +21,7 @@
 
               _words: tWORDS_BEG separated_by<Item = _word, Sep = ' '> tSTRING_END
 
-               _word: at_least_once<_string_content>
+               _word: at_least_once<T = _string_content>
 
             _symbols: tSYMBOLS_BEG separated_by<Item = _word, Sep = ' '> tSTRING_END
 
