@@ -34,6 +34,10 @@ Rule = Struct.new(:name, :derivations, keyword_init: true) do
 
     out.join("\n")
   end
+
+  def base_name
+    name.name
+  end
 end
 
 PlainRuleName = Struct.new(:name) do
