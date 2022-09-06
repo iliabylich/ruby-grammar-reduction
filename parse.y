@@ -1,14 +1,3 @@
-// A B means "A followed by B"
-// A | B means "A or B"
-// maybe<A> means "maybe A"
-// (A B) means "A followed by B, together"
-// repeat<A> means "A zero or more times"
-// at_least_once<A> means "A one or more times"
-// separated_by<Item = A, Sep = B> means "zero or more A separated by B"
-//
-// foo<T>: T '=' T means that rule 'foo' is parameterized over T
-// foo: bar<T> means that foo has a derivation bar applied with rule T
-
              program: top_stmts opt_terms
 
            top_stmts: separated_by<Item = stmt_or_begin, Sep = terms>
