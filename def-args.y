@@ -1,6 +1,6 @@
     opt_block_params: maybe<block_params>
 
-        block_params: '|' maybe(block_params1) maybe<';' block_params2> '|'
+        block_params: '|' maybe<block_params1> maybe<';' block_params2> '|'
 
         // There must be runtime validations:
         // 1. ',' is allowed after a sole required argument

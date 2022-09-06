@@ -10,6 +10,6 @@
                  method_def_args: '(' maybe<def_args> ')'
                                 | maybe<def_args> term_t
 
-        endless_method_def<Body>: def_head endless_method_args '=' Body maybe('rescue' arg)
+        endless_method_def<Body>: def_head endless_method_args '=' Body maybe<'rescue' arg>
 
              endless_method_args: maybe<'(' maybe<def_args> ')'>
