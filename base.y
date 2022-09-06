@@ -4,7 +4,7 @@
          maybe2<T1, T2>: T1 T2
                        | none
 
-     maybe2<T1, T2, T3>: T1 T2 T3
+     maybe3<T1, T2, T3>: T1 T2 T3
                        | none
 
              repeat1<T>: none

@@ -2,11 +2,13 @@
 
            top_stmts: separated_by<Item = stmt_or_begin, Sep = terms>
 
-            bodystmt: compstmt opt_rescue maybe2<T1 = 'else', T2 = compstmt> maybe2<T1 = 'ensure', T2 = compstmt>
+        top_compstmt: top_stmts opt_terms
+
+               stmts: separated_by<Item = stmt_or_begin, Sep = terms>
 
             compstmt: stmts opt_terms
 
-               stmts: separated_by<Item = stmt_or_begin, Sep = terms>
+            bodystmt: compstmt opt_rescue maybe2<T1 = 'else', T2 = compstmt> maybe2<T1 = 'ensure', T2 = compstmt>
 
        stmt_or_begin: stmt
                     | preexe

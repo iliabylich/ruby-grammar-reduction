@@ -4,6 +4,7 @@ require_relative './grammar'
 
 require_relative './actions/find_rules_used_in_one_place'
 require_relative './actions/ensure_local_rules_are_private'
+require_relative './actions/find_dead_references'
 
 grammar =
   Dir['**/*.y']
@@ -16,3 +17,4 @@ puts grammar.pretty
 
 find_rules_used_in_one_place(grammar)
 ensure_local_rules_are_private(grammar)
+find_dead_references(grammar)

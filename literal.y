@@ -1,5 +1,5 @@
              literal: _numeric
-                    | _symbol
+                    | symbol
                     | _strings
                     | _xstring
                     | _regexp
@@ -10,7 +10,7 @@
 
             _numeric: maybe1<T = '-'> simple_numeric_t
 
-             _symbol: tSYMBEG sym_t
+              symbol: tSYMBEG sym_t
                     | tSYMBEG string_contents tSTRING_END
 
             _strings: tCHAR

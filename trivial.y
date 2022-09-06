@@ -38,7 +38,7 @@
 
         operation3_t: tIDENTIFIER
                     | tFID
-                    | op_
+                    | _op_t
 
          _reswords_t: '__LINE__'
                     | '__FILE__'

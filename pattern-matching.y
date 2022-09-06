@@ -89,23 +89,17 @@
                     | '..' _p_primitive
                     | '...' _p_primitive
 
-        _p_primitive: numeric
-                    | symbol
-                    | strings
-                    | xstring
-                    | regexp
-                    | words
-                    | qwords
-                    | symbols
-                    | qsymbols
-                    | keyword_variable
+        _p_primitive: literal
+                    | keyword_variable_t
                     | lambda
 
           _p_var_ref: '^' tIDENTIFIER
-                    | '^' nonlocal_var
+                    | '^' tIVAR
+                    | '^' tGVAR
+                    | '^' tCVAR
 
          _p_expr_ref: '^' '(' expr ')'
 
-            _p_const: '::' cname
-                    | _p_const '::' cname
+            _p_const: '::' cname_t
+                    | _p_const '::' cname_t
                     | tCONSTANT
