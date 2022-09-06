@@ -13,7 +13,7 @@
 
            top_stmts: separated_by<Item = stmt_or_begin, Sep = terms>
 
-            bodystmt: compstmt opt_rescue maybe<'else' compstmt> maybe<'ensure' compstmt>
+            bodystmt: compstmt opt_rescue maybe2<T1 = 'else', T2 = compstmt> maybe2<T1 = 'ensure', T2 = compstmt>
 
             compstmt: stmts opt_terms
 
@@ -25,7 +25,7 @@
                preexe: 'BEGIN' '{' top_compstmt '}'
               postexe: 'END'   '{' compstmt     '}'
 
-                stmt: stmt_head maybe<stmt_tail>
+                stmt: stmt_head maybe1<T = stmt_tail>
 
            stmt_head: alias
                     | undef
@@ -38,8 +38,8 @@
                     | lhs tOP_ASGN command_rhs
                     |
                     | mlhs '=' command_call
-                    | mlhs '=' mrhs maybe<'rescue' stmt>
-                    | mlhs '=' arg maybe<'rescue' stmt>
+                    | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = stmt>
+                    | mlhs '=' arg maybe2<T1 = 'rescue', T2 = stmt>
                     | expr
 
             // %nonassoc 'if' 'unless' 'while' 'until'
@@ -59,7 +59,7 @@
                     | backref_t
 
 
-         command_rhs: command_call maybe<'rescue' stmt>
+         command_rhs: command_call maybe2<T1 = 'rescue', T2 = stmt>
                     |
                     | endless_method_def<Return = command>
                     |
@@ -84,13 +84,13 @@
 
      cmd_brace_block: '{' opt_block_params compstmt '}'
 
-             command: operation_t call_args maybe<cmd_brace_block>
-                    | primary call_op_t operation2_t call_args maybe<cmd_brace_block>
-                    | primary '::' operation2_t call_args maybe<cmd_brace_block>
+             command: operation_t call_args maybe1<T = cmd_brace_block>
+                    | primary call_op_t operation2_t call_args maybe1<T = cmd_brace_block>
+                    | primary '::' operation2_t call_args maybe1<T = cmd_brace_block>
                     |
                     | command_keyword_cmd
 
-               cpath: maybe<maybe<primary> '::'> cname_t
+               cpath: maybe2<T1 = maybe1<T = primary>, T2 = '::'> cname_t
 
                  arg: lhs '=' arg_rhs
                     |
@@ -146,7 +146,7 @@
                     | '(' args ',' '...' ')'
                     | '(' '...' ')'
 
-      opt_paren_args: maybe<paren_args>
+      opt_paren_args: maybe1<T = paren_args>
 
        opt_call_args: none
                     | call_args
@@ -160,20 +160,20 @@
                     | args ',' assocs opt_block_arg
                     | block_arg
 
-           block_arg: '&' maybe<arg>
+           block_arg: '&' maybe1<T = arg>
 
-       opt_block_arg: maybe<',' block_arg>
+       opt_block_arg: maybe2<T1 = ',', T2 = block_arg>
 
                 args: arg
-                    | '*' maybe<arg>
+                    | '*' maybe1<T = arg>
                     | args ',' arg
-                    | args ',' '*' maybe<arg>
+                    | args ',' '*' maybe1<T = arg>
 
                 mrhs: args ',' arg
                     | args ',' '*' arg
                     | '*' arg
 
-                then: maybe<term_t> maybe<'then'>
+                then: maybe1<T = term_t> maybe1<T = 'then'>
 
              if_tail: opt_else
                     | 'elsif' expr then compstmt if_tail
@@ -209,19 +209,19 @@
 
            case_args: separated_by<Item = case_arg, Sep = ','>
 
-            case_arg: maybe<'*'> arg
+            case_arg: maybe1<T = '*'> arg
 
            case_body: 'when' case_args then compstmt cases
 
                cases: opt_else
                     | case_body
 
-          superclass: maybe<'<' expr term_t>
+          superclass: maybe3<T1 = '<', T2 = expr, T3 = term_t>
 
            singleton: var_ref_t
                     | '(' expr ')'
 
-           opt_terms: maybe<terms>
+           opt_terms: maybe1<T = terms>
 
                terms: separated_by<Item = term_t, Sep = ';'>
 

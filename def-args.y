@@ -1,12 +1,12 @@
-    opt_block_params: maybe<block_params>
+    opt_block_params: maybe1<T = block_params>
 
-        block_params: '|' maybe<block_params1> maybe<';' block_params2> '|'
+        block_params: '|' maybe1<T = block_params1> maybe2<T1 = ';', T2 = block_params2> '|'
 
         // There must be runtime validations:
         // 1. ',' is allowed after a sole required argument
-       block_params1: def_args maybe<','>
+       block_params1: def_args maybe1<T = ','>
 
-         lambda_args: '(' def_args maybe<';' block_params2> ')'
+         lambda_args: '(' def_args maybe2<T1 = ';', T2 = block_params2> ')'
                     | def_args
 
        block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
@@ -30,13 +30,13 @@
 
              _optarg: tIDENTIFIER '=' primary
 
-               _rest: '*' maybe<tIDENTIFIER>
+               _rest: '*' maybe1<T = tIDENTIFIER>
 
               _kwarg: tLABEL
 
-           _kwoptarg: tLABEL maybe<primary>
+           _kwoptarg: tLABEL maybe1<T = primary>
 
-             _kwrest: '**' maybe<tIDENTIFIER>
+             _kwrest: '**' maybe1<T = tIDENTIFIER>
 
            _blockarg: '&' tIDENTIFIER
 

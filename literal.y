@@ -8,7 +8,7 @@
                     | symbols
                     | qsymbols
 
-            _numeric: maybe<'-'> simple_numeric_t
+            _numeric: maybe1<T = '-'> simple_numeric_t
 
             _strings: tCHAR
                     | at_least_once<_string1>

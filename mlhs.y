@@ -1,4 +1,4 @@
-                mlhs: mlhs_primitive maybe<',' mlhs_list>
+                mlhs: mlhs_primitive maybe2<T1 = ',', T2 = mlhs_list>
                     | '(' mlhs ')'
 
             // There must be runtime validations:
@@ -6,7 +6,7 @@
            mlhs_list: separated_by<Item = mlhs_item, Sep = ','>
 
       mlhs_primitive: lhs
-                    | '*' maybe<lhs>
+                    | '*' maybe1<T = lhs>
 
            mlhs_item: mlhs_primitive
                     | '(' mlhs ')'
