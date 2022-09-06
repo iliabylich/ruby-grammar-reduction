@@ -29,7 +29,7 @@
 
            _qsymbols: tQSYMBOLS_BEG ' ' separated_by<Item = tSTRING_CONTENT, item = ' ') tSTRING_END
 
-     string_contents: repeat<_string_content>
+     string_contents: repeat1<T = _string_content>
 
      _string_content: tSTRING_CONTENT
                     | tSTRING_DVAR string_dvar_t

@@ -140,7 +140,7 @@
                     |
                     | primary
 
-             arg_rhs: arg repeat<'rescue' arg>
+             arg_rhs: arg repeat2<T1 = 'rescue', T2 = arg>
 
           paren_args: '(' opt_call_args ')'
                     | '(' args ',' '...' ')'
