@@ -22,4 +22,4 @@ separated_by<Item, Sep>: none
        parenthesized<T>: '(' T ')'
 
  maybe_parenthesized<T>: T
-                       | parenthesized<T>
+                       | parenthesized<T = T>

@@ -19,7 +19,7 @@ Grammar = Struct.new(:rules, keyword_init: true) do
   end
 
   def pretty
-    max_length = rules.map { |rule| rule.name.length }.max
+    max_length = rules.map { |rule| rule.name.pretty.length }.max
     rules.map { |rule| rule.pretty(offset: max_length) }.join("\n\n")
   end
 end

@@ -23,6 +23,7 @@
                     | preexe
 
                preexe: 'BEGIN' '{' top_compstmt '}'
+
               postexe: 'END'   '{' compstmt     '}'
 
                 stmt: stmt_head maybe1<T = stmt_tail>
@@ -94,7 +95,7 @@
 
                  arg: lhs '=' arg_rhs
                     |
-                    | lhs tOP_ASGN = arg_rhs
+                    | lhs tOP_ASGN '=' arg_rhs
                     |
                     | arg '..' arg
                     | arg '...' arg
@@ -224,5 +225,3 @@
            opt_terms: maybe1<T = terms>
 
                terms: separated_by<Item = term_t, Sep = ';'>
-
-                none: /* none */

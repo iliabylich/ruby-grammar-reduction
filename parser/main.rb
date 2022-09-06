@@ -4,8 +4,8 @@ require_relative './grammar'
 
 grammar =
   Dir['**/*.y']
-    .map { |filepath| File.read(filepath) }
-    .map { |src| Grammar.parse(src) }
+    .map { |filepath| [filepath, File.read(filepath)] }
+    .map { |(filepath, src)| puts "Parsing #{filepath}"; Grammar.parse(src) }
     .reduce(&:merge)
 
 puts grammar.pretty

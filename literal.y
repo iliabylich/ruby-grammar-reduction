@@ -25,9 +25,9 @@
 
             _symbols: tSYMBOLS_BEG separated_by<Item = _word, Sep = ' '> tSTRING_END
 
-             _qwords: tQWORDS_BEG separated_by<Item = tSTRING_CONTENT, item = ' ') tSTRING_END
+             _qwords: tQWORDS_BEG separated_by<Item = tSTRING_CONTENT, item = ' '> tSTRING_END
 
-           _qsymbols: tQSYMBOLS_BEG ' ' separated_by<Item = tSTRING_CONTENT, item = ' ') tSTRING_END
+           _qsymbols: tQSYMBOLS_BEG ' ' separated_by<Item = tSTRING_CONTENT, item = ' '> tSTRING_END
 
      string_contents: repeat1<T = _string_content>
 
