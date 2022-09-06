@@ -2,9 +2,9 @@
                 // 1. '**' is not allowed (it's for call args only)
                 hash: '{' assocs '}'
 
-              assocs: separated_by<Item = assoc, Sep = ','>
+              assocs: separated_by<Item = _assoc, Sep = ','>
 
-               assoc: arg '=>' arg
+              _assoc: arg '=>' arg
                     | tLABEL maybe1<T = arg>
                     | tSTRING_BEG string_contents tLABEL_END arg
                     | '**' arg

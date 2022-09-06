@@ -1,5 +1,5 @@
-Rule = Struct.new(:name, :derivations, keyword_init: true) do
-  def self.parse(src)
+Rule = Struct.new(:filename, :name, :derivations, keyword_init: true) do
+  def self.parse(filename, src)
     src = src.strip
 
     head, *rest = src.lines.map(&:strip)
@@ -17,6 +17,7 @@ Rule = Struct.new(:name, :derivations, keyword_init: true) do
     derivation = Derivation.parse(derivation)
     derivations = rest.map { |src| src.gsub('|', '').strip }.reject(&:empty?).map { |src| Derivation.parse(src) }
     new(
+      filename: filename,
       name: name,
       derivations: [derivation, *derivations]
     )
@@ -37,6 +38,10 @@ Rule = Struct.new(:name, :derivations, keyword_init: true) do
 
   def base_name
     name.name
+  end
+
+  def references
+    derivations.flat_map(&:references)
   end
 end
 

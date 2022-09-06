@@ -15,5 +15,14 @@ def find_rules_used_in_one_place(grammar)
     result
   end
 
-  grammar.rules.group_by { |rule| count.call(rule.base_name) }[1]
+  rules = grammar.rules.select { |rule| count.call(rule.base_name) == 1 }
+
+  allowed = %w[alias array hash literal preexe postexe undef]
+  puts "Rules used once:"
+  rules.each do |rule|
+    name = rule.base_name
+    next if name.start_with?('_')
+    next if allowed.include?(name)
+    puts "+ #{name}"
+  end
 end

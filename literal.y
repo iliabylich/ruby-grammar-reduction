@@ -1,14 +1,17 @@
-             literal: numeric
-                    | symbol
-                    | strings
-                    | xstring
-                    | regexp
-                    | words
-                    | qwords
-                    | symbols
-                    | qsymbols
+             literal: _numeric
+                    | _symbol
+                    | _strings
+                    | _xstring
+                    | _regexp
+                    | _words
+                    | _qwords
+                    | _symbols
+                    | _qsymbols
 
             _numeric: maybe1<T = '-'> simple_numeric_t
+
+             _symbol: tSYMBEG sym_t
+                    | tSYMBEG string_contents tSTRING_END
 
             _strings: tCHAR
                     | at_least_once<T = _string1>
@@ -35,5 +38,3 @@
                     | tSTRING_DVAR string_dvar_t
                     | tSTRING_DBEG compstmt tSTRING_DEND
 
-             _symbol: tSYMBEG sym_t
-                    | tSYMBEG string_contents tSTRING_END

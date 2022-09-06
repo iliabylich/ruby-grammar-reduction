@@ -1,4 +1,4 @@
-                op_t: '|'
+               _op_t: '|'
                     | '^'
                     | '&'
                     | tCMP
@@ -34,13 +34,13 @@
                     | tFID
 
         operation2_t: operation_t
-                    | op_t
+                    | _op_t
 
         operation3_t: tIDENTIFIER
                     | tFID
                     | op_
 
-          reswords_t: '__LINE__'
+         _reswords_t: '__LINE__'
                     | '__FILE__'
                     | '__ENCODING__'
                     | 'BEGIN'
@@ -85,13 +85,8 @@
              fname_t: tIDENTIFIER
                     | tCONSTANT
                     | tFID
-                    | op_t
-                    | reswords_t
-
-             relop_t: '>'
-                    | '<'
-                    | '>='
-                    | '<='
+                    | _op_t
+                    | _reswords_t
 
     simple_numeric_t: tINTEGER
                     | tFLOAT
@@ -100,9 +95,9 @@
 
      user_variable_t: tIDENTIFIER
                     | tCONSTANT
-                    | nonlocal_var_t
+                    | _nonlocal_var_t
 
-      nonlocal_var_t: tIVAR
+     _nonlocal_var_t: tIVAR
                     | tGVAR
                     | tCVAR
 
@@ -129,7 +124,7 @@
                     | backref_t
 
                sym_t: fname_t
-                    | nonlocal_var_t
+                    | _nonlocal_var_t
 
       dot_or_colon_t: '.'
                     | '::'

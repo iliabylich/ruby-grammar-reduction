@@ -75,9 +75,8 @@ Derivation = Struct.new(:rules, keyword_init: true) do
     rules.map(&:pretty).join(' ')
   end
 
-  # Some rules can be generic, this is the reason why this method exists
-  def used_rules(applied_with)
-
+  def references
+    rules.flat_map(&:references)
   end
 end
 
@@ -85,11 +84,19 @@ PlainRuleRef = Struct.new(:name) do
   def pretty
     name
   end
+
+  def references
+    [name]
+  end
 end
 
 GenericRuleRef = Struct.new(:name, :args) do
   def pretty
     args = self.args.map { |name, value| "#{name} = #{value.pretty}" }.join(",")
     "#{name}<#{args}>"
+  end
+
+  def references
+    [name, *args.values.flat_map(&:references)]
   end
 end

@@ -1,22 +1,22 @@
-    opt_block_params: maybe1<T = block_params>
+    opt_block_params: maybe1<T = _block_params>
 
-        block_params: '|' maybe1<T = block_params1> maybe2<T1 = ';', T2 = block_params2> '|'
+       _block_params: '|' maybe1<T = _block_params1> maybe2<T1 = ';', T2 = _block_params2> '|'
 
         // There must be runtime validations:
         // 1. ',' is allowed after a sole required argument
-       block_params1: def_args maybe1<T = ','>
+      _block_params1: def_args maybe1<T = ','>
 
-         lambda_args: '(' def_args maybe2<T1 = ';', T2 = block_params2> ')'
+         lambda_args: '(' def_args maybe2<T1 = ';', T2 = _block_params2> ')'
                     | def_args
 
-       block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
+      _block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
 
             // There must be runtime validations:
             // 1. params are ordered
             //    req -> opt -> (single) rest -> post -> kw[req/opt/rest] -> block
-            def_args: separated_by<Item = def_arg, Sep = ','>
+            def_args: separated_by<Item = _def_arg, Sep = ','>
 
-             def_arg: _arg
+            _def_arg: _arg
                     | _optarg
                     | _rest
                     | _arg
@@ -26,7 +26,7 @@
                     | _blockarg
 
                 _arg: tIDENTIFIER
-                    | '(' multi_args ')'
+                    | '(' _multi_args ')'
 
              _optarg: tIDENTIFIER '=' primary
 
@@ -42,7 +42,7 @@
 
           // There must be runtime validations:
           // 1. restarg appears only once
-          multi_args: separated_by<Item = multi_arg, Sep = ','>
+         _multi_args: separated_by<Item = _multi_arg, Sep = ','>
 
-           multi_arg: _arg
+          _multi_arg: _arg
                     | _rest

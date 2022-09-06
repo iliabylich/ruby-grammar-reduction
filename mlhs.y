@@ -1,12 +1,12 @@
-                mlhs: mlhs_primitive maybe2<T1 = ',', T2 = mlhs_list>
+                mlhs: _mlhs_primitive maybe2<T1 = ',', T2 = _mlhs_list>
                     | '(' mlhs ')'
 
             // There must be runtime validations:
             // 1. the list can have only one splat
-           mlhs_list: separated_by<Item = mlhs_item, Sep = ','>
+          _mlhs_list: separated_by<Item = _mlhs_item, Sep = ','>
 
-      mlhs_primitive: lhs
+     _mlhs_primitive: lhs
                     | '*' maybe1<T = lhs>
 
-           mlhs_item: mlhs_primitive
+          _mlhs_item: _mlhs_primitive
                     | '(' mlhs ')'

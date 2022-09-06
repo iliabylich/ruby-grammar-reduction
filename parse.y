@@ -78,7 +78,11 @@
                     | primary call_op_t operation2_t call_args maybe1<T = cmd_brace_block>
                     | primary '::' operation2_t call_args maybe1<T = cmd_brace_block>
                     |
-                    | command_keyword_cmd
+                    | 'super'  call_args
+                    | 'yield'  call_args
+                    | 'return' call_args
+                    | 'break'  call_args
+                    | 'next'   call_args
 
                cpath: maybe2<T1 = maybe1<T = primary>, T2 = '::'> cname_t
 
@@ -122,7 +126,7 @@
                     | '!' arg
                     | '~' arg
                     |
-                    | expr_keyword_cmd
+                    | 'defined?' arg
                     |
                     | arg '?' arg ':' arg
                     |
@@ -192,7 +196,8 @@
                     | primary '::' paren_args
                     | primary '[' opt_call_args ']'
                     |
-                    | method_call_keyword_cmd
+                    | 'super' paren_args
+                    | 'super' none
 
          brace_block: '{'  opt_block_params compstmt '}'
                     | 'do' opt_block_params bodystmt 'end'
