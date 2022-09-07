@@ -16,9 +16,9 @@
                     | _args ',' assocs _opt_block_arg
                     | _block_arg
 
-                mrhs: _args ',' arg
-                    | _args ',' '*' arg
-                    | '*' arg
+                mrhs: separated_by<Item = _mrhs1, Sep = ','>
+
+              _mrhs1: maybe1<T = '*'> arg
 
                _args: arg
                     | '*' maybe1<T = arg>
