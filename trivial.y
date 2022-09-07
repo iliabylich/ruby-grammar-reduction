@@ -126,9 +126,6 @@
                sym_t: fname_t
                     | _nonlocal_var_t
 
-      dot_or_colon_t: '.'
-                    | '::'
-
            call_op_t: '.'
                     | '&.'
 

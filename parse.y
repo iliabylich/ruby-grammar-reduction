@@ -186,9 +186,9 @@
 
          method_call: operation_t paren_args
                     | primary call_op_t operation2_t opt_paren_args
+                    | primary call_op_t paren_args
                     | primary '::' operation2_t paren_args
                     | primary '::' operation3_t
-                    | primary call_op_t paren_args
                     | primary '::' paren_args
                     | primary '[' opt_call_args ']'
                     |
@@ -208,9 +208,6 @@
                     | case_body
 
           superclass: maybe3<T1 = '<', T2 = expr, T3 = term_t>
-
-           singleton: var_ref_t
-                    | '(' expr ')'
 
            opt_terms: maybe1<T = terms>
 
