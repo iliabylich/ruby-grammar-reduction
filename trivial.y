@@ -1,18 +1,18 @@
                _op_t: '|'
                     | '^'
                     | '&'
-                    | tCMP
-                    | tEQ
-                    | tEQQ
-                    | tMATCH
-                    | tNMATCH
+                    | '<=>'
+                    | '=='
+                    | '==='
+                    | '=~'
+                    | '!~'
                     | '>'
                     | '>='
                     | '<'
                     | '<='
-                    | tNEQ
-                    | tLSHFT
-                    | tRSHFT
+                    | '!='
+                    | '<<'
+                    | '>>'
                     | '+'
                     | '-'
                     | '*'
@@ -23,10 +23,8 @@
                     | '**'
                     | '!'
                     | '~'
-                    | tUPLUS
-                    | tUMINUS
-                    | tAREF
-                    | tASET
+                    | '[]'
+                    | '[]='
                     | '`'
 
          operation_t: tIDENTIFIER
