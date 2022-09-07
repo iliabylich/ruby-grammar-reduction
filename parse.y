@@ -74,11 +74,9 @@
        block_command: block_call
                     | block_call call_op2_t operation2_t call_args
 
-     cmd_brace_block: '{' opt_block_params compstmt '}'
-
-             command: operation_t call_args maybe1<T = cmd_brace_block>
-                    | primary call_op_t operation2_t call_args maybe1<T = cmd_brace_block>
-                    | primary '::' operation2_t call_args maybe1<T = cmd_brace_block>
+             command: operation_t call_args maybe1<T = brace_block>
+                    | primary call_op_t operation2_t call_args maybe1<T = brace_block>
+                    | primary '::' operation2_t call_args maybe1<T = brace_block>
                     |
                     | 'super'  call_args
                     | 'yield'  call_args
@@ -177,10 +175,14 @@
             opt_else: none
                     | 'else' compstmt
 
-          block_call: command 'do' opt_block_params bodystmt 'end'
+            do_block: 'do' opt_block_params bodystmt 'end'
+
+     brace_block: '{' opt_block_params compstmt '}'
+
+          block_call: command do_block
                     | block_call call_op2_t operation2_t opt_paren_args
-                    | block_call call_op2_t operation2_t opt_paren_args brace_block
-                    | block_call call_op2_t operation2_t call_args 'do' opt_block_params bodystmt 'end'
+                    | block_call call_op2_t operation2_t opt_paren_args block
+                    | block_call call_op2_t operation2_t call_args do_block
 
          method_call: operation_t paren_args
                     | primary call_op_t operation2_t opt_paren_args
@@ -193,8 +195,8 @@
                     | 'super' paren_args
                     | 'super' none
 
-         brace_block: '{'  opt_block_params compstmt '}'
-                    | 'do' opt_block_params bodystmt 'end'
+               block: brace_block
+                    | do_block
 
            case_args: separated_by<Item = case_arg, Sep = ','>
 
