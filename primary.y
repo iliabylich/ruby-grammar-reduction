@@ -26,7 +26,7 @@
                     | 'case' opt_terms case_body 'end'
                     | 'case' expr opt_terms p_case_body 'end'
                     |
-                    | 'for' for_var 'in' expr do_t compstmt 'end'
+                    | for_loop
                     |
                     | 'class' cpath superclass bodystmt 'end'
                     | 'class' '<<' expr term_t bodystmt 'end'

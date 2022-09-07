@@ -177,9 +177,6 @@
             opt_else: none
                     | 'else' compstmt
 
-             for_var: lhs
-                    | mlhs
-
               lambda: tLAMBDA lambda_args lambda_body
 
          lambda_body: tLAMBEG compstmt '}'
