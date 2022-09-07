@@ -174,10 +174,6 @@
 
             opt_else: maybe2<T1 = 'else', T2 = compstmt>
 
-            do_block: 'do' opt_block_params bodystmt 'end'
-
-         brace_block: '{' opt_block_params compstmt '}'
-
           block_call: command do_block
                     | block_call call_op2_t operation2_t opt_paren_args maybe1<T = block>
                     | block_call call_op2_t operation2_t call_args do_block
@@ -191,9 +187,6 @@
                     | primary '[' opt_call_args ']'
                     |
                     | 'super' maybe1<T = paren_args>
-
-               block: brace_block
-                    | do_block
 
            case_args: separated_by<Item = case_arg, Sep = ','>
 
