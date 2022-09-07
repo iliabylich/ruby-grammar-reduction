@@ -1,14 +1,10 @@
-          paren_args: '(' opt_call_args ')'
+                    // There must be runtime validations:
+                    // 1. trailing ',' is allowed only if arglist is not empty
+          paren_args: '(' maybe1<T = call_args> maybe1<T = ','> ')'
                     | '(' _args ',' '...' ')'
                     | '(' '...' ')'
 
-      opt_paren_args: maybe1<T = paren_args>
-
-       opt_call_args: none
-                    | call_args
-                    | _args ','
-                    | _args ',' assocs ','
-                    | assocs ','
+      opt_paren_args: maybe1<T = paren_args>'
 
            call_args: command
                     | _args _opt_block_arg

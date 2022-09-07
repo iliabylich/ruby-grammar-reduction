@@ -44,7 +44,9 @@
 
                  lhs: user_variable_t
                     | keyword_variable_t
-                    | primary '[' opt_call_args ']'
+                    // There must be runtime validations:
+                    // 1. trailing ',' is allowed only if arglist is not empty
+                    | primary '[' maybe1<T = call_args> maybe1<T = ','> ']'
                     | primary call_op_t method_name_t
                     | primary '::' method_name_t
                     | '::' tCONSTANT
@@ -152,7 +154,9 @@
                     | primary '::' operation2_t paren_args
                     | primary '::' operation3_t
                     | primary '::' paren_args
-                    | primary '[' opt_call_args ']'
+                    // There must be runtime validations:
+                    // 1. trailing ',' is allowed only if arglist is not empty
+                    | primary '[' maybe1<T = call_args> maybe1<T = ','> ']'
                     |
                     | 'super' maybe1<T = paren_args>
 
