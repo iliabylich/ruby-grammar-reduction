@@ -135,37 +135,6 @@
 
              arg_rhs: arg repeat2<T1 = 'rescue', T2 = arg>
 
-          paren_args: '(' opt_call_args ')'
-                    | '(' args ',' '...' ')'
-                    | '(' '...' ')'
-
-      opt_paren_args: maybe1<T = paren_args>
-
-       opt_call_args: none
-                    | call_args
-                    | args ','
-                    | args ',' assocs ','
-                    | assocs ','
-
-           call_args: command
-                    | args opt_block_arg
-                    | assocs opt_block_arg
-                    | args ',' assocs opt_block_arg
-                    | block_arg
-
-           block_arg: '&' maybe1<T = arg>
-
-       opt_block_arg: maybe2<T1 = ',', T2 = block_arg>
-
-                args: arg
-                    | '*' maybe1<T = arg>
-                    | args ',' arg
-                    | args ',' '*' maybe1<T = arg>
-
-                mrhs: args ',' arg
-                    | args ',' '*' arg
-                    | '*' arg
-
                 then: maybe1<T = term_t> maybe1<T = 'then'>
 
              if_tail: opt_else
