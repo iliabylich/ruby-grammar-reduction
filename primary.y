@@ -37,12 +37,12 @@
                     |
                     | _keyword_cmd
 
-        _keyword_cmd: 'break' none
-                    | 'next'  none
-                    | 'redo'  none
-                    | 'retry' none
-                    | 'return' none
+        _keyword_cmd: 'break'
+                    | 'next'
+                    | 'redo'
+                    | 'retry'
+                    | 'return'
                     | 'yield' '(' call_args ')'
                     | 'yield' '(' ')'
-                    | 'yield' none
+                    | 'yield'
                     | 'defined?' '(' expr ')'

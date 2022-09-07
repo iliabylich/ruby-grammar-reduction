@@ -71,8 +71,7 @@
         command_call: command
                     | block_command
 
-       block_command: block_call
-                    | block_call call_op2_t operation2_t call_args
+       block_command: block_call maybe3<T1 = call_op2_t, T2 = operation2_t, T3 = call_args>
 
              command: operation_t call_args maybe1<T = brace_block>
                     | primary call_op_t operation2_t call_args maybe1<T = brace_block>
