@@ -6,9 +6,6 @@
         // 1. ',' is allowed after a sole required argument
       _block_params1: def_args maybe1<T = ','>
 
-         lambda_args: '(' def_args maybe2<T1 = ';', T2 = _block_params2> ')'
-                    | def_args
-
       _block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
 
             // There must be runtime validations:

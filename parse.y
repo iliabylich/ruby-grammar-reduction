@@ -177,11 +177,6 @@
             opt_else: none
                     | 'else' compstmt
 
-              lambda: tLAMBDA lambda_args lambda_body
-
-         lambda_body: tLAMBEG compstmt '}'
-                    | kDO_LAMBDA bodystmt 'end'
-
           block_call: command 'do' opt_block_params bodystmt 'end'
                     | block_call call_op2_t operation2_t opt_paren_args
                     | block_call call_op2_t operation2_t opt_paren_args brace_block
