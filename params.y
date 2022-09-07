@@ -1,9 +1,9 @@
             // There must be runtime validations:
             // 1. params are ordered
             //    req -> opt -> (single) rest -> post -> kw[req/opt/rest] -> block
-              params: separated_by<Item = _def_arg, Sep = ','>
+              params: separated_by<Item = _param, Sep = ','>
 
-            _def_arg: _arg
+              _param: _arg
                     | _optarg
                     | _rest
                     | _arg
