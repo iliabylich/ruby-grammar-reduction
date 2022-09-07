@@ -7,12 +7,12 @@
 
                       method_def: _def_head _method_def_args bodystmt 'end'
 
-                _method_def_args: '(' maybe1<T = def_args> ')'
-                                | maybe1<T = def_args> term_t
+                _method_def_args: '(' maybe1<T = params> ')'
+                                | maybe1<T = params> term_t
 
         endless_method_def<Body>: _def_head _endless_method_args '=' Body maybe2<T1 = 'rescue', T2 = arg>
 
-            _endless_method_args: maybe3<T1 = '(', T2 = maybe1<T = def_args>, T3 = ')'>
+            _endless_method_args: maybe3<T1 = '(', T2 = maybe1<T = params>, T3 = ')'>
 
                       _singleton: var_ref_t
                                 | '(' expr ')'

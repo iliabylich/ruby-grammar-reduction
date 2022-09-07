@@ -4,14 +4,14 @@
 
         // There must be runtime validations:
         // 1. ',' is allowed after a sole required argument
-      _block_params1: def_args maybe1<T = ','>
+      _block_params1: params maybe1<T = ','>
 
       _block_params2: separated_by<Item = tIDENTIFIER, Sep = ','>
 
             // There must be runtime validations:
             // 1. params are ordered
             //    req -> opt -> (single) rest -> post -> kw[req/opt/rest] -> block
-            def_args: separated_by<Item = _def_arg, Sep = ','>
+              params: separated_by<Item = _def_arg, Sep = ','>
 
             _def_arg: _arg
                     | _optarg

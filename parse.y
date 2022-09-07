@@ -172,16 +172,14 @@
              if_tail: opt_else
                     | 'elsif' expr then compstmt if_tail
 
-            opt_else: none
-                    | 'else' compstmt
+            opt_else: maybe2<T1 = 'else', T2 = compstmt>
 
             do_block: 'do' opt_block_params bodystmt 'end'
 
-     brace_block: '{' opt_block_params compstmt '}'
+         brace_block: '{' opt_block_params compstmt '}'
 
           block_call: command do_block
-                    | block_call call_op2_t operation2_t opt_paren_args
-                    | block_call call_op2_t operation2_t opt_paren_args block
+                    | block_call call_op2_t operation2_t opt_paren_args maybe1<T = block>
                     | block_call call_op2_t operation2_t call_args do_block
 
          method_call: operation_t paren_args
@@ -192,8 +190,7 @@
                     | primary '::' paren_args
                     | primary '[' opt_call_args ']'
                     |
-                    | 'super' paren_args
-                    | 'super' none
+                    | 'super' maybe1<T = paren_args>
 
                block: brace_block
                     | do_block
