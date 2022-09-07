@@ -46,7 +46,7 @@
                     | keyword_variable_t
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty
-                    | primary '[' maybe1<T = call_args> maybe1<T = ','> ']'
+                    | primary '[' maybe1<T = args> maybe1<T = ','> ']'
                     | primary call_op_t method_name_t
                     | primary '::' method_name_t
                     | '::' tCONSTANT
@@ -73,17 +73,17 @@
         command_call: command
                     | block_command
 
-       block_command: block_call maybe3<T1 = call_op2_t, T2 = operation2_t, T3 = call_args>
+       block_command: block_call maybe3<T1 = call_op2_t, T2 = operation2_t, T3 = args>
 
-             command: operation_t call_args maybe1<T = brace_block>
-                    | primary call_op_t operation2_t call_args maybe1<T = brace_block>
-                    | primary '::' operation2_t call_args maybe1<T = brace_block>
+             command: operation_t args maybe1<T = brace_block>
+                    | primary call_op_t operation2_t args maybe1<T = brace_block>
+                    | primary '::' operation2_t args maybe1<T = brace_block>
                     |
-                    | 'super'  call_args
-                    | 'yield'  call_args
-                    | 'return' call_args
-                    | 'break'  call_args
-                    | 'next'   call_args
+                    | 'super'  args
+                    | 'yield'  args
+                    | 'return' args
+                    | 'break'  args
+                    | 'next'   args
 
                cpath: maybe2<T1 = maybe1<T = primary>, T2 = '::'> cname_t
 
@@ -146,7 +146,7 @@
 
           block_call: command do_block
                     | block_call call_op2_t operation2_t opt_paren_args maybe1<T = block>
-                    | block_call call_op2_t operation2_t call_args do_block
+                    | block_call call_op2_t operation2_t args do_block
 
          method_call: operation_t paren_args
                     | primary call_op_t operation2_t opt_paren_args
@@ -156,7 +156,7 @@
                     | primary '::' paren_args
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty
-                    | primary '[' maybe1<T = call_args> maybe1<T = ','> ']'
+                    | primary '[' maybe1<T = args> maybe1<T = ','> ']'
                     |
                     | 'super' maybe1<T = paren_args>
 

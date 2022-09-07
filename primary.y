@@ -42,7 +42,7 @@
                     | 'redo'
                     | 'retry'
                     | 'return'
-                    | 'yield' '(' call_args ')'
+                    | 'yield' '(' args ')'
                     | 'yield' '(' ')'
                     | 'yield'
                     | 'defined?' '(' expr ')'

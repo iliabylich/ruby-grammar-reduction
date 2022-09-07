@@ -3,13 +3,13 @@
                     // 2. '...' can be used only with elements
                     // 3. args are ordered:
                     //    [elements] -> [pairs] -> [block] -> ['...']
-          paren_args: '(' maybe1<T = call_args> maybe1<T = ','> ')'
+          paren_args: '(' maybe1<T = args> maybe1<T = ','> ')'
                     | '(' _args ',' '...' ')'
                     | '(' '...' ')'
 
       opt_paren_args: maybe1<T = paren_args>
 
-           call_args: command
+                args: command
                     | _args
 
                 mrhs: separated_by<Item = _mrhs1, Sep = ','>
