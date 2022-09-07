@@ -144,9 +144,10 @@
 
             opt_else: maybe2<T1 = 'else', T2 = compstmt>
 
-          block_call: command do_block
-                    | block_call call_op2_t operation2_t opt_paren_args maybe1<T = block>
-                    | block_call call_op2_t operation2_t args do_block
+          block_call: command do_block repeat1<T = chain_block_call>
+
+    chain_block_call: call_op2_t operation2_t opt_paren_args maybe1<T = block>
+                    | call_op2_t operation2_t args do_block
 
          method_call: operation_t paren_args
                     | primary call_op_t operation2_t opt_paren_args
