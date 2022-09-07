@@ -18,10 +18,10 @@
 
               _mrhs1: maybe1<T = '*'> arg
 
-               _args: arg
+               _args: separated_by<Item = _arg, Sep = ','>
+
+                _arg: arg
                     | '*' maybe1<T = arg>
-                    | _args ',' arg
-                    | _args ',' '*' maybe1<T = arg>
 
           _block_arg: '&' maybe1<T = arg>
 
