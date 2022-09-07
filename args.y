@@ -4,10 +4,12 @@
                     | '(' _args ',' '...' ')'
                     | '(' '...' ')'
 
-      opt_paren_args: maybe1<T = paren_args>'
+      opt_paren_args: maybe1<T = paren_args>
 
            call_args: command
-                    | _args _opt_block_arg
+                    | _call_args1
+
+         _call_args1: _args _opt_block_arg
                     | assocs _opt_block_arg
                     | _args ',' assocs _opt_block_arg
                     | _block_arg
