@@ -21,7 +21,7 @@
 
               _kwarg: tLABEL
 
-           _kwoptarg: tLABEL maybe1<T = primary>
+           _kwoptarg: tLABEL primary
 
              _kwrest: '**' maybe1<T = tIDENTIFIER>
 
