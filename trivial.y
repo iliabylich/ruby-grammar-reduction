@@ -27,8 +27,7 @@
                     | '[]='
                     | '`'
 
-         operation_t: tIDENTIFIER
-                    | tCONSTANT
+         operation_t: _id_or_const_t
                     | tFID
 
         operation2_t: operation_t
@@ -80,8 +79,7 @@
                     | 'while'
                     | 'until'
 
-             fname_t: tIDENTIFIER
-                    | tCONSTANT
+             fname_t: _id_or_const_t
                     | tFID
                     | _op_t
                     | _reswords_t
@@ -91,8 +89,7 @@
                     | tRATIONAL
                     | tIMAGINARY
 
-     user_variable_t: tIDENTIFIER
-                    | tCONSTANT
+     user_variable_t: _id_or_const_t
                     | _nonlocal_var_t
 
      _nonlocal_var_t: tIVAR
@@ -113,12 +110,9 @@
            backref_t: tNTH_REF
                     | tBACK_REF
 
-             cname_t: tIDENTIFIER
-                    | tCONSTANT
+             cname_t: _id_or_const_t
 
-       string_dvar_t: tGVAR
-                    | tIVAR
-                    | tCVAR
+       string_dvar_t: _nonlocal_var_t
                     | backref_t
 
                sym_t: fname_t
@@ -127,12 +121,13 @@
            call_op_t: '.'
                     | '&.'
 
-          call_op2_t: '.'
-                    | '&.'
+          call_op2_t: call_op_t
                     | '::'
 
-       method_name_t: tIDENTIFIER
+      _id_or_const_t: tIDENTIFIER
                     | tCONSTANT
+
+       method_name_t: _id_or_const_t
 
                 do_t: term_t
                     | 'do'
