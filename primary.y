@@ -26,10 +26,8 @@
                     |
                     | for_loop
                     |
-                    | 'class' cpath superclass bodystmt 'end'
-                    | 'class' '<<' expr term_t bodystmt 'end'
-                    |
-                    | 'module' cpath bodystmt 'end'
+                    | class
+                    | module
                     |
                     | method_def
                     |
