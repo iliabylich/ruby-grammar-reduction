@@ -113,15 +113,6 @@
                     |
                     | 'super' maybe1<T = paren_args>
 
-           case_args: separated_by<Item = case_arg, Sep = ','>
-
-            case_arg: maybe1<T = '*'> arg
-
-           case_body: 'when' case_args then compstmt cases
-
-               cases: opt_else
-                    | case_body
-
           superclass: maybe3<T1 = '<', T2 = expr, T3 = term_t>
 
            opt_terms: maybe1<T = terms>

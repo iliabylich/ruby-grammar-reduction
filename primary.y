@@ -22,9 +22,7 @@
                     | 'while'  expr do_t compstmt 'end'
                     | 'until'  expr do_t compstmt 'end'
                     |
-                    | 'case' expr opt_terms case_body 'end'
-                    | 'case' opt_terms case_body 'end'
-                    | 'case' expr opt_terms p_case_body 'end'
+                    | case
                     |
                     | for_loop
                     |
