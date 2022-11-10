@@ -87,54 +87,6 @@
 
                cpath: maybe2<T1 = maybe1<T = primary>, T2 = '::'> cname_t
 
-                 arg: lhs '=' arg_rhs
-                    |
-                    | lhs tOP_ASGN '=' arg_rhs
-                    |
-                    | arg '..' arg
-                    | arg '...' arg
-                    | arg '..'
-                    | arg '...'
-                    | arg '+' arg
-                    | arg '-' arg
-                    | arg '*' arg
-                    | arg '/' arg
-                    | arg '%' arg
-                    | arg '**' arg
-                    | arg '|' arg
-                    | arg '^' arg
-                    | arg '&' arg
-                    | arg '<=>' arg
-                    | arg '=' arg
-                    | arg '==' arg
-                    | arg '!=' arg
-                    | arg '=~' arg
-                    | arg '!~' arg
-                    | arg '<<' arg
-                    | arg '>>' arg
-                    | arg '&&' arg
-                    | arg '||' arg
-                    | arg '>' arg
-                    | arg '<' arg
-                    | arg '>=' arg
-                    | arg '<=' arg
-                    |
-                    | '..' arg
-                    | '...' arg
-                    | '-' simple_numeric_t '**' arg
-                    | '+' arg
-                    | '-' arg
-                    | '!' arg
-                    | '~' arg
-                    |
-                    | 'defined?' arg
-                    |
-                    | arg '?' arg ':' arg
-                    |
-                    | endless_method_def<Return = arg>
-                    |
-                    | primary
-
              arg_rhs: arg repeat2<T1 = 'rescue', T2 = arg>
 
                 then: maybe1<T = term_t> maybe1<T = 'then'>
