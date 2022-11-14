@@ -1,14 +1,14 @@
              program: top_stmts opt_terms
 
-                 lhs: user_variable_t
-                    | keyword_variable_t
+                 lhs: user_variable
+                    | keyword_variable
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty
                     | primary '[' maybe1<T = args> maybe1<T = ','> ']'
                     | primary call_op_t method_name_t
                     | primary '::' method_name_t
                     | '::' tCONSTANT
-                    | backref_t
+                    | backref
 
 
          command_rhs: command_call maybe2<T1 = 'rescue', T2 = stmt>

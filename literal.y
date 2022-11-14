@@ -8,7 +8,7 @@
                     | _symbols
                     | _qsymbols
 
-            _numeric: maybe1<T = '-'> simple_numeric_t
+            _numeric: maybe1<T = '-'> simple_numeric
 
               symbol: tSYMBEG sym_t
                     | tSYMBEG string_contents tSTRING_END
@@ -35,6 +35,6 @@
      string_contents: repeat1<T = _string_content>
 
      _string_content: tSTRING_CONTENT
-                    | tSTRING_DVAR string_dvar_t
+                    | tSTRING_DVAR string_dvar
                     | tSTRING_DBEG compstmt tSTRING_DEND
 

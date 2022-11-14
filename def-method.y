@@ -14,7 +14,7 @@
 
             _endless_method_args: maybe3<T1 = '(', T2 = maybe1<T = params>, T3 = ')'>
 
-                      _singleton: var_ref_t
+                      _singleton: var_ref
                                 | '(' expr ')'
 
                  _dot_or_colon_t: '.'

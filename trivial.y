@@ -84,19 +84,19 @@
                     | _op_t
                     | _reswords_t
 
-    simple_numeric_t: tINTEGER
+      simple_numeric: tINTEGER
                     | tFLOAT
                     | tRATIONAL
                     | tIMAGINARY
 
-     user_variable_t: _id_or_const_t
-                    | _nonlocal_var_t
+       user_variable: _id_or_const_t
+                    | _nonlocal_var
 
-     _nonlocal_var_t: tIVAR
+       _nonlocal_var: tIVAR
                     | tGVAR
                     | tCVAR
 
-  keyword_variable_t: 'nil'
+    keyword_variable: 'nil'
                     | 'self'
                     | 'true'
                     | 'false'
@@ -104,19 +104,21 @@
                     | '__LINE__'
                     | '__ENCODING__'
 
-           var_ref_t: user_variable_t
-                    | keyword_variable_t
+             var_ref: user_variable
+                    | keyword_variable
 
-           backref_t: tNTH_REF
+             backref: tNTH_REF
                     | tBACK_REF
 
              cname_t: _id_or_const_t
 
-       string_dvar_t: _nonlocal_var_t
-                    | backref_t
+         string_dvar: _nonlocal_var
+                    | backref
 
                sym_t: fname_t
-                    | _nonlocal_var_t
+                    | tIVAR
+                    | tGVAR
+                    | tCVAR
 
            call_op_t: '.'
                     | '&.'

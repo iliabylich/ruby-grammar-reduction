@@ -32,7 +32,7 @@
                     |
                     | '..' arg
                     | '...' arg
-                    | '-' simple_numeric_t '**' arg
+                    | '-' simple_numeric '**' arg
                     | '+' arg
                     | '-' arg
                     | '!' arg

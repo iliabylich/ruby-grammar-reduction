@@ -3,8 +3,8 @@
        _primary_head: literal
                     | array
                     | hash
-                    | var_ref_t
-                    | backref_t
+                    | var_ref
+                    | backref
                     | tFID
                     | 'begin' bodystmt 'end'
                     | '(' ')'

@@ -90,7 +90,7 @@
                     | '...' _p_primitive
 
         _p_primitive: literal
-                    | keyword_variable_t
+                    | keyword_variable
                     | lambda
 
           _p_var_ref: '^' tIDENTIFIER
