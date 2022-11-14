@@ -17,8 +17,9 @@
                     | method_call brace_block
                     | lambda
                     |
-                    | 'if'     expr then compstmt if_tail 'end'
-                    | 'unless' expr then compstmt opt_else 'end'
+                    | if_stmt
+                    | unless_stmt
+                    |
                     | 'while'  expr do_t compstmt 'end'
                     | 'until'  expr do_t compstmt 'end'
                     |

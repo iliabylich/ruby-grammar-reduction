@@ -1,46 +1,8 @@
              program: top_stmts opt_terms
 
-           top_stmts: separated_by<Item = stmt_or_begin, Sep = terms>
-
-        top_compstmt: top_stmts opt_terms
-
-               stmts: separated_by<Item = stmt_or_begin, Sep = terms>
-
-            compstmt: stmts opt_terms
-
-            bodystmt: compstmt opt_rescue maybe2<T1 = 'else', T2 = compstmt> maybe2<T1 = 'ensure', T2 = compstmt>
-
-       stmt_or_begin: stmt
-                    | preexe
-
                preexe: 'BEGIN' '{' top_compstmt '}'
 
               postexe: 'END'   '{' compstmt     '}'
-
-                stmt: stmt_head maybe1<T = stmt_tail>
-
-           stmt_head: alias
-                    | undef
-                    | postexe
-                    |
-                    | endless_method_def<Return = command>
-                    |
-                    | lhs '=' command_rhs
-                    | lhs '=' mrhs
-                    | lhs tOP_ASGN command_rhs
-                    |
-                    | mlhs '=' command_call
-                    | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = stmt>
-                    | mlhs '=' arg maybe2<T1 = 'rescue', T2 = stmt>
-                    | expr
-
-            // %nonassoc 'if' 'unless' 'while' 'until'
-            // %left 'rescue'
-           stmt_tail: 'if'     expr
-                    | 'unless' expr
-                    | 'while'  expr
-                    | 'until'  expr
-                    | 'rescue' stmt
 
                  lhs: user_variable_t
                     | keyword_variable_t
@@ -60,15 +22,6 @@
                     | lhs '=' command_rhs
                     |
                     | lhs tOP_ASGN command_rhs
-
-                expr: command_call
-                    | expr 'and' expr
-                    | expr 'or'  expr
-                    | 'not' expr
-                    | '!' command_call
-                    | arg '=>' p_top_expr_body
-                    | arg 'in' p_top_expr_body
-                    | arg
 
         command_call: command
                     | block_command
@@ -90,9 +43,6 @@
              arg_rhs: arg repeat2<T1 = 'rescue', T2 = arg>
 
                 then: maybe1<T = term_t> maybe1<T = 'then'>
-
-             if_tail: opt_else
-                    | 'elsif' expr then compstmt if_tail
 
             opt_else: maybe2<T1 = 'else', T2 = compstmt>
 
