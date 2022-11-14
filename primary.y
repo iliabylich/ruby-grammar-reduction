@@ -13,8 +13,7 @@
                     | '::' tCONSTANT
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
-                    | operation_t brace_block
-                    | operation_t paren_args maybe1<T = brace_block>
+                    | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
                     |
                     | 'super' maybe1<T = paren_args> maybe1<T = brace_block>
                     |
