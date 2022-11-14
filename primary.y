@@ -1,4 +1,6 @@
-             primary: literal
+             primary: _primary_head repeat1<T = _primary_tail>
+
+       _primary_head: literal
                     | array
                     | hash
                     | var_ref_t
@@ -8,21 +10,11 @@
                     | '(' ')'
                     | '(' stmt ')'
                     | '(' compstmt ')'
-                    | primary '::' tCONSTANT
                     | '::' tCONSTANT
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
                     | operation_t brace_block
-                    |
                     | operation_t paren_args maybe1<T = brace_block>
-                    | primary call_op_t operation2_t opt_paren_args maybe1<T = brace_block>
-                    | primary call_op_t paren_args maybe1<T = brace_block>
-                    | primary '::' operation2_t paren_args maybe1<T = brace_block>
-                    | primary '::' operation3_t maybe1<T = brace_block>
-                    | primary '::' paren_args maybe1<T = brace_block>
-                    // There must be runtime validations:
-                    // 1. trailing ',' is allowed only if arglist is not empty
-                    | primary '[' maybe1<T = args> maybe1<T = ','> ']' maybe1<T = brace_block>
                     |
                     | 'super' maybe1<T = paren_args> maybe1<T = brace_block>
                     |
@@ -44,6 +36,16 @@
                     | method_def
                     |
                     | _keyword_cmd
+
+       _primary_tail: '::' tCONSTANT
+                    | call_op_t operation2_t opt_paren_args maybe1<T = brace_block>
+                    | call_op_t paren_args maybe1<T = brace_block>
+                    | '::' operation2_t paren_args maybe1<T = brace_block>
+                    | '::' operation3_t maybe1<T = brace_block>
+                    | '::' paren_args maybe1<T = brace_block>
+                    // There must be runtime validations:
+                    // 1. trailing ',' is allowed only if arglist is not empty
+                    | '[' maybe1<T = args> maybe1<T = ','> ']' maybe1<T = brace_block>
 
         _keyword_cmd: 'break'
                     | 'next'
