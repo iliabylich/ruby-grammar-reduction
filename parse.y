@@ -1,9 +1,5 @@
              program: top_stmts opt_terms
 
-               preexe: 'BEGIN' '{' top_compstmt '}'
-
-              postexe: 'END'   '{' compstmt     '}'
-
                  lhs: user_variable_t
                     | keyword_variable_t
                     // There must be runtime validations:
