@@ -51,8 +51,6 @@
     chain_block_call: call_op2_t operation2_t opt_paren_args maybe1<T = block>
                     | call_op2_t operation2_t args do_block
 
-          superclass: maybe3<T1 = '<', T2 = expr, T3 = term_t>
-
            opt_terms: maybe1<T = terms>
 
                terms: separated_by<Item = term_t, Sep = ';'>
