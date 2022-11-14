@@ -51,18 +51,6 @@
     chain_block_call: call_op2_t operation2_t opt_paren_args maybe1<T = block>
                     | call_op2_t operation2_t args do_block
 
-         method_call: operation_t paren_args
-                    | primary call_op_t operation2_t opt_paren_args
-                    | primary call_op_t paren_args
-                    | primary '::' operation2_t paren_args
-                    | primary '::' operation3_t
-                    | primary '::' paren_args
-                    // There must be runtime validations:
-                    // 1. trailing ',' is allowed only if arglist is not empty
-                    | primary '[' maybe1<T = args> maybe1<T = ','> ']'
-                    |
-                    | 'super' maybe1<T = paren_args>
-
           superclass: maybe3<T1 = '<', T2 = expr, T3 = term_t>
 
            opt_terms: maybe1<T = terms>

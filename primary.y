@@ -13,8 +13,19 @@
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
                     | operation_t brace_block
-                    | method_call
-                    | method_call brace_block
+                    |
+                    | operation_t paren_args maybe1<T = brace_block>
+                    | primary call_op_t operation2_t opt_paren_args maybe1<T = brace_block>
+                    | primary call_op_t paren_args maybe1<T = brace_block>
+                    | primary '::' operation2_t paren_args maybe1<T = brace_block>
+                    | primary '::' operation3_t maybe1<T = brace_block>
+                    | primary '::' paren_args maybe1<T = brace_block>
+                    // There must be runtime validations:
+                    // 1. trailing ',' is allowed only if arglist is not empty
+                    | primary '[' maybe1<T = args> maybe1<T = ','> ']' maybe1<T = brace_block>
+                    |
+                    | 'super' maybe1<T = paren_args> maybe1<T = brace_block>
+                    |
                     | lambda
                     |
                     | if_stmt
