@@ -1,9 +1,5 @@
              program: top_stmts opt_terms
 
-                    // There must be runtime validations:
-                    // 1. trailing ',' is allowed only if arglist is not empty
-           aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
-
          command_rhs: command_call maybe2<T1 = 'rescue', T2 = stmt>
                     |
                     | endless_method_def<Return = command>
