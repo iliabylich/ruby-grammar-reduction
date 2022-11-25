@@ -42,9 +42,7 @@
                     | '::' operation2_t paren_args maybe1<T = brace_block>
                     | '::' operation3_t maybe1<T = brace_block>
                     | '::' paren_args maybe1<T = brace_block>
-                    // There must be runtime validations:
-                    // 1. trailing ',' is allowed only if arglist is not empty
-                    | '[' maybe1<T = args> maybe1<T = ','> ']' maybe1<T = brace_block>
+                    | aref_args maybe1<T = brace_block>
 
         _keyword_cmd: 'break'
                     | 'next'

@@ -2,14 +2,13 @@
 
                  lhs: user_variable
                     | keyword_variable
-                    // There must be runtime validations:
-                    // 1. trailing ',' is allowed only if arglist is not empty
-                    | primary '[' maybe1<T = args> maybe1<T = ','> ']'
+                    | primary aref_args
                     | primary call_op_t method_name_t
                     | primary '::' method_name_t
                     | '::' tCONSTANT
                     | backref
 
+           aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
 
          command_rhs: command_call maybe2<T1 = 'rescue', T2 = stmt>
                     |
