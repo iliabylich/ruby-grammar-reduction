@@ -1,6 +1,6 @@
-                 arg: lhs '=' arg_rhs
+                 arg: lhs '=' _arg_rhs
                     |
-                    | lhs tOP_ASGN '=' arg_rhs
+                    | lhs tOP_ASGN '=' _arg_rhs
                     |
                     | arg '..' arg
                     | arg '...' arg
@@ -45,3 +45,5 @@
                     | endless_method_def<Return = arg>
                     |
                     | primary
+
+            _arg_rhs: arg repeat2<T1 = 'rescue', T2 = arg>
