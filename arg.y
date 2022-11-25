@@ -16,8 +16,8 @@
                     | arg '^' arg
                     | arg '&' arg
                     | arg '<=>' arg
-                    | arg '=' arg
                     | arg '==' arg
+                    | arg '===' arg
                     | arg '!=' arg
                     | arg '=~' arg
                     | arg '!~' arg
