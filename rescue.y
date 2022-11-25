@@ -6,4 +6,4 @@
                     | mrhs
                     | none
 
-            _exc_var: maybe2<T1 = '=>', T2 = lhs>
+            _exc_var: maybe2<T1 = '=>', T2 = primary> // primary must be assignable

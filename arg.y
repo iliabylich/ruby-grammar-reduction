@@ -1,6 +1,6 @@
-                 arg: lhs '=' _arg_rhs
+                 arg: primary '=' _arg_rhs // primary must be assignable
                     |
-                    | lhs tOP_ASGN '=' _arg_rhs
+                    | primary tOP_ASGN '=' _arg_rhs // primary must be assignable
                     |
                     | arg '..' arg
                     | arg '...' arg

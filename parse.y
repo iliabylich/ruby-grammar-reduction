@@ -1,7 +1,5 @@
              program: top_stmts opt_terms
 
-                 lhs: primary // assignable
-
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty
            aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
@@ -10,9 +8,9 @@
                     |
                     | endless_method_def<Return = command>
                     |
-                    | lhs '=' command_rhs
+                    | primary '=' command_rhs // primary must be assignable
                     |
-                    | lhs tOP_ASGN command_rhs
+                    | primary tOP_ASGN command_rhs // primary must be assignable
 
         command_call: command
                     | command do_block repeat1<T = chain_block_call> maybe3<T1 = call_op2_t, T2 = operation2_t, T3 = args>
