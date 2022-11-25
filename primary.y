@@ -1,3 +1,12 @@
+                    // Primary is assignable if it is:
+                    // 1. backref
+                    // 2. local variable
+                    // 3. constant (with **any** scope)
+                    // 4. instance variable
+                    // 5. class variable
+                    // 6. global variable
+                    // 7. indexasgn
+                    // 8. method call without arguments
              primary: _primary_head repeat1<T = _primary_tail>
 
        _primary_head: literal

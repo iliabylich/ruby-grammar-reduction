@@ -1,12 +1,6 @@
              program: top_stmts opt_terms
 
-                 lhs: user_variable
-                    | keyword_variable
-                    | primary aref_args
-                    | primary call_op_t method_name_t
-                    | primary '::' method_name_t
-                    | '::' tCONSTANT
-                    | backref
+                 lhs: primary // assignable
 
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty

@@ -54,6 +54,7 @@ end
 
 Derivation = Struct.new(:rules, keyword_init: true) do
   def self.parse(src)
+    src = src.split("//").first
     src = StringScanner.new(src.strip)
     rules = []
 

@@ -89,7 +89,7 @@
                     | tRATIONAL
                     | tIMAGINARY
 
-       user_variable: _id_or_const_t
+      _user_variable: _id_or_const_t
                     | _nonlocal_var
 
        _nonlocal_var: tIVAR
@@ -104,7 +104,7 @@
                     | '__LINE__'
                     | '__ENCODING__'
 
-             var_ref: user_variable
+             var_ref: _user_variable
                     | keyword_variable
 
              backref: tNTH_REF
@@ -128,8 +128,6 @@
 
       _id_or_const_t: tIDENTIFIER
                     | tCONSTANT
-
-       method_name_t: _id_or_const_t
 
                 do_t: term_t
                     | 'do'
