@@ -31,8 +31,6 @@
                     | 'break'  args
                     | 'next'   args
 
-               cpath: maybe2<T1 = maybe1<T = primary>, T2 = '::'> cname_t
-
                 then: maybe1<T = term_t> maybe1<T = 'then'>
 
             opt_else: maybe2<T1 = 'else', T2 = compstmt>
