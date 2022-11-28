@@ -1,8 +1,8 @@
-           top_stmts: separated_by<Item = _stmt_or_begin, Sep = terms>
+           top_stmts: separated_by<Item = _stmt_or_begin, Sep = _terms>
 
         top_compstmt: top_stmts opt_terms
 
-              _stmts: separated_by<Item = _stmt_or_begin, Sep = terms>
+              _stmts: separated_by<Item = _stmt_or_begin, Sep = _terms>
 
             compstmt: _stmts opt_terms
 
@@ -35,3 +35,7 @@
                     | 'while'  expr
                     | 'until'  expr
                     | 'rescue' stmt
+
+           opt_terms: maybe1<T = _terms>
+
+              _terms: separated_by<Item = term_t, Sep = ';'>
