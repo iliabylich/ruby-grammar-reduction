@@ -9,9 +9,7 @@
                     |
                     | 'not' expr
                     |
-                    | primary '=' _expr_rhs // primary must be assignable
-                    |
-                    | primary tOP_ASGN '=' _expr_rhs // primary must be assignable
+                    | primary _expr_assignment_t '=' _expr_rhs // primary must be assignable
                     |
                     | expr '..' expr  // LHS and RHS must be arguments
                     | expr '...' expr // LHS and RHS must be arguments
@@ -64,5 +62,8 @@
                     | expr 'in' p_top_expr_body // LHS must be argument
                     |
                     | primary
+
+  _expr_assignment_t: '='
+                    | tOP_ASGN
 
            _expr_rhs: expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
