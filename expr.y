@@ -36,7 +36,7 @@
                     // 17. standard method definition statement
                     // 18. indexasgn if receiver is also primary
                     //
-                expr: expr0
+                expr: _expr0
                     |
                     | expr '..'  expr // LHS and RHS must be arguments
                     | expr '...' expr // LHS and RHS must be arguments
@@ -88,7 +88,7 @@
                     | expr '=>' p_top_expr_body // LHS must be argument
                     | expr 'in' p_top_expr_body // LHS must be argument
 
-               expr0: operation_t args                   maybe1<T = brace_block> _command_block_tail
+              _expr0: operation_t args                   maybe1<T = brace_block> _command_block_tail
                     | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
                     |
                     | literal
