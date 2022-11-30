@@ -150,7 +150,7 @@
                     |
                     | 'defined?' '(' expr ')'
 
- _command_block_tail: maybe1<T = _command_block>
+ _command_block_tail: maybe1<T = command_block>
 
     _assignment_rhs: expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
 
