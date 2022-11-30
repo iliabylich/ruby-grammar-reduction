@@ -88,8 +88,8 @@
                     | expr '=>' p_top_expr_body // LHS must be argument
                     | expr 'in' p_top_expr_body // LHS must be argument
 
-              _expr0: operation_t args                   maybe1<T = brace_block> _command_block_tail
-                    | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
+              _expr0: operation_t args                   maybe_brace_block _command_block_tail
+                    | operation_t maybe1<T = paren_args> maybe_brace_block
                     |
                     | literal
                     | array
@@ -132,18 +132,18 @@
 
      _expr_call_tail: '::' tCONSTANT
                     |
-                    | '::' operation2_t paren_args maybe1<T = brace_block>
-                    | '::' operation2_t       args maybe1<T = brace_block> _command_block_tail // cannot be chained because of open args
+                    | '::' operation2_t paren_args maybe_brace_block
+                    | '::' operation2_t       args maybe_brace_block _command_block_tail // cannot be chained because of open args
                     |
-                    | '::' operation3_t            maybe1<T = brace_block>
+                    | '::' operation3_t            maybe_brace_block
                     |
-                    | '::'              paren_args maybe1<T = brace_block>
+                    | '::'              paren_args maybe_brace_block
                     |
-                    | call_op_t operation2_t opt_paren_args maybe1<T = brace_block>
-                    | call_op_t operation2_t           args maybe1<T = brace_block> _command_block_tail // cannot be chained because of open args
-                    | call_op_t                  paren_args maybe1<T = brace_block>
+                    | call_op_t operation2_t opt_paren_args maybe_brace_block
+                    | call_op_t operation2_t           args maybe_brace_block _command_block_tail // cannot be chained because of open args
+                    | call_op_t                  paren_args maybe_brace_block
                     |
-                    | _aref_args maybe1<T = brace_block>
+                    | _aref_args maybe_brace_block
                     |
 
                     // There must be runtime validations:
@@ -169,7 +169,7 @@
                     | 'yield' args _command_block_tail
                     |
                     | 'super' args _command_block_tail
-                    | 'super' maybe1<T = paren_args> maybe1<T = brace_block>
+                    | 'super' maybe1<T = paren_args> maybe_brace_block
                     |
                     | 'defined?' '(' expr ')'
 

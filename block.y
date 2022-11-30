@@ -1,9 +1,11 @@
             do_block: 'do' _opt_block_params bodystmt 'end'
 
-         brace_block: '{' _opt_block_params compstmt '}'
+   maybe_brace_block: maybe1<T = _brace_block>
 
-               block: brace_block
+               block: _brace_block
                     | do_block
+
+        _brace_block: '{' _opt_block_params compstmt '}'
 
    _opt_block_params: maybe1<T = _block_params>
 
