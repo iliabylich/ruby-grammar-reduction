@@ -7,7 +7,7 @@
                 expr: command_call
                     | '!' command_call
                     |
-                    | primary _expr_assignment_t '=' _expr_rhs // primary must be assignable
+                    | primary _expr_assignment_t '=' expr repeat2<T1 = 'rescue', T2 = expr> // primary must be assignable, all expressions must be arguments
                     |
                     | expr '..'  expr // LHS and RHS must be arguments
                     | expr '...' expr // LHS and RHS must be arguments
@@ -65,5 +65,3 @@
 
   _expr_assignment_t: '='
                     | tOP_ASGN
-
-           _expr_rhs: expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
