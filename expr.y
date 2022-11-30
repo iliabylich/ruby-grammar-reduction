@@ -5,8 +5,8 @@
                     // 4. '=>' or 'in' one-line pattern-matching
                     // 5. binary operation 'and' / 'or'
                     // 6. super/yield/return/break/next in command mode
-                expr: command_call
-                    | '!' command_call
+                expr: command maybe1<T = _command_block>
+                    | '!' command maybe1<T = _command_block>
                     |
                     | primary maybe1<T = _expr_assignment_tail> // primary must be assignable
                     |
