@@ -5,6 +5,16 @@
                     // 4. '=>' or 'in' one-line pattern-matching
                     // 5. binary operation 'and' / 'or'
                     // 6. super/yield/return/break/next in command mode
+                    //
+                    // Expression is assignable if it is:
+                    // 1. backref
+                    // 2. local variable
+                    // 3. constant (with **any** scope)
+                    // 4. instance variable
+                    // 5. class variable
+                    // 6. global variable
+                    // 7. indexasgn
+                    // 8. method call without arguments
                 expr: operation_t args maybe1<T = brace_block> _command_block_tail
                     | 'super'  args _command_block_tail
                     | 'yield'  args _command_block_tail
