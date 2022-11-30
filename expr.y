@@ -99,7 +99,7 @@
                     | '...' expr     // expr must be argument
                     | '+'   expr     // expr must be argument
                     | '-'   expr     // expr must be argument
-                    | '!'   expr     // expr must be argument
+                    | '!'   expr     // expr must be argument or command
                     | '~'   expr     // expr must be argument
                     |
                     | 'not' expr
