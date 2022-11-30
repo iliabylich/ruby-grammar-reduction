@@ -8,7 +8,7 @@
                     | '!' command_call
                     |
                     | primary
-                    | primary _expr_assignment_t '=' expr repeat2<T1 = 'rescue', T2 = expr> // primary must be assignable, all expressions must be arguments
+                    | primary _expr_assignment_t expr repeat2<T1 = 'rescue', T2 = expr> // primary must be assignable, all expressions must be arguments
                     |
                     | endless_method_def<Return = expr> // expr must be argument
                     |
