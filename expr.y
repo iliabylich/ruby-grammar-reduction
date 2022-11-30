@@ -36,47 +36,7 @@
                     // 17. standard method definition statement
                     // 18. indexasgn if receiver is also primary
                     //
-                expr: operation_t args                   maybe1<T = brace_block> _command_block_tail
-                    | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
-                    |
-                    | literal
-                    | array
-                    | hash
-                    | var_ref
-                    | backref
-                    | tFID
-                    | 'begin' bodystmt 'end'
-                    | '(' ')'
-                    | '(' stmt ')'
-                    | '(' compstmt ')'
-                    | '::' tCONSTANT
-                    | 'not' '(' expr ')'
-                    | 'not' '(' ')'
-                    |
-                    | lambda
-                    |
-                    | if_stmt
-                    | unless_stmt
-                    |
-                    | 'while'  expr do_t compstmt 'end'
-                    | 'until'  expr do_t compstmt 'end'
-                    |
-                    | case
-                    |
-                    | for_loop
-                    |
-                    | class
-                    | module
-                    |
-                    | method_def
-                    |
-                    | _keyword_cmd
-                    |
-                    | expr repeat1<T = _expr_call_tail>
-                    |
-                    | expr _assignment_t _assignment_rhs // expr must be assignable
-                    |
-                    | endless_method_def<Return = expr> // expr must be argument
+                expr: expr0
                     |
                     | expr '..'  expr // LHS and RHS must be arguments
                     | expr '...' expr // LHS and RHS must be arguments
@@ -127,6 +87,48 @@
                     |
                     | expr '=>' p_top_expr_body // LHS must be argument
                     | expr 'in' p_top_expr_body // LHS must be argument
+
+               expr0: operation_t args                   maybe1<T = brace_block> _command_block_tail
+                    | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
+                    |
+                    | literal
+                    | array
+                    | hash
+                    | var_ref
+                    | backref
+                    | tFID
+                    | 'begin' bodystmt 'end'
+                    | '(' ')'
+                    | '(' stmt ')'
+                    | '(' compstmt ')'
+                    | '::' tCONSTANT
+                    | 'not' '(' expr ')'
+                    | 'not' '(' ')'
+                    |
+                    | lambda
+                    |
+                    | if_stmt
+                    | unless_stmt
+                    |
+                    | 'while'  expr do_t compstmt 'end'
+                    | 'until'  expr do_t compstmt 'end'
+                    |
+                    | case
+                    |
+                    | for_loop
+                    |
+                    | class
+                    | module
+                    |
+                    | method_def
+                    |
+                    | _keyword_cmd
+                    |
+                    | expr repeat1<T = _expr_call_tail>
+                    |
+                    | expr _assignment_t _assignment_rhs // expr must be assignable
+                    |
+                    | endless_method_def<Return = expr> // expr must be argument
 
      _expr_call_tail: '::' tCONSTANT
                     |
