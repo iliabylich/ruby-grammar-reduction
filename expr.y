@@ -7,35 +7,33 @@
                 expr: command_call
                     | '!' command_call
                     |
-                    | 'not' expr
-                    |
                     | primary _expr_assignment_t '=' _expr_rhs // primary must be assignable
                     |
-                    | expr '..' expr  // LHS and RHS must be arguments
+                    | expr '..'  expr // LHS and RHS must be arguments
                     | expr '...' expr // LHS and RHS must be arguments
-                    | expr '+' expr   // LHS and RHS must be arguments
-                    | expr '-' expr   // LHS and RHS must be arguments
-                    | expr '*' expr   // LHS and RHS must be arguments
-                    | expr '/' expr   // LHS and RHS must be arguments
-                    | expr '%' expr   // LHS and RHS must be arguments
-                    | expr '**' expr  // LHS and RHS must be arguments
-                    | expr '|' expr   // LHS and RHS must be arguments
-                    | expr '^' expr   // LHS and RHS must be arguments
-                    | expr '&' expr   // LHS and RHS must be arguments
+                    | expr '+'   expr // LHS and RHS must be arguments
+                    | expr '-'   expr // LHS and RHS must be arguments
+                    | expr '*'   expr // LHS and RHS must be arguments
+                    | expr '/'   expr // LHS and RHS must be arguments
+                    | expr '%'   expr // LHS and RHS must be arguments
+                    | expr '**'  expr // LHS and RHS must be arguments
+                    | expr '|'   expr // LHS and RHS must be arguments
+                    | expr '^'   expr // LHS and RHS must be arguments
+                    | expr '&'   expr // LHS and RHS must be arguments
                     | expr '<=>' expr // LHS and RHS must be arguments
-                    | expr '==' expr  // LHS and RHS must be arguments
+                    | expr '=='  expr // LHS and RHS must be arguments
                     | expr '===' expr // LHS and RHS must be arguments
-                    | expr '!=' expr  // LHS and RHS must be arguments
-                    | expr '=~' expr  // LHS and RHS must be arguments
-                    | expr '!~' expr  // LHS and RHS must be arguments
-                    | expr '<<' expr  // LHS and RHS must be arguments
-                    | expr '>>' expr  // LHS and RHS must be arguments
-                    | expr '&&' expr  // LHS and RHS must be arguments
-                    | expr '||' expr  // LHS and RHS must be arguments
-                    | expr '>' expr   // LHS and RHS must be arguments
-                    | expr '<' expr   // LHS and RHS must be arguments
-                    | expr '>=' expr  // LHS and RHS must be arguments
-                    | expr '<=' expr  // LHS and RHS must be arguments
+                    | expr '!='  expr // LHS and RHS must be arguments
+                    | expr '=~'  expr // LHS and RHS must be arguments
+                    | expr '!~'  expr // LHS and RHS must be arguments
+                    | expr '<<'  expr // LHS and RHS must be arguments
+                    | expr '>>'  expr // LHS and RHS must be arguments
+                    | expr '&&'  expr // LHS and RHS must be arguments
+                    | expr '||'  expr // LHS and RHS must be arguments
+                    | expr '>'   expr // LHS and RHS must be arguments
+                    | expr '<'   expr // LHS and RHS must be arguments
+                    | expr '>='  expr // LHS and RHS must be arguments
+                    | expr '<='  expr // LHS and RHS must be arguments
                     |
                     | expr '..'       // expr must be argument
                     | expr '...'      // expr must be argument
@@ -46,6 +44,8 @@
                     | '-'   expr     // expr must be argument
                     | '!'   expr     // expr must be argument
                     | '~'   expr     // expr must be argument
+                    |
+                    | 'not' expr
                     |
                     | '-' simple_numeric '**' expr // expr must be argument
                     |
