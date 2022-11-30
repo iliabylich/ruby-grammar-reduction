@@ -36,7 +36,8 @@
                     // 17. standard method definition statement
                     // 18. indexasgn if receiver is also primary
                     //
-                expr: operation_t args maybe1<T = brace_block> _command_block_tail
+                expr: operation_t args                   maybe1<T = brace_block> _command_block_tail
+                    | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
                     |
                     | literal
                     | array
@@ -51,7 +52,6 @@
                     | '::' tCONSTANT
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
-                    | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
                     |
                     | lambda
                     |
