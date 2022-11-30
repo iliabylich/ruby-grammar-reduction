@@ -7,7 +7,7 @@
                     // 6. global variable
                     // 7. indexasgn
                     // 8. method call without arguments
-             primary: _primary_head repeat1<T = _primary_tail>
+             primary: _primary_head repeat1<T = _primary_call_tail>
 
        _primary_head: literal
                     | array
@@ -45,7 +45,7 @@
                     |
                     | _keyword_cmd
 
-       _primary_tail: '::' tCONSTANT
+  _primary_call_tail: '::' tCONSTANT
                     | '::' operation2_t paren_args maybe1<T = brace_block>
                     | '::' operation3_t            maybe1<T = brace_block>
                     | '::'              paren_args maybe1<T = brace_block>
