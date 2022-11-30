@@ -4,6 +4,7 @@
                     // 3. '!' command
                     // 4. '=>' or 'in' one-line pattern-matching
                     // 5. binary operation 'and' / 'or'
+                    // 6. super/yield/return/break/next in command mode
                 expr: command_call
                     | '!' command_call
                     |
