@@ -47,10 +47,10 @@
 
        _primary_tail: '::' tCONSTANT
                     | '::' operation2_t paren_args maybe1<T = brace_block>
-                    | '::' operation3_t maybe1<T = brace_block>
-                    | '::' paren_args maybe1<T = brace_block>
+                    | '::' operation3_t            maybe1<T = brace_block>
+                    | '::'              paren_args maybe1<T = brace_block>
                     | call_op_t operation2_t opt_paren_args maybe1<T = brace_block>
-                    | call_op_t paren_args maybe1<T = brace_block>
+                    | call_op_t                  paren_args maybe1<T = brace_block>
                     | _aref_args maybe1<T = brace_block>
 
                     // There must be runtime validations:
