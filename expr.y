@@ -60,8 +60,6 @@
                     |
                     | expr repeat1<T = _expr_call_tail>
                     |
-                    | expr call_op_t operation2_t args maybe1<T = brace_block> _command_block_tail
-                    | expr '::' operation2_t args maybe1<T = brace_block> _command_block_tail
                     | expr maybe1<T = _assignment_tail> // expr must be assignable
                     |
                     | endless_method_def<Return = expr> // expr must be argument
@@ -123,6 +121,9 @@
                     | call_op_t operation2_t opt_paren_args maybe1<T = brace_block>
                     | call_op_t                  paren_args maybe1<T = brace_block>
                     | _aref_args maybe1<T = brace_block>
+                    |
+                    | call_op_t operation2_t args maybe1<T = brace_block> _command_block_tail // cannot be repeated because of open args
+                    | '::' operation2_t args maybe1<T = brace_block> _command_block_tail // cannot be repeated because of open args
 
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty
