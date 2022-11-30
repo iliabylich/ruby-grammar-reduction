@@ -60,7 +60,7 @@
                     |
                     | expr repeat1<T = _expr_call_tail>
                     |
-                    | expr maybe1<T = _assignment_tail> // expr must be assignable
+                    | expr _assignment_t _assignment_rhs // expr must be assignable
                     |
                     | endless_method_def<Return = expr> // expr must be argument
                     |
@@ -146,7 +146,7 @@
 
  _command_block_tail: maybe1<T = _command_block>
 
-    _assignment_tail: _assignment_t expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
+    _assignment_rhs: expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
 
        _assignment_t: '='
                     | tOP_ASGN
