@@ -12,9 +12,47 @@
                     | 'break'  args _command_block_tail
                     | 'next'   args _command_block_tail
                     |
-                    | primary call_op_t operation2_t args maybe1<T = brace_block> _command_block_tail
-                    | primary '::' operation2_t args maybe1<T = brace_block> _command_block_tail
-                    | primary maybe1<T = _expr_assignment_tail> // primary must be assignable
+                    | literal
+                    | array
+                    | hash
+                    | var_ref
+                    | backref
+                    | tFID
+                    | 'begin' bodystmt 'end'
+                    | '(' ')'
+                    | '(' stmt ')'
+                    | '(' compstmt ')'
+                    | '::' tCONSTANT
+                    | 'not' '(' expr ')'
+                    | 'not' '(' ')'
+                    | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
+                    |
+                    | 'super' maybe1<T = paren_args> maybe1<T = brace_block>
+                    |
+                    | lambda
+                    |
+                    | if_stmt
+                    | unless_stmt
+                    |
+                    | 'while'  expr do_t compstmt 'end'
+                    | 'until'  expr do_t compstmt 'end'
+                    |
+                    | case
+                    |
+                    | for_loop
+                    |
+                    | class
+                    | module
+                    |
+                    | method_def
+                    |
+                    | _keyword_cmd
+                    |
+                    | expr repeat1<T = _expr_call_tail>
+                    |
+                    | expr call_op_t operation2_t args maybe1<T = brace_block> _command_block_tail
+                    | expr '::' operation2_t args maybe1<T = brace_block> _command_block_tail
+                    | expr maybe1<T = _expr_assignment_tail> // expr must be assignable
                     |
                     | endless_method_def<Return = expr> // expr must be argument
                     |
@@ -67,6 +105,28 @@
                     |
                     | expr '=>' p_top_expr_body // LHS must be argument
                     | expr 'in' p_top_expr_body // LHS must be argument
+
+     _expr_call_tail: '::' tCONSTANT
+                    | '::' operation2_t paren_args maybe1<T = brace_block>
+                    | '::' operation3_t            maybe1<T = brace_block>
+                    | '::'              paren_args maybe1<T = brace_block>
+                    | call_op_t operation2_t opt_paren_args maybe1<T = brace_block>
+                    | call_op_t                  paren_args maybe1<T = brace_block>
+                    | _aref_args maybe1<T = brace_block>
+
+                    // There must be runtime validations:
+                    // 1. trailing ',' is allowed only if arglist is not empty
+          _aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
+
+        _keyword_cmd: 'break'
+                    | 'next'
+                    | 'redo'
+                    | 'retry'
+                    | 'return'
+                    | 'yield' '(' args ')'
+                    | 'yield' '(' ')'
+                    | 'yield'
+                    | 'defined?' '(' expr ')'
 
  _command_block_tail: maybe1<T = _command_block>
 
