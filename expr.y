@@ -6,14 +6,14 @@
                     // 5. binary operation 'and' / 'or'
                     // 6. super/yield/return/break/next in command mode
                 expr: operation_t args maybe1<T = brace_block> _command_block_tail
-                    | primary call_op_t operation2_t args maybe1<T = brace_block> _command_block_tail
-                    | primary '::' operation2_t args maybe1<T = brace_block> _command_block_tail
                     | 'super'  args _command_block_tail
                     | 'yield'  args _command_block_tail
                     | 'return' args _command_block_tail
                     | 'break'  args _command_block_tail
                     | 'next'   args _command_block_tail
                     |
+                    | primary call_op_t operation2_t args maybe1<T = brace_block> _command_block_tail
+                    | primary '::' operation2_t args maybe1<T = brace_block> _command_block_tail
                     | primary maybe1<T = _expr_assignment_tail> // primary must be assignable
                     |
                     | endless_method_def<Return = expr> // expr must be argument
