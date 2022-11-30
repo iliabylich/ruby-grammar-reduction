@@ -4,8 +4,8 @@
 
              _assocs: separated_by<Item = assoc, Sep = ','>
 
-               assoc: arg '=>' arg
-                    | tLABEL maybe1<T = arg>
-                    | tSTRING_BEG string_contents tLABEL_END arg
-                    | '**' arg
+               assoc: expr '=>' expr // both expressions must be arguments
+                    | tLABEL maybe1<T = expr> // expr must be argument
+                    | tSTRING_BEG string_contents tLABEL_END expr // expr must be argument
+                    | '**' expr // expr must be argument
                     | '**'

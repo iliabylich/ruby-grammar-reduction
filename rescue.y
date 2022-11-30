@@ -2,7 +2,7 @@
 
              _rescue: 'rescue' _exc_list maybe1<T = _exc_var> then compstmt opt_rescue
 
-           _exc_list: arg
+           _exc_list: expr // must be argument
                     | mrhs
                     | none
 

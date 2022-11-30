@@ -5,11 +5,11 @@
                 // 2. ',' requires non-empty list of items
               _items: separated_by<Item = _item, Sep = ','> maybe1<T = ','>
 
-               _item: '*' arg
-                    | arg
+               _item: '*' expr // expr must be argument
+                    | expr // expr must be argument
                     |
                     // pairs:
-                    | arg '=>' arg
-                    | tLABEL maybe1<T = arg>
-                    | tSTRING_BEG string_contents tLABEL_END arg
-                    | '**' arg
+                    | expr '=>' expr // both expressions must be argument
+                    | tLABEL maybe1<T = expr> // expr must be argument
+                    | tSTRING_BEG string_contents tLABEL_END expr // expr must be argument
+                    | '**' expr // expr must be argument

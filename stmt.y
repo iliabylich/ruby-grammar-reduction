@@ -25,7 +25,7 @@
                     |
                     | mlhs '=' command_call
                     | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = stmt>
-                    | mlhs '=' arg maybe2<T1 = 'rescue', T2 = stmt>
+                    | mlhs '=' expr maybe2<T1 = 'rescue', T2 = stmt> // expr must be argument
                     | expr
 
             // %nonassoc 'if' 'unless' 'while' 'until'

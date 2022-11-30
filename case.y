@@ -4,7 +4,7 @@
 
           _case_args: separated_by<Item = _case_arg, Sep = ','>
 
-           _case_arg: maybe1<T = '*'> arg
+           _case_arg: maybe1<T = '*'> expr // expr must be argument
 
           _case_body: 'when' _case_args then compstmt _cases
 
