@@ -16,11 +16,6 @@
                     // 7. indexasgn
                     // 8. method call without arguments
                 expr: operation_t args maybe1<T = brace_block> _command_block_tail
-                    | 'super'  args _command_block_tail
-                    | 'yield'  args _command_block_tail
-                    | 'return' args _command_block_tail
-                    | 'break'  args _command_block_tail
-                    | 'next'   args _command_block_tail
                     |
                     | literal
                     | array
@@ -36,8 +31,6 @@
                     | 'not' '(' expr ')'
                     | 'not' '(' ')'
                     | operation_t maybe1<T = paren_args> maybe1<T = brace_block>
-                    |
-                    | 'super' maybe1<T = paren_args> maybe1<T = brace_block>
                     |
                     | lambda
                     |
@@ -102,9 +95,9 @@
                     |
                     | 'not' expr
                     |
-                    | '-' simple_numeric '**' expr // expr must be argument
-                    |
                     | 'defined?' expr // expr must be argument
+                    |
+                    | '-' simple_numeric '**' expr // expr must be argument
                     |
                     | expr '?' expr ':' expr // LHS, MHS and RHS must be arguments
                     |
@@ -135,13 +128,26 @@
           _aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
 
         _keyword_cmd: 'break'
+                    | 'break' args _command_block_tail
+                    |
                     | 'next'
+                    | 'next' args _command_block_tail
+                    |
                     | 'redo'
+                    |
                     | 'retry'
+                    |
                     | 'return'
+                    | 'return' args _command_block_tail
+                    |
                     | 'yield' '(' args ')'
                     | 'yield' '(' ')'
                     | 'yield'
+                    | 'yield' args _command_block_tail
+                    |
+                    | 'super' args _command_block_tail
+                    | 'super' maybe1<T = paren_args> maybe1<T = brace_block>
+                    |
                     | 'defined?' '(' expr ')'
 
  _command_block_tail: maybe1<T = _command_block>
