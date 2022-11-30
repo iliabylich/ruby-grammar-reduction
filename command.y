@@ -6,8 +6,9 @@
                     |
                     | primary tOP_ASGN command_rhs // primary must be assignable
 
-        command_call: command
-                    | command do_block repeat1<T = _chain_block_call> maybe3<T1 = call_op2_t, T2 = operation2_t, T3 = args>
+        command_call: command maybe1<T = command_block>
+
+       command_block: do_block repeat1<T = _chain_block_call> maybe3<T1 = call_op2_t, T2 = operation2_t, T3 = args>
 
              command: operation_t args maybe1<T = brace_block>
                     | primary call_op_t operation2_t args maybe1<T = brace_block>
