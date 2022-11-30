@@ -6,9 +6,9 @@
                     |
                     | expr tOP_ASGN command_rhs // expr must be assignable
 
-        command_call: command maybe1<T = command_block>
+        command_call: command maybe_command_block
 
-       command_block: do_block repeat1<T = _chain_block_call> maybe3<T1 = call_op2_t, T2 = operation2_t, T3 = args>
+ maybe_command_block: maybe1<T = do_block> repeat1<T = _chain_block_call> maybe3<T1 = call_op2_t, T2 = operation2_t, T3 = args>
 
              command: operation_t args maybe_brace_block
                     | expr call_op_t operation2_t args maybe_brace_block // expr must be primary

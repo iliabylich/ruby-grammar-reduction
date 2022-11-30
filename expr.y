@@ -88,7 +88,7 @@
                     | expr '=>' p_top_expr_body // LHS must be argument
                     | expr 'in' p_top_expr_body // LHS must be argument
 
-              _expr0: operation_t args           maybe_brace_block _command_block_tail
+              _expr0: operation_t args           maybe_brace_block maybe_command_block
                     | operation_t opt_paren_args maybe_brace_block
                     |
                     | literal
@@ -133,14 +133,14 @@
      _expr_call_tail: '::' tCONSTANT
                     |
                     | '::' operation2_t paren_args maybe_brace_block
-                    | '::' operation2_t       args maybe_brace_block _command_block_tail // cannot be chained because of open args
+                    | '::' operation2_t       args maybe_brace_block maybe_command_block // cannot be chained because of open args
                     |
                     | '::' operation3_t            maybe_brace_block
                     |
                     | '::'              paren_args maybe_brace_block
                     |
                     | call_op_t operation2_t opt_paren_args maybe_brace_block
-                    | call_op_t operation2_t           args maybe_brace_block _command_block_tail // cannot be chained because of open args
+                    | call_op_t operation2_t           args maybe_brace_block maybe_command_block // cannot be chained because of open args
                     | call_op_t                  paren_args maybe_brace_block
                     |
                     | _aref_args maybe_brace_block
@@ -151,29 +151,27 @@
           _aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
 
         _keyword_cmd: 'break'
-                    | 'break' args _command_block_tail
+                    | 'break' args maybe_command_block
                     |
                     | 'next'
-                    | 'next' args _command_block_tail
+                    | 'next' args maybe_command_block
                     |
                     | 'redo'
                     |
                     | 'retry'
                     |
                     | 'return'
-                    | 'return' args _command_block_tail
+                    | 'return' args maybe_command_block
                     |
                     | 'yield' '(' args ')'
                     | 'yield' '(' ')'
                     | 'yield'
-                    | 'yield' args _command_block_tail
+                    | 'yield' args maybe_command_block
                     |
-                    | 'super' args           _command_block_tail
+                    | 'super' args           maybe_command_block
                     | 'super' opt_paren_args maybe_brace_block
                     |
                     | 'defined?' '(' expr ')'
-
- _command_block_tail: maybe1<T = command_block>
 
     _assignment_rhs: expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
 
