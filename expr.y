@@ -88,8 +88,8 @@
                     | expr '=>' p_top_expr_body // LHS must be argument
                     | expr 'in' p_top_expr_body // LHS must be argument
 
-              _expr0: operation_t args                   maybe_brace_block _command_block_tail
-                    | operation_t maybe1<T = paren_args> maybe_brace_block
+              _expr0: operation_t args           maybe_brace_block _command_block_tail
+                    | operation_t opt_paren_args maybe_brace_block
                     |
                     | literal
                     | array
@@ -168,8 +168,8 @@
                     | 'yield'
                     | 'yield' args _command_block_tail
                     |
-                    | 'super' args _command_block_tail
-                    | 'super' maybe1<T = paren_args> maybe_brace_block
+                    | 'super' args           _command_block_tail
+                    | 'super' opt_paren_args maybe_brace_block
                     |
                     | 'defined?' '(' expr ')'
 
