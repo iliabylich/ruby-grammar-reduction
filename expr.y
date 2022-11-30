@@ -15,6 +15,27 @@
                     // 6. global variable
                     // 7. indexasgn
                     // 8. method call without arguments
+                    //
+                    // Expression is primary if it is:
+                    // 1. literal (numer/sym/str/array/hash)
+                    // 2. variable
+                    // 3. backref
+                    // 4. tFID-based expression
+                    // 5. begin..end
+                    // 6. (stmt/compstmt/nothing)
+                    // 7. global constant or const defined on a primary
+                    // 8. not (expr?)
+                    // 9. fcall maybe with brace block if receiver is also primry
+                    // 10. super/yield in fcall mode
+                    // 11. break/next/redo/retry with no arguments
+                    // 12. lambda
+                    // 13. if/unless statement
+                    // 14. for loop
+                    // 15. while/until statements
+                    // 16. class/module definition
+                    // 17. standard method definition statement
+                    // 18. indexasgn if receiver is also primary
+                    //
                 expr: operation_t args maybe1<T = brace_block> _command_block_tail
                     |
                     | literal
@@ -110,14 +131,14 @@
      _expr_call_tail: '::' tCONSTANT
                     |
                     | '::' operation2_t paren_args maybe1<T = brace_block>
-                    | '::' operation2_t       args maybe1<T = brace_block> _command_block_tail // cannot be repeated because of open args
+                    | '::' operation2_t       args maybe1<T = brace_block> _command_block_tail // cannot be chained because of open args
                     |
                     | '::' operation3_t            maybe1<T = brace_block>
                     |
                     | '::'              paren_args maybe1<T = brace_block>
                     |
                     | call_op_t operation2_t opt_paren_args maybe1<T = brace_block>
-                    | call_op_t operation2_t           args maybe1<T = brace_block> _command_block_tail // cannot be repeated because of open args
+                    | call_op_t operation2_t           args maybe1<T = brace_block> _command_block_tail // cannot be chained because of open args
                     | call_op_t                  paren_args maybe1<T = brace_block>
                     |
                     | _aref_args maybe1<T = brace_block>
