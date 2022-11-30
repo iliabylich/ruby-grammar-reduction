@@ -8,8 +8,7 @@
                 expr: command_call
                     | '!' command_call
                     |
-                    | primary
-                    | primary _expr_assignment_t expr repeat2<T1 = 'rescue', T2 = expr> // primary must be assignable, all expressions must be arguments
+                    | primary maybe1<T = _expr_assignment_tail> // primary must be assignable
                     |
                     | endless_method_def<Return = expr> // expr must be argument
                     |
@@ -62,6 +61,9 @@
                     |
                     | expr '=>' p_top_expr_body // LHS must be argument
                     | expr 'in' p_top_expr_body // LHS must be argument
+
+
+ _expr_assignment_tail: _expr_assignment_t expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
 
   _expr_assignment_t: '='
                     | tOP_ASGN
