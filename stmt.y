@@ -19,9 +19,9 @@
                     |
                     | endless_method_def<Return = command>
                     |
-                    | primary '=' command_rhs // primary must be assignable
-                    | primary '=' mrhs // primary must be assignable
-                    | primary tOP_ASGN command_rhs // primary must be assignable
+                    | expr '=' command_rhs // expr must be assignable
+                    | expr '=' mrhs // expr must be assignable
+                    | expr tOP_ASGN command_rhs // expr must be assignable
                     |
                     | mlhs '=' command_call
                     | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = stmt>

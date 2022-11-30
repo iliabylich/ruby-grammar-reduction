@@ -5,4 +5,4 @@
 
          _superclass: maybe3<T1 = '<', T2 = expr, T3 = term_t>
 
-              _cpath: maybe2<T1 = maybe1<T = primary>, T2 = '::'> cname_t
+              _cpath: maybe2<T1 = maybe1<T = expr>, T2 = '::'> cname_t // expr must be primary

@@ -6,4 +6,4 @@
                     | mrhs
                     | none
 
-            _exc_var: '=>' primary  // primary must be assignable
+            _exc_var: '=>' expr  // expr must be assignable
