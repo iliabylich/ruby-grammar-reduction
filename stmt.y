@@ -178,8 +178,6 @@
 
      _assignment_rhs: value repeat2<T1 = 'rescue', T2 = value> // all values must be arguments
                     | command_call maybe2<T1 = 'rescue', T2 = value>
-                    |
-                    | endless_method_def<Return = command>
 
        _assignment_t: '='
                     | tOP_ASGN
