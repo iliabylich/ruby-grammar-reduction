@@ -15,13 +15,13 @@
                 _arg: tIDENTIFIER
                     | '(' _multi_args ')'
 
-             _optarg: tIDENTIFIER '=' expr // expr must be primary
+             _optarg: tIDENTIFIER '=' value // value must be primary
 
                _rest: '*' maybe1<T = tIDENTIFIER>
 
               _kwarg: tLABEL
 
-           _kwoptarg: tLABEL expr // expr must be primary
+           _kwoptarg: tLABEL value // value must be primary
 
              _kwrest: '**' maybe1<T = tIDENTIFIER>
 

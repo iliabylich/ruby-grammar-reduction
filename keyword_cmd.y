@@ -19,4 +19,4 @@
                     | 'super' args           maybe_command_block
                     | 'super' opt_paren_args maybe_brace_block
                     |
-                    | 'defined?' '(' expr ')'
+                    | 'defined?' '(' value ')' // value must be expression

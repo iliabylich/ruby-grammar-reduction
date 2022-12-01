@@ -14,11 +14,11 @@
 
                 mrhs: separated_by<Item = _mrhs1, Sep = ','>
 
-              _mrhs1: maybe1<T = '*'> expr // expr must be argument
+              _mrhs1: maybe1<T = '*'> value // value must be argument
 
             _arglist: separated_by<Item = _arg, Sep = ','>
 
-                _arg: expr // expr must be argument
-                    | '*' maybe1<T = expr> // expr must be argument
-                    | '&' maybe1<T = expr> // expr must be argument
+                _arg: value // value must be argument
+                    | '*' maybe1<T = value> // value must be argument
+                    | '&' maybe1<T = value> // value must be argument
                     | assoc

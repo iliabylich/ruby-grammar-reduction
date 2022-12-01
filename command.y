@@ -2,17 +2,17 @@
                     |
                     | endless_method_def<Return = command>
                     |
-                    | expr '=' command_rhs // expr must be assignable
+                    | value '=' command_rhs // value must be assignable
                     |
-                    | expr tOP_ASGN command_rhs // expr must be assignable
+                    | value tOP_ASGN command_rhs // value must be assignable
 
         command_call: command maybe_command_block
 
  maybe_command_block: maybe1<T = do_block> repeat1<T = _chain_command_block_call>
 
              command: operation_t args maybe_brace_block
-                    | expr call_op_t operation2_t args maybe_brace_block // expr must be primary
-                    | expr '::' operation2_t args maybe_brace_block // expr must be primary
+                    | value call_op_t operation2_t args maybe_brace_block // value must be primary
+                    | value '::' operation2_t args maybe_brace_block // value must be primary
                     |
                     | 'super'  args
                     | 'yield'  args

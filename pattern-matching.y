@@ -4,8 +4,8 @@
                     | p_case_body
 
          _p_top_expr: p_top_expr_body
-                    | p_top_expr_body 'if' expr
-                    | p_top_expr_body 'unless' expr
+                    | p_top_expr_body 'if' value // value must be expression
+                    | p_top_expr_body 'unless' value // value must be expression
 
      p_top_expr_body: _p_expr
                     | _p_expr ','
@@ -98,7 +98,7 @@
                     | '^' tGVAR
                     | '^' tCVAR
 
-         _p_expr_ref: '^' '(' expr ')'
+         _p_expr_ref: '^' '(' value ')' // value must be expression
 
             _p_const: '::' cname_t
                     | _p_const '::' cname_t

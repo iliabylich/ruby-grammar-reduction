@@ -24,7 +24,7 @@
                     // 5. begin..end
                     // 6. (value/compstmt/nothing)
                     // 7. global constant or const defined on a primary
-                    // 8. not (expr?)
+                    // 8. not (value?) where value must be expression
                     // 9. fcall maybe with brace block if receiver is also primry
                     // 10. super/yield in fcall mode
                     // 11. break/next/redo/retry with no arguments
@@ -38,7 +38,7 @@
                     //
                     // Value is an argument ALWAYS if it's not:
                     // 1. command (i.e. a method call with argument but without parentheses)
-                    // 2. 'not expr'
+                    // 2. 'not value'
                     // 3. '!' command
                     // 4. '=>' or 'in' one-line pattern-matching
                     // 5. binary operation 'and' / 'or'
@@ -49,73 +49,71 @@
                     // 2. alias/undef/postexe
                value: _stmt_head maybe1<T = _stmt_tail>
 
-                expr: value // value must be expression
-
           _stmt_head: alias
                     | undef
                     | postexe
                     |
                     | endless_method_def<Return = command>
                     |
-                    | expr '=' command_rhs // expr must be assignable
-                    | expr '=' mrhs // expr must be assignable
-                    | expr tOP_ASGN command_rhs // expr must be assignable
+                    | value '=' command_rhs // value must be assignable
+                    | value '=' mrhs // value must be assignable
+                    | value tOP_ASGN command_rhs // value must be assignable
                     |
                     | mlhs '=' command_call
                     | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = value>
-                    | mlhs '=' expr maybe2<T1 = 'rescue', T2 = value> // value must be argument
+                    | mlhs '=' value maybe2<T1 = 'rescue', T2 = value> // RHS must be expression, rescue body must be argument
                     |
                     | _value0
                     |
-                    | expr '..'  expr // LHS and RHS must be arguments
-                    | expr '...' expr // LHS and RHS must be arguments
-                    | expr '+'   expr // LHS and RHS must be arguments
-                    | expr '-'   expr // LHS and RHS must be arguments
-                    | expr '*'   expr // LHS and RHS must be arguments
-                    | expr '/'   expr // LHS and RHS must be arguments
-                    | expr '%'   expr // LHS and RHS must be arguments
-                    | expr '**'  expr // LHS and RHS must be arguments
-                    | expr '|'   expr // LHS and RHS must be arguments
-                    | expr '^'   expr // LHS and RHS must be arguments
-                    | expr '&'   expr // LHS and RHS must be arguments
-                    | expr '<=>' expr // LHS and RHS must be arguments
-                    | expr '=='  expr // LHS and RHS must be arguments
-                    | expr '===' expr // LHS and RHS must be arguments
-                    | expr '!='  expr // LHS and RHS must be arguments
-                    | expr '=~'  expr // LHS and RHS must be arguments
-                    | expr '!~'  expr // LHS and RHS must be arguments
-                    | expr '<<'  expr // LHS and RHS must be arguments
-                    | expr '>>'  expr // LHS and RHS must be arguments
-                    | expr '&&'  expr // LHS and RHS must be arguments
-                    | expr '||'  expr // LHS and RHS must be arguments
-                    | expr '>'   expr // LHS and RHS must be arguments
-                    | expr '<'   expr // LHS and RHS must be arguments
-                    | expr '>='  expr // LHS and RHS must be arguments
-                    | expr '<='  expr // LHS and RHS must be arguments
+                    | value '..'  value // LHS and RHS must be arguments
+                    | value '...' value // LHS and RHS must be arguments
+                    | value '+'   value // LHS and RHS must be arguments
+                    | value '-'   value // LHS and RHS must be arguments
+                    | value '*'   value // LHS and RHS must be arguments
+                    | value '/'   value // LHS and RHS must be arguments
+                    | value '%'   value // LHS and RHS must be arguments
+                    | value '**'  value // LHS and RHS must be arguments
+                    | value '|'   value // LHS and RHS must be arguments
+                    | value '^'   value // LHS and RHS must be arguments
+                    | value '&'   value // LHS and RHS must be arguments
+                    | value '<=>' value // LHS and RHS must be arguments
+                    | value '=='  value // LHS and RHS must be arguments
+                    | value '===' value // LHS and RHS must be arguments
+                    | value '!='  value // LHS and RHS must be arguments
+                    | value '=~'  value // LHS and RHS must be arguments
+                    | value '!~'  value // LHS and RHS must be arguments
+                    | value '<<'  value // LHS and RHS must be arguments
+                    | value '>>'  value // LHS and RHS must be arguments
+                    | value '&&'  value // LHS and RHS must be arguments
+                    | value '||'  value // LHS and RHS must be arguments
+                    | value '>'   value // LHS and RHS must be arguments
+                    | value '<'   value // LHS and RHS must be arguments
+                    | value '>='  value // LHS and RHS must be arguments
+                    | value '<='  value // LHS and RHS must be arguments
                     |
-                    | expr '..'       // expr must be argument
-                    | expr '...'      // expr must be argument
+                    | value '..'       // LHS must be argument
+                    | value '...'      // LHS must be argument
                     |
-                    | '..'  expr     // expr must be argument
-                    | '...' expr     // expr must be argument
-                    | '+'   expr     // expr must be argument
-                    | '-'   expr     // expr must be argument
-                    | '!'   expr     // expr must be argument or command
-                    | '~'   expr     // expr must be argument
+                    | '..'  value     // RHS must be argument
+                    | '...' value     // RHS must be argument
+                    | '+'   value     // RHS must be argument
+                    | '-'   value     // RHS must be argument
+                    | '!'   value     // RHS must be argument or command
+                    | '~'   value     // RHS must be argument
                     |
-                    | 'not' expr     // expr must be expression
+                    | 'not' value     // value must be expression
                     |
-                    | 'defined?' expr // expr must be argument
+                    | 'defined?' value // value must be argument
                     |
-                    | '-' simple_numeric '**' expr // expr must be argument
+                    | '-' simple_numeric '**' value // value must be argument
                     |
-                    | expr '?' expr ':' expr // LHS, MHS and RHS must be arguments
+                    | value '?' value ':' value // LHS, MHS and RHS must be arguments
                     |
-                    | expr 'and' expr // both must be expressions
-                    | expr 'or'  expr // both must be expressions
+                    | value 'and' value // both must be expressions
+                    | value 'or'  value // both must be expressions
                     |
-                    | expr '=>' p_top_expr_body // LHS must be argument
-                    | expr 'in' p_top_expr_body // LHS must be argument
+                    | value '=>' p_top_expr_body // LHS must be argument
+                    | value 'in' p_top_expr_body // LHS must be argument
 
              _value0: operation_t args           maybe_brace_block maybe_command_block
                     | operation_t opt_paren_args maybe_brace_block
@@ -131,7 +129,7 @@
                     | '(' value ')'
                     | '(' compstmt ')'
                     | '::' tCONSTANT
-                    | 'not' '(' expr ')'
+                    | 'not' '(' value ')' // value must be expression
                     | 'not' '(' ')'
                     |
                     | lambda
@@ -139,8 +137,8 @@
                     | if_stmt
                     | unless_stmt
                     |
-                    | 'while'  expr do_t compstmt 'end'
-                    | 'until'  expr do_t compstmt 'end'
+                    | 'while'  value do_t compstmt 'end' // value must be expression
+                    | 'until'  value do_t compstmt 'end' // value must be expression
                     |
                     | case
                     |
@@ -153,11 +151,11 @@
                     |
                     | keyword_cmd
                     |
-                    | expr repeat1<T = _stmt_call_tail>
+                    | value repeat1<T = _stmt_call_tail> // value must be expression
                     |
-                    | expr _assignment_t _assignment_rhs // expr must be assignable
+                    | value _assignment_t _assignment_rhs // LHS must be assignable
                     |
-                    | endless_method_def<Return = expr> // expr must be argument
+                    | endless_method_def<Return = value> // value must be argument
 
      _stmt_call_tail: '::' tCONSTANT
                     |
@@ -178,15 +176,15 @@
                     // 1. trailing ',' is allowed only if arglist is not empty
           _aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
 
-    _assignment_rhs: expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
+    _assignment_rhs: value repeat2<T1 = 'rescue', T2 = value> // all values must be arguments
 
        _assignment_t: '='
                     | tOP_ASGN
 
-          _stmt_tail: 'if'     expr
-                    | 'unless' expr
-                    | 'while'  expr
-                    | 'until'  expr
+          _stmt_tail: 'if'     value // must be expression
+                    | 'unless' value // must be expression
+                    | 'while'  value // must be expression
+                    | 'until'  value // must be expression
                     | 'rescue' value
 
            opt_terms: maybe1<T = _terms>
