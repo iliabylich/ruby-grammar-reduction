@@ -47,7 +47,8 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-               value: value _assignment_t _assignment_rhs // LHS must be assignable
+               value: value _assignment_t value maybe2<T1 = 'rescue', T2 = value> // all values must be arguments
+                    | value _assignment_t command_call maybe2<T1 = 'rescue', T2 = value>
                     | value '=' mrhs                      // LHS must be assignable
                     |
                     | mlhs '=' command_call
@@ -175,9 +176,6 @@
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty
           _aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
-
-     _assignment_rhs: value maybe2<T1 = 'rescue', T2 = value> // all values must be arguments
-                    | command_call maybe2<T1 = 'rescue', T2 = value>
 
        _assignment_t: '='
                     | tOP_ASGN
