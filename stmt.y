@@ -47,8 +47,7 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-               value: value _assignment_t _command_rhs     // LHS must be assignable
-                    | value _assignment_t _assignment_rhs // LHS must be assignable
+               value: value _assignment_t _assignment_rhs // LHS must be assignable
                     | value '=' mrhs                      // LHS must be assignable
                     |
                     | mlhs '=' command_call
@@ -178,6 +177,7 @@
           _aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
 
     _assignment_rhs: value repeat2<T1 = 'rescue', T2 = value> // all values must be arguments
+                   | _command_rhs
 
        _assignment_t: '='
                     | tOP_ASGN
