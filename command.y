@@ -1,11 +1,3 @@
-         command_rhs: command_call maybe2<T1 = 'rescue', T2 = value>
-                    |
-                    | endless_method_def<Return = command>
-                    |
-                    | value '=' command_rhs // value must be assignable
-                    |
-                    | value tOP_ASGN command_rhs // value must be assignable
-
         command_call: command maybe_command_block
 
  maybe_command_block: maybe1<T = do_block> repeat1<T = _chain_command_block_call>

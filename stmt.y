@@ -47,7 +47,7 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-               value: value _assignment_t command_rhs     // LHS must be assignable
+               value: value _assignment_t _command_rhs     // LHS must be assignable
                     | value _assignment_t _assignment_rhs // LHS must be assignable
                     | value '=' mrhs                      // LHS must be assignable
                     |
@@ -185,3 +185,9 @@
            opt_terms: maybe1<T = _terms>
 
               _terms: separated_by<Item = term_t, Sep = ';'>
+
+        _command_rhs: command_call maybe2<T1 = 'rescue', T2 = value>
+                    |
+                    | endless_method_def<Return = command>
+                    |
+                    | value _assignment_t _command_rhs // LHS must be assignable
