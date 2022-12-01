@@ -47,15 +47,13 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-               value: value '=' command_rhs // value must be assignable
-                    | value '=' mrhs // value must be assignable
+               value: value '='      command_rhs // value must be assignable
                     | value tOP_ASGN command_rhs // value must be assignable
+                    | value '=' mrhs             // value must be assignable
                     |
                     | mlhs '=' command_call
                     | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = value>
                     | mlhs '=' value maybe2<T1 = 'rescue', T2 = value> // RHS must be expression, rescue body must be argument
-                    |
-                    | _value0
                     |
                     | value '..'  value // LHS and RHS must be arguments
                     | value '...' value // LHS and RHS must be arguments
@@ -112,6 +110,8 @@
                     | 'while'  value // must be expression
                     | 'until'  value // must be expression
                     | 'rescue' value
+                    |
+                    | _value0
 
              _value0: operation_t args           maybe_brace_block maybe_command_block
                     | operation_t opt_paren_args maybe_brace_block
