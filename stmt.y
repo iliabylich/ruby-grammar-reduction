@@ -1,7 +1,5 @@
            top_stmts: separated_by<Item = _stmt_or_begin, Sep = _terms>
 
-        top_compstmt: top_stmts opt_terms
-
               _stmts: separated_by<Item = _stmt_or_begin, Sep = _terms>
 
             compstmt: _stmts opt_terms
