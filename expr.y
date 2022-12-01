@@ -122,7 +122,7 @@
                     |
                     | method_def
                     |
-                    | _keyword_cmd
+                    | keyword_cmd
                     |
                     | expr repeat1<T = _expr_call_tail>
                     |
@@ -149,29 +149,6 @@
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty
           _aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
-
-        _keyword_cmd: 'break'
-                    | 'break' args maybe_command_block
-                    |
-                    | 'next'
-                    | 'next' args maybe_command_block
-                    |
-                    | 'redo'
-                    |
-                    | 'retry'
-                    |
-                    | 'return'
-                    | 'return' args maybe_command_block
-                    |
-                    | 'yield' '(' args ')'
-                    | 'yield' '(' ')'
-                    | 'yield'
-                    | 'yield' args maybe_command_block
-                    |
-                    | 'super' args           maybe_command_block
-                    | 'super' opt_paren_args maybe_brace_block
-                    |
-                    | 'defined?' '(' expr ')'
 
     _assignment_rhs: expr repeat2<T1 = 'rescue', T2 = expr> // all expressions must be arguments
 
