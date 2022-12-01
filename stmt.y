@@ -1,8 +1,6 @@
            top_stmts: separated_by<Item = _value_or_preexe, Sep = _terms>
 
-              _stmts: separated_by<Item = _value_or_preexe, Sep = _terms>
-
-            compstmt: _stmts opt_terms
+            compstmt: separated_by<Item = _value_or_preexe, Sep = _terms> opt_terms
 
             bodystmt: compstmt opt_rescue maybe2<T1 = 'else', T2 = compstmt> maybe2<T1 = 'ensure', T2 = compstmt>
 
