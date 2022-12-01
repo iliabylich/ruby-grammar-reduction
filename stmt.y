@@ -47,7 +47,7 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-               value: _stmt_head repeat1<T = _stmt_tail>
+               value: _stmt_head
 
           _stmt_head: value '=' command_rhs // value must be assignable
                     | value '=' mrhs // value must be assignable
@@ -108,6 +108,12 @@
                     |
                     | value '=>' p_top_expr_body // LHS must be argument
                     | value 'in' p_top_expr_body // LHS must be argument
+                    |
+                    | 'if'     value // must be expression
+                    | 'unless' value // must be expression
+                    | 'while'  value // must be expression
+                    | 'until'  value // must be expression
+                    | 'rescue' value
 
              _value0: operation_t args           maybe_brace_block maybe_command_block
                     | operation_t opt_paren_args maybe_brace_block
@@ -179,12 +185,6 @@
 
        _assignment_t: '='
                     | tOP_ASGN
-
-          _stmt_tail: 'if'     value // must be expression
-                    | 'unless' value // must be expression
-                    | 'while'  value // must be expression
-                    | 'until'  value // must be expression
-                    | 'rescue' value
 
            opt_terms: maybe1<T = _terms>
 
