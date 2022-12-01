@@ -154,7 +154,7 @@
                     |
                     | keyword_cmd
                     |
-                    | value repeat1<T = _stmt_call_tail> // value must be expression
+                    | value repeat1<T = _call_tail> // value must be expression
                     |
                     | endless_method_def<Return = value> // value must be argument or command
                     |
@@ -162,7 +162,7 @@
                     | undef
                     | postexe
 
-     _stmt_call_tail: '::' tCONSTANT
+          _call_tail: '::' tCONSTANT
                     |
                     | '::' operation2_t paren_args maybe_brace_block
                     | '::' operation2_t       args maybe_brace_block maybe_command_block // cannot be chained because of open args
