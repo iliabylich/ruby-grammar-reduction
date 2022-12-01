@@ -12,6 +12,7 @@
                 args: command
                     | _arglist
 
+                    // Must have at least one element
                 mrhs: separated_by<Item = _mrhs1, Sep = ','>
 
               _mrhs1: maybe1<T = '*'> value // value must be argument

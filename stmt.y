@@ -47,9 +47,9 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-               value: value '='      command_rhs // value must be assignable
-                    | value tOP_ASGN command_rhs // value must be assignable
-                    | value '=' mrhs             // value must be assignable
+               value: value _assignment_t command_rhs     // LHS must be assignable
+                    | value _assignment_t _assignment_rhs // LHS must be assignable
+                    | value '=' mrhs                      // LHS must be assignable
                     |
                     | mlhs '=' command_call
                     | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = value>
@@ -95,7 +95,7 @@
                     |
                     | 'defined?' value // value must be argument
                     |
-                    | '-' simple_numeric '**' value // value must be argument
+                    | '-' simple_numeric '**' value // RHS must be argument
                     |
                     | value '?' value ':' value // LHS, MHS and RHS must be arguments
                     |
@@ -105,11 +105,11 @@
                     | value '=>' p_top_expr_body // LHS must be argument
                     | value 'in' p_top_expr_body // LHS must be argument
                     |
-                    | 'if'     value // must be expression
-                    | 'unless' value // must be expression
-                    | 'while'  value // must be expression
-                    | 'until'  value // must be expression
-                    | 'rescue' value
+                    | value 'if'     value // RHS must be expression
+                    | value 'unless' value // RHS must be expression
+                    | value 'while'  value // RHS must be expression
+                    | value 'until'  value // RHS must be expression
+                    | value 'rescue' value
                     |
                     | _value0
 
@@ -150,8 +150,6 @@
                     | keyword_cmd
                     |
                     | value repeat1<T = _stmt_call_tail> // value must be expression
-                    |
-                    | value _assignment_t _assignment_rhs // LHS must be assignable
                     |
                     | endless_method_def<Return = value> // value must be argument
                     | endless_method_def<Return = command>
