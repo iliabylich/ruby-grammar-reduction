@@ -48,10 +48,10 @@
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
                value: value _assignment_t value maybe2<T1 = 'rescue', T2 = value> // all values must be arguments
-                    | value _assignment_t command_call maybe2<T1 = 'rescue', T2 = value>
+                    | value _assignment_t command maybe_command_block maybe2<T1 = 'rescue', T2 = value>
                     | value '=' mrhs                      // LHS must be assignable
                     |
-                    | mlhs '=' command_call
+                    | mlhs '=' command maybe_command_block
                     | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = value>
                     | mlhs '=' value maybe2<T1 = 'rescue', T2 = value> // RHS must be expression, rescue body must be argument
                     |

@@ -1,5 +1,3 @@
-        command_call: command maybe_command_block
-
  maybe_command_block: maybe1<T = do_block> repeat1<T = _chain_command_block_call>
 
              command: _value0 // must be a call with open args
