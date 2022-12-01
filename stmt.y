@@ -2,7 +2,7 @@
 
             compstmt: separated_by<Item = _value_or_preexe, Sep = _terms> opt_terms
 
-            bodystmt: compstmt opt_rescue maybe2<T1 = 'else', T2 = compstmt> maybe2<T1 = 'ensure', T2 = compstmt>
+            bodystmt: compstmt opt_rescue opt_else maybe2<T1 = 'ensure', T2 = compstmt>
 
     _value_or_preexe: value
                     | preexe
