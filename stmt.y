@@ -47,9 +47,7 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-               value: _stmt_head
-
-          _stmt_head: value '=' command_rhs // value must be assignable
+               value: value '=' command_rhs // value must be assignable
                     | value '=' mrhs // value must be assignable
                     | value tOP_ASGN command_rhs // value must be assignable
                     |
