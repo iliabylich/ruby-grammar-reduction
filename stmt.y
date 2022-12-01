@@ -176,8 +176,10 @@
                     // 1. trailing ',' is allowed only if arglist is not empty
           _aref_args: '[' maybe1<T = args> maybe1<T = ','> ']'
 
-    _assignment_rhs: value repeat2<T1 = 'rescue', T2 = value> // all values must be arguments
-                   | _command_rhs
+     _assignment_rhs: value repeat2<T1 = 'rescue', T2 = value> // all values must be arguments
+                    | command_call maybe2<T1 = 'rescue', T2 = value>
+                    |
+                    | endless_method_def<Return = command>
 
        _assignment_t: '='
                     | tOP_ASGN
@@ -185,9 +187,3 @@
            opt_terms: maybe1<T = _terms>
 
               _terms: separated_by<Item = term_t, Sep = ';'>
-
-        _command_rhs: command_call maybe2<T1 = 'rescue', T2 = value>
-                    |
-                    | endless_method_def<Return = command>
-                    |
-                    | value _assignment_t _command_rhs // LHS must be assignable
