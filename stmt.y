@@ -47,11 +47,16 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
+                    //
+                    // Value is a command if:
+                    // 1. it is a method call with arguments but without parentheses
+                    // 2. super/yield/return/break next -.-
+                    //
                value: value _assignment_t value maybe2<T1 = 'rescue', T2 = value> // all values must be arguments
-                    | value _assignment_t command maybe_command_block maybe2<T1 = 'rescue', T2 = value>
+                    | value _assignment_t value maybe_command_block maybe2<T1 = 'rescue', T2 = value> // RHS must be command
                     | value '=' mrhs                      // LHS must be assignable
                     |
-                    | mlhs '=' command maybe_command_block
+                    | mlhs '=' value maybe_command_block // RHS must be command
                     | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = value>
                     | mlhs '=' value maybe2<T1 = 'rescue', T2 = value> // RHS must be expression, rescue body must be argument
                     |
@@ -151,8 +156,7 @@
                     |
                     | value repeat1<T = _stmt_call_tail> // value must be expression
                     |
-                    | endless_method_def<Return = value> // value must be argument
-                    | endless_method_def<Return = command>
+                    | endless_method_def<Return = value> // value must be argument or command
                     |
                     | alias
                     | undef

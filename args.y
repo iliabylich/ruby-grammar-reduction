@@ -9,7 +9,7 @@
 
       opt_paren_args: maybe1<T = paren_args>
 
-                args: command
+                args: value // must be command
                     | _arglist
 
                     // Must have at least one element
