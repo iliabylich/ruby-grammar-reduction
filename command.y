@@ -1,4 +1,4 @@
-         command_rhs: command_call maybe2<T1 = 'rescue', T2 = stmt>
+         command_rhs: command_call maybe2<T1 = 'rescue', T2 = value>
                     |
                     | endless_method_def<Return = command>
                     |

@@ -6,37 +6,37 @@
 
             bodystmt: compstmt opt_rescue maybe2<T1 = 'else', T2 = compstmt> maybe2<T1 = 'ensure', T2 = compstmt>
 
-      _stmt_or_begin: stmt
+      _stmt_or_begin: value
                     | preexe
 
-                    // Statement is assignable if it is:
+                    // Value is assignable if it is:
                     // 1. backref
                     // 2. local/instance/class/global variable
                     // 3. constant (with **any** scope)
                     // 4. indexasgn
                     // 5. fcall
                     //
-                    // Statement is primary if it is:
+                    // Value is primary if it is:
                     // 1. literal (numer/sym/str/array/hash)
                     // 2. local/instance/class/global variable
                     // 3. backref
                     // 4. tFID-based method call
                     // 5. begin..end
-                    // 6. (stmt/compstmt/nothing)
+                    // 6. (value/compstmt/nothing)
                     // 7. global constant or const defined on a primary
                     // 8. not (expr?)
                     // 9. fcall maybe with brace block if receiver is also primry
                     // 10. super/yield in fcall mode
                     // 11. break/next/redo/retry with no arguments
                     // 12. lambda
-                    // 13. if/unless statement
+                    // 13. if/unless (non-modifier)
                     // 14. for loop
-                    // 15. while/until statements
+                    // 15. while/until (non-modifier)
                     // 16. class/module definition
-                    // 17. standard method definition statement
+                    // 17. method definition
                     // 18. indexasgn if receiver is also primary
                     //
-                    // Statement is an argument ALWAYS if it's not:
+                    // Value is an argument ALWAYS if it's not:
                     // 1. command (i.e. a method call with argument but without parentheses)
                     // 2. 'not expr'
                     // 3. '!' command
@@ -44,12 +44,12 @@
                     // 5. binary operation 'and' / 'or'
                     // 6. super/yield/return/break/next in command mode
                     //
-                    // Statement is an expression ALWAYS if it's not:
+                    // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-                stmt: _stmt_head maybe1<T = _stmt_tail>
+               value: _stmt_head maybe1<T = _stmt_tail>
 
-                expr: stmt // statement must be expression
+                expr: value // value must be expression
 
           _stmt_head: alias
                     | undef
@@ -62,10 +62,10 @@
                     | expr tOP_ASGN command_rhs // expr must be assignable
                     |
                     | mlhs '=' command_call
-                    | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = stmt>
-                    | mlhs '=' expr maybe2<T1 = 'rescue', T2 = stmt> // expr must be argument
+                    | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = value>
+                    | mlhs '=' expr maybe2<T1 = 'rescue', T2 = value> // value must be argument
                     |
-                    | _stmt0
+                    | _value0
                     |
                     | expr '..'  expr // LHS and RHS must be arguments
                     | expr '...' expr // LHS and RHS must be arguments
@@ -117,7 +117,7 @@
                     | expr '=>' p_top_expr_body // LHS must be argument
                     | expr 'in' p_top_expr_body // LHS must be argument
 
-              _stmt0: operation_t args           maybe_brace_block maybe_command_block
+             _value0: operation_t args           maybe_brace_block maybe_command_block
                     | operation_t opt_paren_args maybe_brace_block
                     |
                     | literal
@@ -128,7 +128,7 @@
                     | tFID
                     | 'begin' bodystmt 'end'
                     | '(' ')'
-                    | '(' stmt ')'
+                    | '(' value ')'
                     | '(' compstmt ')'
                     | '::' tCONSTANT
                     | 'not' '(' expr ')'
@@ -187,7 +187,7 @@
                     | 'unless' expr
                     | 'while'  expr
                     | 'until'  expr
-                    | 'rescue' stmt
+                    | 'rescue' value
 
            opt_terms: maybe1<T = _terms>
 
