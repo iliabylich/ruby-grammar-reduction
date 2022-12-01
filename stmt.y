@@ -1,12 +1,12 @@
-           top_stmts: separated_by<Item = _stmt_or_begin, Sep = _terms>
+           top_stmts: separated_by<Item = _value_or_preexe, Sep = _terms>
 
-              _stmts: separated_by<Item = _stmt_or_begin, Sep = _terms>
+              _stmts: separated_by<Item = _value_or_preexe, Sep = _terms>
 
             compstmt: _stmts opt_terms
 
             bodystmt: compstmt opt_rescue maybe2<T1 = 'else', T2 = compstmt> maybe2<T1 = 'ensure', T2 = compstmt>
 
-      _stmt_or_begin: value
+    _value_or_preexe: value
                     | preexe
 
                     // Value is assignable if it is:
