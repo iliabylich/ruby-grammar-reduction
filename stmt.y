@@ -47,15 +47,9 @@
                     // Value is an expression ALWAYS if it's not:
                     // 1. mass-assignment
                     // 2. alias/undef/postexe
-               value: _stmt_head maybe1<T = _stmt_tail>
+               value: _stmt_head repeat1<T = _stmt_tail>
 
-          _stmt_head: alias
-                    | undef
-                    | postexe
-                    |
-                    | endless_method_def<Return = command>
-                    |
-                    | value '=' command_rhs // value must be assignable
+          _stmt_head: value '=' command_rhs // value must be assignable
                     | value '=' mrhs // value must be assignable
                     | value tOP_ASGN command_rhs // value must be assignable
                     |
@@ -156,6 +150,11 @@
                     | value _assignment_t _assignment_rhs // LHS must be assignable
                     |
                     | endless_method_def<Return = value> // value must be argument
+                    | endless_method_def<Return = command>
+                    |
+                    | alias
+                    | undef
+                    | postexe
 
      _stmt_call_tail: '::' tCONSTANT
                     |
