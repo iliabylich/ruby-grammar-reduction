@@ -28,8 +28,6 @@
                     | mlhs '=' expr maybe2<T1 = 'rescue', T2 = stmt> // expr must be argument
                     | expr
 
-            // %nonassoc 'if' 'unless' 'while' 'until'
-            // %left 'rescue'
           _stmt_tail: 'if'     expr
                     | 'unless' expr
                     | 'while'  expr
