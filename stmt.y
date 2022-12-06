@@ -4,9 +4,9 @@
 
             bodystmt: compstmt opt_rescue opt_else maybe2<T1 = 'ensure', T2 = compstmt>
 
+           opt_terms: maybe1<T = _terms>
+
     _value_or_preexe: value
                     | preexe
-
-           opt_terms: maybe1<T = _terms>
 
               _terms: separated_by<Item = term_t, Sep = ';'>

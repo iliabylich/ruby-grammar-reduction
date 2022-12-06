@@ -8,10 +8,12 @@
                     | _symbols
                     | _qsymbols
 
-            _numeric: maybe1<T = '-'> simple_numeric
-
               symbol: tSYMBEG sym_t
                     | tSYMBEG string_contents tSTRING_END
+
+     string_contents: repeat1<T = _string_content>
+
+            _numeric: maybe1<T = '-'> simple_numeric
 
             _strings: tCHAR
                     | at_least_once<T = _string1>
@@ -31,8 +33,6 @@
              _qwords: tQWORDS_BEG separated_by<Item = tSTRING_CONTENT, item = ' '> tSTRING_END
 
            _qsymbols: tQSYMBOLS_BEG ' ' separated_by<Item = tSTRING_CONTENT, item = ' '> tSTRING_END
-
-     string_contents: repeat1<T = _string_content>
 
      _string_content: tSTRING_CONTENT
                     | tSTRING_DVAR string_dvar
