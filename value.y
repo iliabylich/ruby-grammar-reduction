@@ -105,7 +105,7 @@
                     | value 'until'  value // RHS must be expression
                     | value 'rescue' value
                     |
-                    | _value0
+                    | _value0 repeat1<T = _call_tail> // value must be expression
 
              _value0: operation_t args           maybe_brace_block maybe_command_block
                     | operation_t opt_paren_args maybe_brace_block
@@ -142,8 +142,6 @@
                     | method_def
                     |
                     | keyword_cmd
-                    |
-                    | value repeat1<T = _call_tail> // value must be expression
                     |
                     | endless_method_def<Return = value> // value must be argument or command
                     |
