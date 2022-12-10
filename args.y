@@ -24,6 +24,5 @@
                     | tLABEL maybe1<T = value> // value must be argument
                     | tSTRING_BEG string_contents tLABEL_END value // value must be argument
                     | '*' maybe1<T = value> // value must be argument
+                    | '**' maybe1<T = value> // value must be argument
                     | '&' maybe1<T = value> // value must be argument
-                    | '**' value // value must be argument
-                    | '**'
