@@ -107,13 +107,11 @@
                     |
                     | _value0 repeat1<T = _call_tail> // value must be expression
 
-             _value0: operation_t args           maybe_brace_block maybe_command_block
-                    | operation_t opt_paren_args maybe_brace_block
+             _value0: _var_ref_or_method_call
                     |
                     | literal
                     | array
                     | hash
-                    | var_ref
                     | backref
                     | tFID
                     | 'begin' bodystmt 'end'
@@ -163,6 +161,11 @@
                     | call_op_t                  paren_args maybe_brace_block
                     |
                     | _aref_args maybe_brace_block
+
+                         // `operation_t` and `var_ref` have an overlap
+_var_ref_or_method_call: operation_t args           maybe_brace_block maybe_command_block
+                       | operation_t opt_paren_args maybe_brace_block
+                       | var_ref
 
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty

@@ -20,6 +20,10 @@
             _arglist: separated_by<Item = _arg, Sep = ','>
 
                 _arg: value // value must be argument
+                    | value '=>' value // both values must be arguments
+                    | tLABEL maybe1<T = value> // value must be argument
+                    | tSTRING_BEG string_contents tLABEL_END value // value must be argument
                     | '*' maybe1<T = value> // value must be argument
                     | '&' maybe1<T = value> // value must be argument
-                    | assoc
+                    | '**' value // value must be argument
+                    | '**'
