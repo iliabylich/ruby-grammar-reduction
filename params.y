@@ -29,6 +29,7 @@
 
           // There must be runtime validations:
           // 1. restarg appears only once
+          // 2. the list is not empty
          _multi_args: separated_by<Item = _multi_arg, Sep = ','>
 
           _multi_arg: _arg
