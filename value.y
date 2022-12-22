@@ -148,16 +148,13 @@
                     | postexe
 
           _call_tail: // '::' tCONSTANT <any block> with no args is not allowed (and it's a const access)
-                    | '::'      operation2_t _call_args _block_call
-                    | call_op_t operation2_t _call_args _block_call
+                    | '::'      operation2_t   call_args _block_call
+                    | call_op_t operation2_t   call_args _block_call
                     |
                     | '::'                    paren_args _block_call
                     | call_op_t               paren_args _block_call
                     |
                     | _aref_args                         _block_call
-
-          _call_args: args
-                    | opt_paren_args
 
          _block_call: maybe_brace_block
                     | maybe1<T = do_block> // can be chained ONLY if there's no outer command
