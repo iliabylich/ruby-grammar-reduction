@@ -153,8 +153,7 @@
                     |
                     | _aref_args                         _block_call
 
-         _block_call: maybe_brace_block
-                    | maybe1<T = do_block> // can be chained ONLY if there's no outer command
+         _block_call: maybe1<T = block>
 
                          // `operation_t` and `var_ref` have an overlap
 _var_ref_or_method_call: operation_t args           _block_call

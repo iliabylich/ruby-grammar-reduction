@@ -1,9 +1,7 @@
-            do_block: 'do' _opt_block_params bodystmt 'end'
-
-   maybe_brace_block: maybe1<T = _brace_block>
-
                block: _brace_block
-                    | do_block
+                    | _do_block // can be chained ONLY if there's no outer command
+
+           _do_block: 'do' _opt_block_params bodystmt 'end'
 
         _brace_block: '{' _opt_block_params compstmt '}'
 
