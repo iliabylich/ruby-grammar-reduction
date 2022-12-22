@@ -147,11 +147,15 @@
                     | postexe
 
           _call_tail: // '::' tCONSTANT <any block> with no args is not allowed (and it's a const access)
-                    | dot_or_colon2_t operation2_t   call_args maybe_block
+                    | dot_or_colon2_t _method_name_t   call_args maybe_block
                     |
-                    | dot_or_colon2_t               paren_args maybe_block
+                    | dot_or_colon2_t                 paren_args maybe_block
                     |
                     | _aref_args                         maybe_block
+
+      _method_name_t: _id_or_const_t
+                    | tFID
+                    | _op_t
 
                          // `operation_t` and `var_ref` have an overlap
 _var_ref_or_method_call: operation_t args           maybe_block
