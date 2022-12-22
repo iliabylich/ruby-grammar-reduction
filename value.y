@@ -159,8 +159,8 @@
                     | maybe1<T = do_block> // can be chained ONLY if there's no outer command
 
                          // `operation_t` and `var_ref` have an overlap
-_var_ref_or_method_call: operation_t args           maybe_brace_block maybe_command_block
-                       | operation_t opt_paren_args maybe_brace_block
+_var_ref_or_method_call: operation_t args           _block_call
+                       | operation_t opt_paren_args _block_call
                        | var_ref
 
                     // There must be runtime validations:
