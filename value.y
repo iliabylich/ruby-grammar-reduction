@@ -147,11 +147,9 @@
                     | postexe
 
           _call_tail: // '::' tCONSTANT <any block> with no args is not allowed (and it's a const access)
-                    | '::'      operation2_t   call_args _block_call
-                    | call_op_t operation2_t   call_args _block_call
+                    | dot_or_colon2_t operation2_t   call_args _block_call
                     |
-                    | '::'                    paren_args _block_call
-                    | call_op_t               paren_args _block_call
+                    | dot_or_colon2_t               paren_args _block_call
                     |
                     | _aref_args                         _block_call
 

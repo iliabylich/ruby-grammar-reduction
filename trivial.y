@@ -1,10 +1,10 @@
              backref: tNTH_REF
                     | tBACK_REF
 
-          call_op2_t: call_op_t
+     dot_or_colon2_t: dot_t
                     | '::'
 
-           call_op_t: '.'
+               dot_t: '.'
                     | '&.'
 
              cname_t: _id_or_const_t
