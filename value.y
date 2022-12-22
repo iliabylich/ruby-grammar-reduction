@@ -148,13 +148,10 @@
                     | postexe
 
           _call_tail: // '::' tCONSTANT <any block> with no args is not allowed (and it's a const access)
-                    | '::' tCONSTANT         _maybe_args _maybe_block
-                    |
-                    | '::' operation3_t      _maybe_args _maybe_block
+                    | '::'      operation2_t _maybe_args _maybe_block
+                    | call_op_t operation2_t _maybe_args _maybe_block
                     |
                     | '::'                    paren_args _maybe_block
-                    |
-                    | call_op_t operation2_t _maybe_args _maybe_block
                     |
                     | _aref_args                         _maybe_block
 
