@@ -41,13 +41,11 @@
                     // 1. it is a method call with arguments but without parentheses
                     // 2. super/yield/return/break next -.-
                     //
-               value: value _assignment_t value // all values must be arguments
-                    | value _assignment_t value maybe_command_block // RHS must be command
-                    | value '=' mrhs                      // LHS must be assignable
+               value: value _assignment_t value // LHS must be assignable, RHS must be argument
+                    | value '=' mrhs            // LHS must be assignable
                     |
-                    | mlhs '=' value maybe_command_block // RHS must be command
                     | mlhs '=' mrhs
-                    | mlhs '=' value // RHS must be expression
+                    | mlhs '=' value // RHS must be expression or comand
                     |
                     | value '..'  value // LHS and RHS must be arguments
                     | value '...' value // LHS and RHS must be arguments
