@@ -41,13 +41,13 @@
                     // 1. it is a method call with arguments but without parentheses
                     // 2. super/yield/return/break next -.-
                     //
-               value: value _assignment_t value maybe2<T1 = 'rescue', T2 = value> // all values must be arguments
-                    | value _assignment_t value maybe_command_block maybe2<T1 = 'rescue', T2 = value> // RHS must be command
+               value: value _assignment_t value // all values must be arguments
+                    | value _assignment_t value maybe_command_block // RHS must be command
                     | value '=' mrhs                      // LHS must be assignable
                     |
                     | mlhs '=' value maybe_command_block // RHS must be command
-                    | mlhs '=' mrhs maybe2<T1 = 'rescue', T2 = value>
-                    | mlhs '=' value maybe2<T1 = 'rescue', T2 = value> // RHS must be expression, rescue body must be argument
+                    | mlhs '=' mrhs
+                    | mlhs '=' value // RHS must be expression
                     |
                     | value '..'  value // LHS and RHS must be arguments
                     | value '...' value // LHS and RHS must be arguments
@@ -103,6 +103,7 @@
                     | value 'unless' value // RHS must be expression
                     | value 'while'  value // RHS must be expression
                     | value 'until'  value // RHS must be expression
+                    | // if LHS is (mass-)assignment it should be re-grouped to `lhs = (rhs rescue value)`
                     | value 'rescue' value
                     |
                     | _value0 repeat1<T = _call_tail> // value must be expression
