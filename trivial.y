@@ -25,8 +25,7 @@
                     | '__LINE__'
                     | '__ENCODING__'
 
-        operation2_t: tCONSTANT
-                    | tIDENTIFIER
+        operation2_t: _id_or_const_t
                     | tFID
                     | _op_t
 
