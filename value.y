@@ -153,9 +153,10 @@
                     |
                     | _aref_args                         maybe_block
 
-      _method_name_t: _id_or_const_t
+      _method_name_t: tIDENTIFIER
+                    | tCONSTANT
                     | tFID
-                    | _op_t
+                    | op_t
 
                          // `operation_t` and `var_ref` have an overlap
 _var_ref_or_method_call: operation_t args           maybe_block

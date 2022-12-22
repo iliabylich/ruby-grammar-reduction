@@ -14,7 +14,7 @@
 
              fname_t: _id_or_const_t
                     | tFID
-                    | _op_t
+                    | op_t
                     | _reswords_t
 
     keyword_variable: 'nil'
@@ -47,7 +47,7 @@
              var_ref: _user_variable
                     | keyword_variable
 
-               _op_t: '|'
+                op_t: '|'
                     | '^'
                     | '&'
                     | '<=>'
