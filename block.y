@@ -1,4 +1,6 @@
-               block: _brace_block
+         maybe_block: maybe1<T = _block>
+
+              _block: _brace_block
                     | _do_block // can be chained ONLY if there's no outer command
 
            _do_block: 'do' _opt_block_params bodystmt 'end'
