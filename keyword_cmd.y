@@ -12,10 +12,8 @@
                     | 'return' args
                     |
                     | // For some reason trailing comman in yield(a, b,) is not allowed. why?? we ignore it
-                    | 'yield' opt_paren_args
-                    | 'yield' args
+                    | 'yield' call_args
                     |
-                    | 'super' args           maybe_command_block
-                    | 'super' opt_paren_args maybe_brace_block
+                    | 'super' call_args maybe1<T = block>
                     |
                     | 'defined?' '(' value ')' // value must be expression
