@@ -1,20 +1,20 @@
          keyword_cmd: 'break'
-                    | 'break' args maybe_command_block
+                    | 'break' args
                     |
                     | 'next'
-                    | 'next' args maybe_command_block
+                    | 'next' args
                     |
                     | 'redo'
                     |
                     | 'retry'
                     |
                     | 'return'
-                    | 'return' args maybe_command_block
+                    | 'return' args
                     |
                     | 'yield' '(' args ')'
                     | 'yield' '(' ')'
                     | 'yield'
-                    | 'yield' args maybe_command_block
+                    | 'yield' args
                     |
                     | 'super' args           maybe_command_block
                     | 'super' opt_paren_args maybe_brace_block
