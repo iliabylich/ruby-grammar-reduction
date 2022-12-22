@@ -26,9 +26,7 @@
                     | '__ENCODING__'
 
         operation2_t: tCONSTANT
-                    | operation3_t
-
-        operation3_t: tIDENTIFIER
+                    | tIDENTIFIER
                     | tFID
                     | _op_t
 
