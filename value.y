@@ -148,10 +148,11 @@
                     | postexe
 
           _call_tail: '::' tCONSTANT
+                    | '::' tCONSTANT paren_args maybe_brace_block
+                    | '::' tCONSTANT       args maybe_brace_block maybe_command_block // cannot be chained because of open args
                     |
-                    | '::' operation2_t paren_args maybe_brace_block
-                    | '::' operation2_t       args maybe_brace_block maybe_command_block // cannot be chained because of open args
-                    |
+                    | '::' operation3_t paren_args maybe_brace_block
+                    | '::' operation3_t       args maybe_brace_block maybe_command_block // cannot be chained because of open args
                     | '::' operation3_t            maybe_brace_block
                     |
                     | '::'              paren_args maybe_brace_block
