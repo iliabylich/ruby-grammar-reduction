@@ -147,21 +147,22 @@
                     | undef
                     | postexe
 
-          _call_tail: '::' tCONSTANT
-                    | '::' tCONSTANT paren_args maybe_brace_block
-                    | '::' tCONSTANT       args maybe_brace_block maybe_command_block // cannot be chained because of open args
+          _call_tail: // '::' tCONSTANT <any block> with no args is not allowed (and it's a const access)
+                    | '::' tCONSTANT         _maybe_args _maybe_block
                     |
-                    | '::' operation3_t paren_args maybe_brace_block
-                    | '::' operation3_t       args maybe_brace_block maybe_command_block // cannot be chained because of open args
-                    | '::' operation3_t            maybe_brace_block
+                    | '::' operation3_t      _maybe_args _maybe_block
                     |
-                    | '::'              paren_args maybe_brace_block
+                    | '::'                    paren_args _maybe_block
                     |
-                    | call_op_t operation2_t opt_paren_args maybe_brace_block
-                    | call_op_t operation2_t           args maybe_brace_block maybe_command_block // cannot be chained because of open args
-                    | call_op_t                  paren_args maybe_brace_block
+                    | call_op_t operation2_t _maybe_args _maybe_block
                     |
-                    | _aref_args maybe_brace_block
+                    | _aref_args                         _maybe_block
+
+         _maybe_args: args
+                    | opt_paren_args
+
+        _maybe_block: maybe_brace_block
+                    | maybe_command_block // can be chained ONLY if there's no outer command
 
                          // `operation_t` and `var_ref` have an overlap
 _var_ref_or_method_call: operation_t args           maybe_brace_block maybe_command_block
