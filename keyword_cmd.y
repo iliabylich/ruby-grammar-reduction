@@ -11,9 +11,8 @@
                     | 'return'
                     | 'return' args
                     |
-                    | 'yield' '(' args ')'
-                    | 'yield' '(' ')'
-                    | 'yield'
+                    | // For some reason trailing comman in yield(a, b,) is not allowed. why?? we ignore it
+                    | 'yield' opt_paren_args
                     | 'yield' args
                     |
                     | 'super' args           maybe_command_block
