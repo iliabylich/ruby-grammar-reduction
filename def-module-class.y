@@ -5,4 +5,4 @@
 
          _superclass: '<' value term_t // value must be expression
 
-              _cpath: maybe2<T1 = maybe1<T = value>, T2 = '::'> cname_t // value must be primary
+              _cpath: value // value must be primary and const-get
