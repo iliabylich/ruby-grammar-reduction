@@ -154,9 +154,9 @@
                     | tFID
                     | op_t
 
-_var_ref_or_method_call: tIDENTIFIER maybe2<T1 = call_args, T2 = maybe_block>
-                       | tCONSTANT maybe2<T1 = call_args, T2 = maybe_block>
-                       | tFID maybe2<T1 = call_args, T2 = maybe_block>
+_var_ref_or_method_call: tIDENTIFIER call_args maybe_block
+                       | tCONSTANT call_args maybe_block
+                       | tFID call_args maybe_block
                        |
                        | tIVAR
                        | tGVAR
