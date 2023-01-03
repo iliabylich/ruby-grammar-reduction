@@ -112,7 +112,6 @@
                     | array
                     | hash
                     | backref
-                    | tFID
                     | 'begin' bodystmt 'end'
                     | '(' maybe1<T = compstmt> ')'
                     | '::' tCONSTANT
@@ -156,9 +155,9 @@
                     | op_t
 
                          // `operation_t` and `var_ref` have an overlap
-_var_ref_or_method_call: operation_t args           maybe_block
-                       | operation_t opt_paren_args maybe_block
+_var_ref_or_method_call: operation_t call_args maybe_block
                        | var_ref
+                       | tFID
 
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty
