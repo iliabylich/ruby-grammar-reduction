@@ -1,15 +1,12 @@
-         keyword_cmd: 'break'
-                    | 'break' args
+         keyword_cmd: 'break' maybe1<T = args>
                     |
-                    | 'next'
-                    | 'next' args
+                    | 'next' maybe1<T = args>
                     |
                     | 'redo'
                     |
                     | 'retry'
                     |
-                    | 'return'
-                    | 'return' args
+                    | 'return' maybe1<T = args>
                     |
                     | // For some reason trailing comman in yield(a, b,) is not allowed. why?? we ignore it
                     | 'yield' call_args
