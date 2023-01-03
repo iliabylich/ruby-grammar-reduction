@@ -4,9 +4,6 @@
          maybe2<T1, T2>: T1 T2
                        | none
 
-     maybe3<T1, T2, T3>: T1 T2 T3
-                       | none
-
              repeat1<T>: none
                        | T repeat1<T = T>
 
