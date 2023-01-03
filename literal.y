@@ -8,7 +8,7 @@
                     | _symbols
                     | _qsymbols
 
-              symbol: tSYMBEG sym_t
+              symbol: tSYMBEG _sym_t
                     | tSYMBEG string_contents tSTRING_END
 
      string_contents: repeat1<T = _string_content>
@@ -35,6 +35,15 @@
            _qsymbols: tQSYMBOLS_BEG ' ' separated_by<Item = tSTRING_CONTENT, item = ' '> tSTRING_END
 
      _string_content: tSTRING_CONTENT
-                    | tSTRING_DVAR string_dvar
+                    | tSTRING_DVAR _string_dvar
                     | tSTRING_DBEG compstmt tSTRING_DEND
 
+        _string_dvar: tIVAR
+                    | tGVAR
+                    | tCVAR
+                    | tBACK_REF
+
+              _sym_t: fname_t
+                    | tIVAR
+                    | tGVAR
+                    | tCVAR

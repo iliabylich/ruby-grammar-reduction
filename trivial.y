@@ -33,14 +33,6 @@
                     | tRATIONAL
                     | tIMAGINARY
 
-         string_dvar: _nonlocal_var
-                    | backref
-
-               sym_t: fname_t
-                    | tIVAR
-                    | tGVAR
-                    | tCVAR
-
               term_t: ';'
                     | '\n'
 
