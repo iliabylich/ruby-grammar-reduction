@@ -25,9 +25,6 @@
                     | '__LINE__'
                     | '__ENCODING__'
 
-         operation_t: _id_or_const_t
-                    | tFID
-
       simple_numeric: tINTEGER
                     | tFLOAT
                     | tRATIONAL

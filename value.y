@@ -154,10 +154,16 @@
                     | tFID
                     | op_t
 
-                         // `operation_t` and `var_ref` have an overlap
-_var_ref_or_method_call: operation_t call_args maybe_block
-                       | var_ref
+_var_ref_or_method_call: tIDENTIFIER call_args maybe_block
+                       | tIDENTIFIER
+                       | tCONSTANT call_args maybe_block
+                       | tCONSTANT
+                       | tFID call_args maybe_block
                        | tFID
+                       | tIVAR
+                       | tGVAR
+                       | tCVAR
+                       | keyword_variable
 
                     // There must be runtime validations:
                     // 1. trailing ',' is allowed only if arglist is not empty

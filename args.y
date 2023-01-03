@@ -7,12 +7,10 @@
                     | '(' _arglist ',' '...' ')'
                     | '(' '...' ')'
 
-      opt_paren_args: maybe1<T = paren_args>
-
                 args: _arglist // cannot have more than 1 element if contains command
 
            call_args: args
-                    | opt_paren_args
+                    | maybe1<T = paren_args>
 
                     // Must have at least one element
                 mrhs: separated_by<Item = _mrhs1, Sep = ','>
