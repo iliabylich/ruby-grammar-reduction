@@ -137,7 +137,7 @@
                     |
                     | keyword_cmd
                     |
-                    | endless_method_def<Return = value> // value must be argument or command
+                    | endless_method_def
                     |
                     | alias
                     | undef

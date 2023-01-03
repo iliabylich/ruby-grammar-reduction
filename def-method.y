@@ -1,6 +1,7 @@
                       method_def: _def_head _method_def_args bodystmt 'end'
 
-        endless_method_def<Body>: _def_head maybe1<T = _parenthesized_args> '=' Body maybe2<T1 = 'rescue', T2 = value> // value must be argument
+                                // body must be argument or command, rescue value must argument
+              endless_method_def: _def_head maybe1<T = _parenthesized_args> '=' value maybe2<T1 = 'rescue', T2 = value>
 
                        _def_head: 'def' fname_t
                                 | 'def' _singleton _dot_or_colon_t fname_t
