@@ -114,12 +114,9 @@
                     | backref
                     | tFID
                     | 'begin' bodystmt 'end'
-                    | '(' ')'
-                    | '(' value ')'
-                    | '(' compstmt ')'
+                    | '(' maybe1<T = compstmt> ')'
                     | '::' tCONSTANT
-                    | 'not' '(' value ')' // value must be expression
-                    | 'not' '(' ')'
+                    | 'not' '(' maybe1<T = value> ')' // value must be expression
                     |
                     | lambda
                     |
